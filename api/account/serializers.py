@@ -8,10 +8,10 @@ User = get_user_model()
 
 password_pattern = re.compile(r'^(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$')
 
-class UserSerializer(serializers.ModelSerializer):
+class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['phone', 'password', 'first_name', 'last_name', 'date_of_birth', 'email']
+        fields = ['phone', 'password', 'first_name', 'last_name']
 
     def validate_phone(self, phone):
         try:
@@ -44,4 +44,3 @@ class UserSerializer(serializers.ModelSerializer):
                 setattr(user, key, value)
         user.save()
         return user
-    

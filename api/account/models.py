@@ -6,7 +6,6 @@ import re
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from uuid import uuid4
-from django.core.validators import EmailValidator, MinValueValidator
 
 class UserManager(BaseUserManager):
     def create_user(self, password, phone, first_name, last_name):       
@@ -52,6 +51,12 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     uuid = models.UUIDField(default=uuid4, editable=False)
     
+    email=models.EmailField(
+        verbose_name='Email',
+        max_length=255,
+        unique=True
+    )
+
     phone = models.CharField(
         verbose_name='Phone Number',
         max_length=20,
@@ -62,21 +67,11 @@ class User(AbstractBaseUser):
         verbose_name='Password'
     )
 
+
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
 
-    email=models.EmailField(
-        verbose_name='Email',
-        max_length=255,
-        unique=True,
-        validators=[EmailValidator()],
-        null=True,
-        blank=True
-    )
-    date_of_birth = models.DateField(null=True, blank=True)
-
     is_phone_verified = models.BooleanField(default=False)
-    verification_sid = models.CharField(max_length=255, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     is_admin = models.BooleanField(default=False)

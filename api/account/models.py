@@ -8,10 +8,13 @@ from django.utils.translation import gettext_lazy as _
 from uuid import uuid4
 
 class UserManager(BaseUserManager):
-    def create_user(self, password, phone, first_name, last_name):       
+    def create_user(self, password, phone, first_name, last_name, email):       
         if not password:
             raise ValueError("User must have a password.")
         
+        if not email:
+            raise ValueError("User must hvae an email.")
+
         if not phone:
             raise ValueError("User must have a phone number.")
         
@@ -23,6 +26,9 @@ class UserManager(BaseUserManager):
 
         user = self.model(
             phone = phone,
+            email = email,
+            first_name = first_name,
+            last_name = last_name,
         )
         
         user.set_password(password)

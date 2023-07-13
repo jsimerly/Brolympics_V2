@@ -79,7 +79,7 @@ class OverallBrolympicsRanking(models.Model):
         on_delete=models.PROTECT,
     )
 
-    total_score = models.PositiveIntegerField(default=0)
+    total_score = models.FloatField(default=0)
 
     wins = models.PositiveIntegerField(default=0)
     losses = models.PositiveIntegerField(default=0)
@@ -96,8 +96,8 @@ class EventAbstactBase(models.Model):
     name = models.CharField(max_length=60)
 
     is_high_score_wins = models.BooleanField(default=True)
-    max_score = models.IntegerField(default=100)
-    min_score = models.IntegerField(default=0)
+    max_score = models.FloatField(default=100)
+    min_score = models.FloatField(default=0)
 
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
@@ -111,23 +111,131 @@ class EventAbstactBase(models.Model):
         self.is_available = True
         self.create_child_objects()
 
+    def _get_score_to_rank(self):
+        n_teams = len(self.brolympics.teams.all())
+        score_map = {
+            1 : n_teams+2,
+            2 : n_teams,
+            3 : n_teams-1,
+        }
+
+        for i in range(3, n_teams):
+            score_map[i+1] = n_teams-i
+
+        return score_map
+
     def finalize(self):
         self.end_time = timezone.now()
         self.is_concluded = True
         self.finalized_rankings()
         
 
-class Event_IND(models.Model):
-    pass
+class Event_IND(EventAbstactBase):
+    is_individual_scores = models.BooleanField(default=True)
+    
+    n_competitions = models.PositiveIntegerField(default=1)
+
+    n_active_limit = models.PositiveIntegerField(blank=True, null=True)
+    is_available = models.BooleanField(default=False)
+
+    ## Initialization
+
+    def create_child_objects(self):
+        self._create_competition_and_ranking_objs_ind()
+
+    def _create_competition_and_ranking_objs_ind(self):
+        competitions = []
+        rankings = []
+        for team in self.brolympics:
+            for _ in range(self.n_competitions):
+                competitions.append(Competition_Ind(event=self, team=team))
+            rankings.append(EventRanking_Ind(event=self, team=team, is_individual_scores=self.is_individual_scores))
+
+        Competition_Ind.objects.bulk_create(competitions)
+        EventRanking_Ind.objects.bulk_create(rankings)
+   
+    ## End of Initialization ##
+
+    ## Event Utility ##
+    def full_update_event_rankings_ind(self):
+        team_rankings = list(self.event_ind_event_rankings.all())
+        for ranking in team_rankings:
+            self._wipe_rankings(ranking)
+        pass
+
+    def _get_completed_event_comps_ind(self):
+        return Competition_Ind.objects.filter(
+            event=self,
+            is_complete=True
+        )
+    
+    def _wipe_rankings(self, rankings):
+        rankings.update(
+            player_1_total_score=0,
+            player_1_avg_score=0,
+            player_2_total_score=0,
+            player_2_avg_score=0,
+            team_total_score=0,
+            team_avg_score=0,
+            rank=0,
+            points=0,
+        )
+
+
+        pass
+
+    ## End of Event Utility
+
+    ## Event Life Cycle ##
+    def is_event_available(self):
+        # Return true or false, it true then 
+        pass
+
+    def update_event_rankings_h2h(self):
+        pass
+
+    def _group_by_score(self):
+        pass
+
+    def check_for_completion(self):
+        pass
+
+    ## End of Life Cycle
+
+    ## Event Clean Up ##
+    def finalize_rankings(self):
+        pass
+
+    def _set_event_rankings_final(self):
+        pass
+
+
+
+
+    
+    
+
+
+
+    
+
+
+
+
+    ## End of Life Cylce ##
+
+
+
+    def _finalize_rankings():
+        pass
+
+
 class Event_H2H(EventAbstactBase):
     brolympics = models.ForeignKey(
         Brolympics,
         on_delete=models.CASCADE,
         related_name='events'
     )
-
-    name = models.CharField(max_length=60)
-
 
     #add validation that it's an even number and no more than n_teams-1
     n_matches = models.PositiveIntegerField(null=False, blank=False)
@@ -209,11 +317,9 @@ class Event_H2H(EventAbstactBase):
 
     ## Utility ## 
     def full_update_event_rankings_h2h(self):
-        completed_comps = self._get_completed_event_comps_h2h()
         team_rankings = list(self.event_h2h_event_rankings.all())
 
-        for ranking in team_rankings:
-            self._wipe_win_loss_sos_h2h(ranking)
+        self._wipe_win_loss_sos_h2h(team_rankings)
         
         #need a loop through and updated wins
         self._update_sos(team_rankings)
@@ -225,30 +331,18 @@ class Event_H2H(EventAbstactBase):
             is_complete=True,
         )
 
-    def _wipe_win_loss_sos_h2h(self, ranking):
-        ranking.wins = 0
-        ranking.losses = 0
-        ranking.ties = 0
+    def _wipe_win_loss_sos_h2h(self, rankings):
+        rankings.update(
+            wins = 0,
+            losses = 0,
+            ties = 0,
+            score_for = 0,
+            score_against = 0,
+            sos_wins = 0,
+            sos_losses = 0,
+            sos_ties = 0,
+        )
 
-        ranking.score_for = 0
-        ranking.score_against = 0
-
-        ranking.sos_wins = 0
-        ranking.sos_losses = 0
-        ranking.sos_ties = 0
-
-    def _get_score_to_rank(self):
-        n_teams = len(self.brolympics.teams.all())
-        score_map = {
-            1 : n_teams+2,
-            2 : n_teams,
-            3 : n_teams-1,
-        }
-
-        for i in range(3, n_teams):
-            score_map[i+1] = n_teams-i
-
-        return score_map
     
     def flatten_1(self, lst):
         result = []
@@ -578,7 +672,7 @@ class Team(models.Model):
 
     is_available = models.BooleanField(default=True)
 
-    score = models.PositiveIntegerField(default=0)
+    score = models.FloatField(default=0)
 
     wins = models.PositiveIntegerField(default=0)
     losses = models.PositiveIntegerField(default=0)
@@ -586,7 +680,7 @@ class Team(models.Model):
 
 class Competition_Ind(models.Model):
     event = models.ForeignKey(
-        Event_H2H,
+        Event_IND,
         on_delete=models.CASCADE,
         related_name='ind_comp',
     )
@@ -597,11 +691,10 @@ class Competition_Ind(models.Model):
         related_name='ind_competition_team',
     )
 
-    is_individual_scores = models.BooleanField(default=True)
-    player_1_score = models.IntegerField(blank=True, null=True)
-    player_2_score = models.IntegerField(blank=True, null=True)
+    player_1_score = models.FloatField(blank=True, null=True)
+    player_2_score = models.FloatField(blank=True, null=True)
 
-    team_score = models.IntegerField(blank=True, null=True)
+    team_score = models.FloatField(blank=True, null=True)
 
     is_active = models.BooleanField(default=False)
     is_complete = models.BooleanField(default=False)
@@ -630,8 +723,8 @@ class Competition_H2H_Base(models.Model):
         blank=True
     )
 
-    team_1_score = models.IntegerField(blank=True, null=True)
-    team_2_score = models.IntegerField(blank=True, null=True)
+    team_1_score = models.FloatField(blank=True, null=True)
+    team_2_score = models.FloatField(blank=True, null=True)
 
     winner = models.ForeignKey(
         Team,
@@ -738,13 +831,16 @@ class EventRanking_Ind(models.Model):
 
     is_individual_scores = models.BooleanField(default=True)
 
-    player_1_score = models.IntegerField(blank=True, null=True)
-    player_2_score = models.IntegerField(blank=True, null=True)
+    player_1_total_score = models.FloatField(blank=True, null=True)
+    player_1_avg_score = models.FloatField(blank=True, null=True)
+    player_2_total_score = models.FloatField(blank=True, null=True)
+    player_2_avg_score = models.FloatField(blank=True, null=True)
     
-    team_score = models.IntegerField(blank=True, null=True)
+    team_total_score = models.FloatField(blank=True, null=True)
+    team_avg_score = models.FloatField(blank=True, null=True)
     
-    ranking = models.PositiveIntegerField(default=1)
-    points = models.PositiveIntegerField(default=0)
+    rank = models.PositiveIntegerField(default=1)
+    points = models.FloatField(default=0)
 
     is_final = models.BooleanField(default=False)
 
@@ -768,8 +864,8 @@ class EventRanking_H2H(models.Model):
     ties = models.PositiveIntegerField(default=0)
     win_rate = models.FloatField(default=0)
 
-    score_for = models.IntegerField(default=0)
-    score_against = models.IntegerField(default=0)
+    score_for = models.FloatField(default=0)
+    score_against = models.FloatField(default=0)
 
     sos_wins = models.PositiveIntegerField(default=0)
     sos_losses = models.PositiveIntegerField(default=0)

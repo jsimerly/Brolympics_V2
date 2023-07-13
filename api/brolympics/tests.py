@@ -179,7 +179,9 @@ class Event_H2HUtilityTests(TestCase):
         ranking.sos_ties = 2
         ranking.save()
 
-        self.h2h_event._wipe_win_loss_sos_h2h(ranking)
+        ranking_qs = EventRanking_H2H.objects.filter(pk=ranking.pk)
+        self.h2h_event._wipe_win_loss_sos_h2h(ranking_qs)
+        ranking.refresh_from_db()
 
         # Assert that the values are reset to 0
         self.assertEqual(ranking.wins, 0)
@@ -764,3 +766,7 @@ class Event_H2HLifeCycleTests(TestCase):
 class Event_H2HCleanUpTest(TestCase):
     pass
     #complete this once you've finished testing for other models
+
+
+class Event_INDInitializationTests(TestCase):
+    pass

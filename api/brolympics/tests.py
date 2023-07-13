@@ -3,6 +3,7 @@ from django.utils import timezone
 from .models import *
 from django.contrib.auth import get_user_model
 import random
+from unittest.mock import patch
 
 User = get_user_model()
 
@@ -60,85 +61,40 @@ class BrolympicsTestCase(TestCase):
         # Placeholder for the update_overall_rankings test
         pass
 
-class EventTestCases_H2H(TestCase):
+class Event_H2HInitializationTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(email='Jon@test.com', phone='1234567890', password='Passw0rd@123', first_name='John', last_name='Doe',)
-        self.league = League.objects.create(name='Test League', league_owner=self.user)
+        self.user = User.objects.create_user(
+            phone='1234567890', 
+            email='jon_doe@test.com',
+            password='Passw0rd@123',
+            first_name='John',
+            last_name='Doe',
+        )
+        self.league = League.objects.create(
+            name='Test League', 
+            league_owner=self.user
+        )
     
-        self.brolympics = Brolympics.objects.create(league=self.league, name='Test Brolympics')
-        self.team_a = Team.objects.create(brolympics=self.brolympics, name='Team A', is_available=True)
-        self.team_b = Team.objects.create(brolympics=self.brolympics, name='Team B', is_available=False)
-        self.team_c = Team.objects.create(brolympics=self.brolympics, name='Team C', is_available=True)
-        self.team_d = Team.objects.create(brolympics=self.brolympics, name='Team D', is_available=False)
-        self.team_e = Team.objects.create(brolympics=self.brolympics, name='Team E', is_available=True)
-        self.team_f = Team.objects.create(brolympics=self.brolympics, name='Team F', is_available=False)
-        self.team_g = Team.objects.create(brolympics=self.brolympics, name='Team G', is_available=True)
-        self.team_h = Team.objects.create(brolympics=self.brolympics, name='Team H', is_available=False)
-
-        self.player_a1 = User.objects.create_user(phone='1234567890', password='Passw0rd@123', first_name='A', last_name='1', email='a1@test.com')
-        self.player_a2 = User.objects.create_user(phone='1234567891', password='Passw0rd@123', first_name='A', last_name='2', email='a2@test.com')
-        self.player_b1 = User.objects.create_user(phone='1234567892', password='Passw0rd@123', first_name='B', last_name='1', email='b1@test.com')
-        self.player_b2 = User.objects.create_user(phone='1234567893', password='Passw0rd@123', first_name='B', last_name='2', email='b2@test.com')
-        self.player_c1 = User.objects.create_user(phone='1234567894', password='Passw0rd@123', first_name='C', last_name='1', email='c1@test.com')
-        self.player_c2 = User.objects.create_user(phone='1234567895', password='Passw0rd@123', first_name='C', last_name='2', email='c2@test.com')
-        self.player_d1 = User.objects.create_user(phone='1234567896', password='Passw0rd@123', first_name='D', last_name='1', email='d1@test.com')
-        self.player_d2 = User.objects.create_user(phone='1234567897', password='Passw0rd@123', first_name='D', last_name='2', email='d2@test.com')
-        self.player_e1 = User.objects.create_user(phone='1234567898', password='Passw0rd@123', first_name='E', last_name='1', email='e1@test.com')
-        self.player_e2 = User.objects.create_user(phone='1234567899', password='Passw0rd@123', first_name='E', last_name='2', email='e2@test.com')
-        self.player_f1 = User.objects.create_user(phone='1234567812', password='Passw0rd@123', first_name='F', last_name='1', email='f1@test.com')
-        self.player_f2 = User.objects.create_user(phone='1234567813', password='Passw0rd@123', first_name='F', last_name='2', email='f2@test.com')
-        self.player_g1 = User.objects.create_user(phone='1234567814', password='Passw0rd@123', first_name='G', last_name='1', email='g1@test.com')
-        self.player_g2 = User.objects.create_user(phone='1234567815', password='Passw0rd@123', first_name='G', last_name='2', email='g2@test.com')
-        self.player_h1 = User.objects.create_user(phone='1234567816', password='Passw0rd@123', first_name='H', last_name='1', email='h1@test.com')
-        self.player_h2 = User.objects.create_user(phone='1234567817', password='Passw0rd@123', first_name='H', last_name='2', email='h2@test.com')
-
-        self.team_a.player_1, self.team_a.player_2 = self.player_a1, self.player_a2
-        self.team_b.player_1, self.team_b.player_2 = self.player_b1, self.player_b2
-        self.team_c.player_1, self.team_c.player_2 = self.player_c1, self.player_c2
-        self.team_d.player_1, self.team_d.player_2 = self.player_d1, self.player_d2
-        self.team_e.player_1, self.team_e.player_2 = self.player_e1, self.player_e2
-        self.team_f.player_1, self.team_f.player_2 = self.player_f1, self.player_f2
-        self.team_g.player_1, self.team_g.player_2 = self.player_g1, self.player_g2
-        self.team_h.player_1, self.team_h.player_2 = self.player_h1, self.player_h2
-
-        self.teams_list = [self.team_a, self.team_b, self.team_c, self.team_d, self.team_e, self.team_f, self.team_g, self.team_h]
-
-        self.h2h_event = Event.objects.create(
+        self.brolympics = Brolympics.objects.create(
+            league=self.league, 
+            name='Test Brolympics',
+        )
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0)) for i in range(8)]
+        self.h2h_event = Event_H2H.objects.create(
             brolympics=self.brolympics,
-            name='Test H2H Event',
-            type='H',
+            name="test event",
             n_matches=4,
-            n_active_limit=1,
         )
 
-        self.event_rankings = [
-            EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams_list[i])
-            for i in range(len(self.teams_list))
-        ]
-
-    # Functions # 
-    def simulate_h2h_matchup(self, comp):
-        comp.start()
-        win_score = comp.event.max_score
-        lose_score = random.randint(comp.event.min_score, comp.event.max_score-1)
-        
-        scores = [win_score, lose_score]
-        random.shuffle(scores)
-
-        comp.end(scores[0], scores[1])
-
-
-    # GENERAL TESTING #
-
-    ## HEAD TO HEAD UNIT TESTING ##
-    def test_is_comp_map_full(self):
-        comp_map = {self.team_a: 4, self.team_b: 4, self.team_c: 4}
-        self.assertTrue(self.h2h_event._is_comp_map_full(comp_map, 4))
-        comp_map[self.team_c] = 3
-        self.assertFalse(self.h2h_event._is_comp_map_full(comp_map, 4))
+    def test_create_competition_objs(self):
+        self.h2h_event._create_competition_objs_h2h()
+        n_teams = len(self.brolympics.teams.all())
+        expected_comps = self.h2h_event.n_matches * n_teams / 2
+        created_comps = len(Competition_H2H.objects.filter(event=self.h2h_event))
+        self.assertEqual(expected_comps, created_comps)
 
     def test_create_team_pairs(self):
-        pairs = self.h2h_event.create_team_pairs()
+        pairs = self.h2h_event._create_team_pairs()
 
         expected_pairs = (self.h2h_event.n_matches * len(self.brolympics.teams.all()))/2
         self.assertEqual(len(pairs), expected_pairs)
@@ -155,36 +111,64 @@ class EventTestCases_H2H(TestCase):
 
         for team, count in team_pairs_count.items():
             self.assertEqual(count, self.h2h_event.n_matches)
-    
 
-    def test_create_competition_objs_h2h(self):
-        self.h2h_event.create_competition_objs_h2h()
-        pairs = self.h2h_event.create_team_pairs()
-        competitions = Competition_H2H.objects.filter(event=self.h2h_event)
-        self.assertEqual(len(pairs), competitions.count())
+    def test_is_comp_map_full(self):
+        c_map_good = {
+            't_1' : 3,
+            't_2' : 3,
+        }
+        c_map_bad = {
+            't_1' : 3,
+            't_2' : 2.
+        }
+
+        self.assertTrue(self.h2h_event._is_comp_map_full(c_map_good, 3))
+        self.assertFalse(self.h2h_event._is_comp_map_full(c_map_bad, 3))
 
     def test_create_event_ranking_h2h(self):
-        self.h2h_event.create_event_ranking_h2h()
+        self.h2h_event._create_event_ranking_h2h()
         ranking_objs = EventRanking_H2H.objects.filter(event=self.h2h_event)
-        self.assertEqual(len(ranking_objs), self.brolympics.teams.count()*2) #2 because they were created in set up
+        self.assertEqual(len(ranking_objs), self.brolympics.teams.count()) #2 because they were created in set up
 
     def test_create_bracket(self):
-        self.h2h_event.create_bracket()
+        self.h2h_event._create_bracket()
         self.assertIsNotNone(self.h2h_event.bracket_4)
 
+class Event_H2HUtilityTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            phone='1234567890', 
+            email='jon_doe@test.com',
+            password='Passw0rd@123',
+            first_name='John',
+            last_name='Doe',
+        )
+        self.league = League.objects.create(
+            name='Test League', 
+            league_owner=self.user
+        )
+    
+        self.brolympics = Brolympics.objects.create(
+            league=self.league, 
+            name='Test Brolympics',
+        )
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0)) for i in range(8)]
+        self.h2h_event = Event_H2H.objects.create(
+            brolympics=self.brolympics,
+            name="test event",
+            n_matches=4,
+        )
+
     def test_get_completed_event_comps_h2h(self):
-        self.h2h_event.create_competition_objs_h2h()
-        competitions = Competition_H2H.objects.filter(event=self.h2h_event)
-        
-        for i in range(3):
-            self.simulate_h2h_matchup(competitions[i])
+        for _ in range(3):
+            Competition_H2H.objects.create(event=self.h2h_event, is_complete=True)
 
         completed_events = self.h2h_event._get_completed_event_comps_h2h()
 
         self.assertEqual(len(completed_events), 3)
 
     def test_wipe_win_loss_sos_h2h(self):
-        ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.team_a)
+        ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[0])
         ranking.wins = 5
         ranking.losses = 3
         ranking.ties = 1
@@ -207,113 +191,34 @@ class EventTestCases_H2H(TestCase):
         self.assertEqual(ranking.sos_losses, 0)
         self.assertEqual(ranking.sos_ties, 0)
 
-    def test_group_by_win_rate(self):
-        team_a_ranking = EventRanking_H2H.objects.get(event=self.h2h_event, team=self.team_a)
-        team_b_ranking = EventRanking_H2H.objects.get(event=self.h2h_event, team=self.team_b)
-        team_c_ranking = EventRanking_H2H.objects.get(event=self.h2h_event, team=self.team_c)
+    def test_get_score_to_rank(self):
+        score_to_rank = self.h2h_event._get_score_to_rank()
+        expected_score_to_rank = {
+            1: 10, 
+            2: 8, 
+            3: 7,  
+            4: 5,  
+            5: 4,  
+            6: 3,  
+            7: 2,  
+            8: 1,
+        }
+        self.assertEqual(score_to_rank, expected_score_to_rank)
 
-        team_a_ranking.win_rate = 1
-        team_b_ranking.win_rate = .5
-        team_c_ranking.win_rate = 1
+    def test_flatten_1(self):
+        nested_list = [1, [2, 3, [4, 5]], [6, [7, 8]], 9, [10]]
+        flattened_list = self.h2h_event.flatten_1(nested_list)
+        expected_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertEqual(flattened_list, expected_list)
 
-        team_a_ranking.save()
-        team_b_ranking.save()
-        team_c_ranking.save()
-
-
-        two_teams = [team_a_ranking, team_b_ranking, team_c_ranking]
-        
-        grouped_by_win_rate = self.h2h_event._group_by_win_rate(two_teams)
-        self.assertEqual(grouped_by_win_rate, [[team_a_ranking, team_c_ranking], [team_b_ranking]])
-
-        team_c_ranking.win_rate = 0
-        team_c_ranking.save()
-
-        grouped_by_win_rate = self.h2h_event._group_by_win_rate(two_teams)
-        self.assertEqual(grouped_by_win_rate, [[team_a_ranking], [team_b_ranking], [team_c_ranking]])
-
-
-
-    def test_update_event_ranking_h2h(self):
-        comp_1 = Competition_H2H.objects.create(event=self.h2h_event, team_1=self.team_a, team_2=self.team_b)
-        comp_2 = Competition_H2H.objects.create(event=self.h2h_event, team_1=self.team_a, team_2=self.team_c)
-        comp_3 = Competition_H2H.objects.create(event=self.h2h_event, team_1=self.team_c, team_2=self.team_b)
-        comp_4 = Competition_H2H.objects.create(event=self.h2h_event, team_1=self.team_a, team_2=self.team_d)
-        comp_5 = Competition_H2H.objects.create(event=self.h2h_event, team_1=self.team_d, team_2=self.team_e)
-
-        comp_1.end(10,9) # a > b
-        comp_2.end(10,9) # a > c
-        comp_3.end(10,9) # c > b
-        comp_4.end(10,9) # a > d
-        comp_5.end(10,8) # d > e || test tie breaker between d and c (d should win)
-
-        team_a_ranking = EventRanking_H2H.objects.get(event=self.h2h_event, team=self.team_a)
-        team_b_ranking = EventRanking_H2H.objects.get(event=self.h2h_event, team=self.team_b)
-        team_c_ranking = EventRanking_H2H.objects.get(event=self.h2h_event, team=self.team_c)
-        team_d_ranking = EventRanking_H2H.objects.get(event=self.h2h_event, team=self.team_d)
-        team_e_ranking = EventRanking_H2H.objects.get(event=self.h2h_event, team=self.team_e)
-
-        self.assertEqual(team_a_ranking.wins, 3)
-        self.assertEqual(team_a_ranking.losses, 0)
-        self.assertEqual(team_a_ranking.score_for, 30)
-        self.assertEqual(team_a_ranking.score_against, 27)
-        self.assertEqual(team_a_ranking.rank, 1)
-        
-
-        self.assertEqual(team_b_ranking.wins, 0)
-        self.assertEqual(team_b_ranking.losses, 2)
-        self.assertEqual(team_b_ranking.score_for, 18)
-        self.assertEqual(team_b_ranking.score_against, 20)
-        
-
-        self.assertEqual(team_c_ranking.wins, 1)
-        self.assertEqual(team_c_ranking.losses, 1)
-        self.assertEqual(team_c_ranking.score_for, 19)
-        self.assertEqual(team_c_ranking.score_against, 19)
-        self.assertEqual(team_c_ranking.rank, 3)
-
-        self.assertEqual(team_d_ranking.wins, 1)
-        self.assertEqual(team_d_ranking.losses, 1)
-        self.assertEqual(team_d_ranking.score_for, 19)
-        self.assertEqual(team_d_ranking.score_against, 18)
-        self.assertEqual(team_d_ranking.rank, 2)
-
-        self.assertEqual(team_e_ranking.wins, 0)
-        self.assertEqual(team_e_ranking.losses, 1)
-        self.assertEqual(team_e_ranking.score_for, 8)
-        self.assertEqual(team_e_ranking.score_against, 10)
-
-    def test_update_ranking_score_and_sos_h2h(self):
-        team1_ranking = EventRanking_H2H.objects.get(event=self.h2h_event, team=self.team_a)
-        team2_ranking = EventRanking_H2H.objects.get(event=self.h2h_event, team=self.team_b)
+    def test_flatten_2(self):
+        nested_list = [[1], [[2, 3], [4, 5]], [[6], [7, 8]], [9], [10]]
+        flattened_list = self.h2h_event.flatten_2(nested_list)
+        expected_list = [[1], [2, 3], [4, 5], [6], [7, 8], [9], [10]]
+        self.assertEqual(flattened_list, expected_list)
 
 
-        comp = Competition_H2H.objects.create(event=self.h2h_event, team_1=self.team_a, team_2=self.team_b)
-
-        comp.end(5,4)
-
-        team_rankings = EventRanking_H2H.objects.all()
-        self.h2h_event._update_ranking_score_and_sos_h2h(comp, team_rankings)
-
-        team1_ranking = EventRanking_H2H.objects.get(team=self.team_a)
-        team2_ranking = EventRanking_H2H.objects.get(team=self.team_b)
-
-        self.assertEqual(team1_ranking.wins, 1)
-        self.assertEqual(team1_ranking.score_for, 5)
-        self.assertEqual(team1_ranking.score_against, 4)
-
-        self.assertEqual(team2_ranking.losses, 1)
-        self.assertEqual(team2_ranking.score_for, 4)
-        self.assertEqual(team2_ranking.score_against, 5)
-
-
-
-    def test_update_event_rankings_h2h(self):
-        self.h2h_event.start()
-        self.h2h_event.update_event_rankings_h2h()
-
-
-class TestUpdateEventRankingsH2H(TestCase):
+class Event_H2HLifeCycleTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             phone='1234567890', 
@@ -331,37 +236,531 @@ class TestUpdateEventRankingsH2H(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.players = [
-            User.objects.create(
-                phone=f'123456789{i}', 
-                email=f'jon_doe{i}@test.com',
-                password='Passw0rd@123',
-                first_name=f'John {i}',
-                last_name='Doe',
-            )
-            for i in range(1,16)
-        ]
-        self.teams = [
-            Team.objects.create(
-                name=f"team{i}", 
-                brolympics=self.brolympics,
-                player_1=self.players[i],
-                player_2=self.players[i*2]
-            ) 
-            for i in range(1, 8)
-        ]
-        self.h2h_event = Event.objects.create(
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}') for i in range(8)]
+        self.h2h_event = Event_H2H.objects.create(
             brolympics=self.brolympics,
-            name='Test H2H Event',
-            type='H',
+            name="test event",
             n_matches=4,
-            n_active_limit=1,
         )
-        
-        # Start the event
         self.h2h_event.start()
+    
+
+    def test_find_available_stanard_comps(self):
+        comps = self.h2h_event._find_available_standard_comps()
+        self.assertEqual(len(comps), 16)
+
+        self.teams[0].is_available = False
+        self.teams[0].save()
+
+        comps = self.h2h_event._find_available_standard_comps()
+        self.assertEqual(len(comps), 12)
+
+    def test_find_available_bracket_comps(self):
+        comps = self.h2h_event._find_available_bracket_comps()
+        self.assertEqual(len(comps), 0)
+
+        self.h2h_event.bracket_4.championship.left.team_1 = self.teams[0]
+        self.h2h_event.bracket_4.championship.left.team_2 = self.teams[1]
+        self.h2h_event.bracket_4.championship.left.save()
+
+        comps = self.h2h_event._find_available_bracket_comps()
+        self.assertEqual(len(comps), 1)
+
+    def test_find_available_comps_no_comps(self):
+        self.h2h_event.is_round_robin_complete = False
+        comps = self.h2h_event._find_available_standard_comps()
+        self.assertEqual(len(comps), 16)
+
+        self.h2h_event.is_round_robin_complete = True
+        self.h2h_event.save()
+
+        comps = self.h2h_event._find_available_bracket_comps()
+        self.assertEqual(len(comps), 0)
+
+    def test_update_event_rankings_h2h(self):
+        t_1_rankings = EventRanking_H2H.objects.get(team=self.teams[0])
+        t_2_rankings = EventRanking_H2H.objects.get(team=self.teams[1])
+        t_3_rankings = EventRanking_H2H.objects.get(team=self.teams[2])
+        t_4_rankings = EventRanking_H2H.objects.get(team=self.teams[3])
+
+        t_1_rankings.wins = 4
+        t_2_rankings.wins = 3
+        t_3_rankings.wins = 2
+        t_4_rankings.wins = 1
+
+        t_1_rankings.save()
+        t_2_rankings.save()
+        t_3_rankings.save()
+        t_4_rankings.save()
+
+        self.h2h_event.update_event_rankings_h2h()
+
+        rank_1 = EventRanking_H2H.objects.get(rank=1)
+        rank_2 = EventRanking_H2H.objects.get(rank=2)
+        rank_3 = EventRanking_H2H.objects.get(rank=3)
+        rank_4 = EventRanking_H2H.objects.get(rank=4)
+
+        t_1_rankings.refresh_from_db()
+        t_2_rankings.refresh_from_db()
+        t_3_rankings.refresh_from_db()
+        t_4_rankings.refresh_from_db()
+
+        self.assertEqual(rank_1, t_1_rankings)
+        self.assertEqual(rank_2, t_2_rankings)
+        self.assertEqual(rank_3, t_3_rankings)
+        self.assertEqual(rank_4, t_4_rankings)
+        self.assertEqual(10, t_1_rankings.points)
+        self.assertEqual(8, t_2_rankings.points)
+        self.assertEqual(7, t_3_rankings.points)
+        self.assertEqual(5, t_4_rankings.points)
+        pass
+
+    def test_update_sos(self):
+        team_1 = self.teams[0]
+        team_2 = self.teams[1]
+        team_3 = self.teams[2]
+
+        comp_1 = Competition_H2H.objects.create(event=self.h2h_event, team_1=team_1, team_2=team_2, is_complete=True)
+        comp_2 = Competition_H2H.objects.create(event=self.h2h_event, team_1=team_1, team_2=team_3, is_complete=True)
+
+        team_2_ranking = EventRanking_H2H.objects.get(team=team_2)
+        team_2_ranking.wins = 3
+        team_2_ranking.losses = 1
+        team_2_ranking.save()
+        team_3_ranking = EventRanking_H2H.objects.get(team=team_3)
+        team_3_ranking.wins = 1
+        team_3_ranking.losses = 2
+        team_3_ranking.ties = 1
+        team_3_ranking.save()
+
+        team_1_ranking = EventRanking_H2H.objects.get(team=team_1)
+
+        team_rankings = [team_1_ranking, team_2_ranking, team_3_ranking]
+
+        self.h2h_event._update_sos(team_rankings)
+
+        self.assertEqual(team_1_ranking.sos_wins, 4)
+        self.assertEqual(team_1_ranking.sos_losses, 3)
+        self.assertEqual(team_1_ranking.sos_ties, 1)
+
+    @patch('random.shuffle', lambda x: x.reverse())
+    def test_break_tie(self):
+        t_1_ranking = EventRanking_H2H.objects.create(
+            event=self.h2h_event, 
+            team=self.teams[0], 
+            wins=1, 
+            losses=0, 
+            ties=0
+        )
+        t_2_ranking = EventRanking_H2H.objects.create(
+            event=self.h2h_event, 
+            team=self.teams[1], 
+            wins=1, 
+            losses=0, 
+            ties=0
+        )
+        t_3_ranking = EventRanking_H2H.objects.create(
+            event=self.h2h_event, 
+            team=self.teams[2], 
+            wins=1, 
+            losses=0, 
+            ties=0
+        )
+        team_rankings = [t_1_ranking, t_2_ranking, t_3_ranking]
+        result = self.h2h_event._break_tie(team_rankings)
+        self.assertEqual(result, [t_3_ranking, t_2_ranking, t_1_ranking])
+
+        #make t_1 1st | t_2 2nd, | t_3 3rd
 
 
+        t_1_ranking.sos_wins = 3
+        t_2_ranking.sos_wins = 2
+        t_2_ranking.sos_ties = 2
+        t_3_ranking.sos_wins = 1
+        t_3_ranking.sos_losses = 3
+
+        t_1_ranking.save()
+        t_2_ranking.save()
+        t_3_ranking.save()
+
+        #Testing that SOS Wins works
+        results = self.h2h_event._break_tie(team_rankings)
+        self.assertEqual(results, [t_1_ranking, t_2_ranking, t_3_ranking])
+
+        #make t_2 1st | t_1 2nd | t_3 3rd
+        t_2_ranking.sos_ties = 0
+        t_2_ranking.sos_wins = 4
+        t_2_ranking.save()
+        
+        #Testing SOS works
+        results = self.h2h_event._break_tie(team_rankings)
+        self.assertEqual(results, [t_2_ranking, t_1_ranking, t_3_ranking])
+
+        #make t_3 1st | t_2 2nd | t_3 3rd 
+        t_1_ranking.score_for=8
+        t_2_ranking.score_for=9
+        t_3_ranking.score_for=10
+
+        t_1_ranking.save()
+        t_2_ranking.save()
+        t_3_ranking.save()
+
+        # Test Victory Margin Works
+        results = self.h2h_event._break_tie(team_rankings)
+        self.assertEqual(results, [t_3_ranking, t_2_ranking, t_1_ranking])
+
+        #make t_1 1st | t_3 2nd | t_2 3rd
+        t_1_ranking.wins = 4
+        t_2_ranking.wins = 2
+        t_2_ranking.losses = 2
+        t_2_ranking.ties = 0
+        t_3_ranking.wins = 3
+        t_3_ranking.losses = 1
+
+        t_1_ranking.save()
+        t_2_ranking.save()
+        t_3_ranking.save()
+
+        #Test Won Games
+        results = self.h2h_event._break_tie(team_rankings)
+        self.assertEqual(results, [t_1_ranking, t_3_ranking, t_2_ranking])
+
+        #make t_3 1st | t_2 2nd | t_1 3rd
+        t_1_ranking.win_rate = .5
+        t_2_ranking.win_rate = .5
+        t_3_ranking.win_rate = .5 
+
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[0],team_2=self.teams[1], winner=self.teams[1], is_complete=True)
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[1],team_2=self.teams[2], winner=self.teams[2], is_complete=True)
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[2],team_2=self.teams[0], winner=self.teams[2], is_complete=True)
+
+        t_1_ranking.save()
+        t_2_ranking.save()
+        t_3_ranking.save()
+
+        #Test Head to Head
+        results = self.h2h_event._break_tie(team_rankings)
+        self.assertEqual(results, [t_3_ranking, t_2_ranking, t_1_ranking])
+
+    def test_tie_break_manager(self):
+        # Set up team rankings with tied win rates
+        t_1_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[0], wins=1, losses=0, ties=0)
+        t_2_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[1], wins=1, losses=0, ties=0)
+        t_3_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[2], wins=1, losses=0, ties=0)
+        team_rankings = [t_1_ranking, t_2_ranking, t_3_ranking]
+
+        # All teams have the same head to head wins, so the first tie breaker doesn't work
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[0], team_2=self.teams[1], is_complete=True, winner=self.teams[0])
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[1], team_2=self.teams[2], is_complete=True, winner=self.teams[1])
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[2], team_2=self.teams[0], is_complete=True, winner=self.teams[2])
+
+        # Only team_1 wins an extra game, so the second tie breaker works for team_1 but not for team_2 and team_3
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[0], team_2=self.teams[1], is_complete=True, winner=self.teams[0])
+        
+        # team_2 has a higher margin of victory, so the third tie breaker works for team_2 over team_3
+        t_2_ranking.score_for = 5
+        t_2_ranking.score_against = 1
+        t_2_ranking.save()
+
+        t_3_ranking.score_for = 3
+        t_3_ranking.score_against = 1
+        t_3_ranking.save()
+
+        tie_break_order = [
+            self.h2h_event._break_head_to_head__wins, 
+            self.h2h_event._break_won_games_total,
+            self.h2h_event._break_victory_margin
+        ]
+
+        result = self.h2h_event._tie_break_manager([team_rankings], tie_break_order)
+        # Assert that tie is broken
+        self.assertEqual(result[0][0], t_1_ranking)  # First place: team_1
+        self.assertEqual(result[1][0], t_2_ranking)  # Second place: team_2
+        self.assertEqual(result[2][0], t_3_ranking)  # Third place: team_3
+
+        ## team_2 and team_3 have the same margin of victory, so the function returns them in groups
+
+        t_3_ranking.score_for = 5
+        t_3_ranking.score_against = 1
+        t_3_ranking.save()
+
+        result = self.h2h_event._tie_break_manager([team_rankings], tie_break_order)
+        self.assertEqual(len(result[0]), 1)  # First place: team_1
+        self.assertEqual(len(result[1]), 2)  # Second place: team_2
 
 
+    def test_get_ordered_teams(self):
+        sorted_teams = [
+            (self.teams[0], 3),
+            (self.teams[1], 2),
+            (self.teams[2], 2),
+            (self.teams[3], 1),
+            (self.teams[4], 3),
+            (self.teams[5], 4)
+        ]
 
+        ordered_teams = self.h2h_event._get_ordered_teams(sorted_teams)
+
+        self.assertTrue(isinstance(ordered_teams, list))
+        self.assertEqual(len(ordered_teams), 4) 
+
+        # Check that the groups are in the correct order
+        self.assertEqual(ordered_teams[0][0], self.teams[5])
+        self.assertEqual(ordered_teams[3][0], self.teams[3])  
+
+        # Check that teams with the same value are in the same group
+        same_value_teams = [team for team, value in sorted_teams if value == 2]
+        self.assertTrue(any(team in group for group in ordered_teams for team in same_value_teams))  
+
+    def test_is_tie_broken(self):
+        tie_broken_true = [[1],[2],[3],[4]]
+        tie_broken_false = [[1,2],[3],[4]]
+        
+        self.assertTrue(self.h2h_event._is_tie_broken(tie_broken_true))
+        self.assertFalse(self.h2h_event._is_tie_broken(tie_broken_false))
+
+
+    def test_group_by_win_rate_different(self):
+        # create some EventRanking_H2H with the same win_rate
+        same_win_rate_teams = [EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[i], win_rate=0.5) for i in range(3)]
+
+        # create some EventRanking_H2H with different win_rate
+        different_win_rate_teams = [
+            EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[3], win_rate=0.6),
+            EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[4], win_rate=0.4),
+            EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[5], win_rate=0.8)
+        ]
+        all_teams = same_win_rate_teams + different_win_rate_teams
+
+        grouped_teams = self.h2h_event._group_by_win_rate(all_teams)
+
+        # Now, verify that the teams were grouped correctly by their win_rate
+        self.assertEqual(len(grouped_teams), 4)  # there were 4 different win rates
+        self.assertTrue(any(team in group for group in grouped_teams for team in same_win_rate_teams))  # the same rate teams must be in a group
+        for team in different_win_rate_teams:
+            self.assertTrue(any(team in group for group in grouped_teams))  # each different rate team must be in a group
+
+    def test_group_by_win_rate_same(self):
+        # create some EventRanking_H2H with the same win_rate
+        same_win_rate_teams = [EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[i], win_rate=0.5) for i in range(6)]
+
+        all_teams = same_win_rate_teams
+
+        grouped_teams = self.h2h_event._group_by_win_rate(all_teams)
+
+        # Now, verify that the teams were grouped correctly by their win_rate
+        self.assertEqual(len(grouped_teams), 1)  # there is 1 unique win rate
+        self.assertEqual(len(grouped_teams[0]), 6)  # there are 6 teams with the same win rate
+        # Checking that the grouped teams are a nested list with the correct teams
+        self.assertTrue(all(team in grouped_teams[0] for team in same_win_rate_teams)) 
+
+        # Checking the structure of the grouped_teams to make sure it's a nested list
+        self.assertTrue(all(isinstance(group, list) for group in grouped_teams))
+
+
+    def test_break_head_to_head_wins(self):
+        team_rankings = []
+        for team in self.teams[0:4]:
+            ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=team, wins=0, losses=0, ties=0)
+            team_rankings.append(ranking)
+
+        # Create head to head competitions, assuming all are completed
+        # Team1 wins against Team2 and Team3. Team2 wins against Team3 and Team4. Team3 wins against Team4. 
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[0], team_2=self.teams[1], is_complete=True, winner=self.teams[0])
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[0], team_2=self.teams[2], is_complete=True, winner=self.teams[0])
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[1], team_2=self.teams[2], is_complete=True, winner=self.teams[1])
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[1], team_2=self.teams[3], is_complete=True, winner=self.teams[1])
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[2], team_2=self.teams[3], is_complete=True, winner=self.teams[2])
+
+        # Call the function under test
+        sorted_by_head_to_head_wins = self.h2h_event._break_head_to_head__wins(team_rankings)
+
+        # Assert the rankings are as expected
+        self.assertEqual(sorted_by_head_to_head_wins[0][0], team_rankings[0])
+        self.assertEqual(sorted_by_head_to_head_wins[0][1], 2) 
+        self.assertEqual(sorted_by_head_to_head_wins[1][0], team_rankings[1])
+        self.assertEqual(sorted_by_head_to_head_wins[1][1], 2) 
+        self.assertEqual(sorted_by_head_to_head_wins[2][0], team_rankings[2])
+        self.assertEqual(sorted_by_head_to_head_wins[2][1], 1) 
+        self.assertEqual(sorted_by_head_to_head_wins[3][0], team_rankings[3])
+        self.assertEqual(sorted_by_head_to_head_wins[3][1], 0)  
+
+    def test_break_won_games_total(self):
+
+        t_1_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[0], wins=2, losses=2, ties=0)
+        t_2_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[1], wins=1, losses=1, ties=2)
+        t_3_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[2], wins=0, losses=2, ties=4)
+
+        team_rankings = [t_1_ranking, t_2_ranking, t_3_ranking]
+        
+        # Call the function under test
+        sorted_by_event_wins = self.h2h_event._break_won_games_total(team_rankings)
+
+        # Assert the rankings are as expected
+        self.assertEqual(sorted_by_event_wins[0][0], t_1_ranking)
+        self.assertEqual(sorted_by_event_wins[0][1], 2) 
+        self.assertEqual(sorted_by_event_wins[1][0], t_2_ranking)
+        self.assertEqual(sorted_by_event_wins[1][1], 1) 
+        self.assertEqual(sorted_by_event_wins[2][0], t_3_ranking)
+        self.assertEqual(sorted_by_event_wins[2][1], 0) 
+
+    def test_break_victory_margin(self):
+
+        # Create EventRanking_H2H objects with different victory margins
+        t_1_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[0], score_for=10, score_against=2)
+        t_2_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[1], score_for=5, score_against=1)
+        t_3_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[2], score_for=6, score_against=6)
+
+        team_rankings = [t_1_ranking, t_2_ranking, t_3_ranking]
+
+        # Call the function under test
+        sorted_by_margin_of_victory = self.h2h_event._break_victory_margin(team_rankings)
+
+        # Assert the rankings are as expected
+        self.assertEqual(sorted_by_margin_of_victory[0][0], t_1_ranking)
+        self.assertEqual(sorted_by_margin_of_victory[0][1], 8)  # 10 - 2
+        self.assertEqual(sorted_by_margin_of_victory[1][0], t_2_ranking)
+        self.assertEqual(sorted_by_margin_of_victory[1][1], 4)  # 5 - 1
+        self.assertEqual(sorted_by_margin_of_victory[2][0], t_3_ranking)
+        self.assertEqual(sorted_by_margin_of_victory[2][1], 0)  # 6 - 6
+
+    def test_break_strength_of_schedule(self):
+
+        # Create EventRanking_H2H objects with different strength of schedules
+        t_1_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[0], sos_wins=10, sos_losses=2, sos_ties=1)
+        t_2_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[1], sos_wins=5, sos_losses=1, sos_ties=2)
+        t_3_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[2], sos_wins=6, sos_losses=6, sos_ties=0)
+
+        Competition_H2H.objects.create
+
+        team_rankings = [t_1_ranking, t_2_ranking, t_3_ranking]
+
+        # Call the function under test
+        sorted_by_strength_of_schedule = self.h2h_event._break_strength_of_schedule(team_rankings)
+
+        # Assert the rankings are as expected
+        self.assertEqual(sorted_by_strength_of_schedule[0][0], t_1_ranking)
+        self.assertAlmostEqual(sorted_by_strength_of_schedule[0][1], 0.807, places=2) 
+
+        self.assertEqual(sorted_by_strength_of_schedule[1][0], t_2_ranking)
+        self.assertAlmostEqual(sorted_by_strength_of_schedule[1][1], .75, places=2)  
+
+        self.assertEqual(sorted_by_strength_of_schedule[2][0], t_3_ranking)
+        self.assertAlmostEqual(sorted_by_strength_of_schedule[2][1], .5 ,places=2) 
+
+    def test_break_strength_of_schedule_vic(self):
+
+        # Create EventRanking_H2H objects with different strength of schedules
+        t_1_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[0], sos_wins=10, sos_losses=2, sos_ties=1)
+        t_2_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[1], sos_wins=5, sos_losses=1, sos_ties=2)
+        t_3_ranking = EventRanking_H2H.objects.create(event=self.h2h_event, team=self.teams[2], sos_wins=6, sos_losses=6, sos_ties=0)
+
+        Competition_H2H.objects.create
+
+        team_rankings = [t_1_ranking, t_2_ranking, t_3_ranking]
+
+        # Call the function under test
+        sorted_by_strength_of_schedule = self.h2h_event._break_strength_of_schedule_wins(team_rankings)
+
+        # Assert the rankings are as expected
+        self.assertEqual(sorted_by_strength_of_schedule[0][0], t_1_ranking)
+        self.assertEqual(sorted_by_strength_of_schedule[0][1], 10) 
+
+        self.assertEqual(sorted_by_strength_of_schedule[1][0], t_3_ranking)
+        self.assertEqual(sorted_by_strength_of_schedule[1][1], 6)  # V
+
+        self.assertEqual(sorted_by_strength_of_schedule[2][0], t_2_ranking) #^ notice these swicthed from last time
+        self.assertEqual(sorted_by_strength_of_schedule[2][1], 5)
+
+    def test_set_rankings_and_points(self):
+        t_1_ranking = EventRanking_H2H.objects.create(
+            event=self.h2h_event, 
+            team=self.teams[0],
+            win_rate=1.0
+        )
+        t_2_ranking = EventRanking_H2H.objects.create(
+            event=self.h2h_event, 
+            team=self.teams[1],
+            win_rate=.8333
+        )
+        t_3_ranking = EventRanking_H2H.objects.create(
+            event=self.h2h_event, 
+            team=self.teams[2],
+            win_rate=.8333
+        )
+        t_4_ranking = EventRanking_H2H.objects.create(
+            event=self.h2h_event, 
+            team=self.teams[3],
+            win_rate=.75
+        )
+        t_5_ranking = EventRanking_H2H.objects.create(
+            event=self.h2h_event, 
+            team=self.teams[4],
+            win_rate=.50
+        )
+        t_6_ranking = EventRanking_H2H.objects.create(
+            event=self.h2h_event, 
+            team=self.teams[5],
+            win_rate=0.
+        )
+        t_7_ranking = EventRanking_H2H.objects.create(
+            event=self.h2h_event, 
+            team=self.teams[6],
+            win_rate=0.0
+        )
+        t_8_ranking = EventRanking_H2H.objects.create(
+            event=self.h2h_event, 
+            team=self.teams[7],
+            win_rate=0.0
+        )
+
+        team_rankings = [
+            t_1_ranking, t_2_ranking, t_3_ranking, t_4_ranking, t_5_ranking,
+            t_6_ranking, t_7_ranking, t_8_ranking
+        ]
+
+        expected_points_rank = {
+            t_1_ranking: (10, 1),
+            t_2_ranking: (8, 2),
+            t_3_ranking: (7, 3),
+            t_4_ranking: (5, 4),
+            t_5_ranking: (4, 5),
+            t_6_ranking: (2, 6),
+            t_7_ranking: (2, 6),
+            t_8_ranking: (2, 6)
+        }
+
+        rankings_w_points = self.h2h_event._set_rankings_and_points(team_rankings)
+        for team in rankings_w_points:
+            self.assertEqual(team.points, expected_points_rank[team][0])
+            self.assertEqual(team.rank, expected_points_rank[team][1])
+
+    def test_check_for_round_robin_completion(self):
+        no_completed = self.h2h_event.check_for_round_robin_completion()
+        self.assertFalse(no_completed)
+
+        all_comps = self.h2h_event.competition_h2h_set.all()
+        all_comps.update(is_complete=True)
+
+        completed = self.h2h_event.check_for_round_robin_completion()
+        self.assertTrue(completed)
+
+    def test_update_bracket(self):
+        rankings = self.h2h_event.event_h2h_event_rankings.all()
+  
+        for i, ranking in enumerate(rankings):
+            ranking.rank = i+1
+            ranking.save()
+
+        self.h2h_event._update_bracket()
+
+        self.assertEqual(self.h2h_event.bracket_4.championship.left.team_1, rankings[0].team)
+        self.assertEqual(self.h2h_event.bracket_4.championship.left.team_2, rankings[3].team)
+        self.assertEqual(self.h2h_event.bracket_4.championship.right.team_1, rankings[1].team)
+        self.assertEqual(self.h2h_event.bracket_4.championship.right.team_2, rankings[2].team)
+
+    #Go back up to event ranking when youre done with ties
+
+class Event_H2HCleanUpTest(TestCase):
+    pass
+    #complete this once you've finished testing for other models

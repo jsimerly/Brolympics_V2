@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.utils import timezone
-from .models import *
+from brolympics.models import *
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from unittest.mock import patch
@@ -10,7 +10,7 @@ User = get_user_model()
 
 
 # Create your tests here.
-class BrolympicsTestCase(TestCase):
+class BrolympicsTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             phone='1234567890', 
@@ -28,10 +28,10 @@ class BrolympicsTestCase(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.team1 = Team.objects.create(brolympics=self.brolympics, name='Team 1', is_available=True)
-        self.team2 = Team.objects.create(brolympics=self.brolympics, name='Team 2', is_available=False)
-        self.team3 = Team.objects.create(brolympics=self.brolympics, name='Team 3', is_available=True)
-        self.team4 = Team.objects.create(brolympics=self.brolympics, name='Team 4', is_available=False)
+        self.team1 = Team.objects.create(brolympics=self.brolympics, name='Team 1', is_available=True, player_1=self.user)
+        self.team2 = Team.objects.create(brolympics=self.brolympics, name='Team 2', is_available=False, player_1=self.user)
+        self.team3 = Team.objects.create(brolympics=self.brolympics, name='Team 3', is_available=True, player_1=self.user)
+        self.team4 = Team.objects.create(brolympics=self.brolympics, name='Team 4', is_available=False, player_1=self.user)
 
     def test_start(self):
         self.brolympics.start()
@@ -40,8 +40,105 @@ class BrolympicsTestCase(TestCase):
         self.assertLessEqual(self.brolympics.start_time, timezone.now())
         self.assertEqual(self.brolympics.overall_ranking.count(), 4)
 
+    def test_end(self):
+        self.brolympics.end()
+        self.assertLessEqual(self.brolympics.end_time, timezone.now())
+        self.assertIsNone(self.brolympics.winner)
+
+
     def test_get_available_teams(self):
         self.assertEqual(list(self.brolympics.get_available_teams()), [self.team1, self.team3])
+
+    def test_update_ranks(self):
+        pass
+
+    def test_group_by_score(self):
+        self.brolympics.start()
+        all_rankings = self.brolympics.overall_ranking.all()
+        for i, ranking in enumerate(all_rankings):
+            ranking.total_points = i+1
+            ranking.save()
+
+        all_rankings = self.brolympics.overall_ranking.all()
+        result = self.brolympics._group_by_score(all_rankings)
+
+        expected_result = {
+            4: [all_rankings[3]],
+            3: [all_rankings[2]],
+            2: [all_rankings[1]],
+            1: [all_rankings[0]],
+        }
+
+        self.assertEqual(result, expected_result)
+
+        for i, ranking in enumerate(all_rankings):
+            ranking.total_points = i%2 + 1
+            ranking.save()
+
+        all_rankings = self.brolympics.overall_ranking.all()
+        result = self.brolympics._group_by_score(all_rankings)
+
+        expected_result = {
+            1: [all_rankings[0], all_rankings[2]],
+            2: [all_rankings[1], all_rankings[3]],
+        }
+                                                 
+
+    def test_order_by_score(self):
+        self.brolympics.start()
+        all_rankings = self.brolympics.overall_ranking.all()
+        score_map = {
+            4: [all_rankings[3]],
+            3: [all_rankings[2]],
+            2: [all_rankings[1]],
+            1: [all_rankings[0]],
+        }
+
+        result = self.brolympics._order_by_score(score_map)
+        expected_result = [[all_rankings[3]],[all_rankings[2]],[all_rankings[1]],[all_rankings[0]]]
+
+        self.assertEqual(expected_result, result)
+
+        score_map = {
+            1: [all_rankings[0], all_rankings[2]],
+            2: [all_rankings[1], all_rankings[3]],
+        }
+
+        result = self.brolympics._order_by_score(score_map)
+        expected_result = [[all_rankings[1], all_rankings[3]], [all_rankings[0],all_rankings[2]]]
+        self.assertEqual(expected_result, result)
+
+
+    def test_set_rankings(self):
+        self.brolympics.start()
+        all_rankings = self.brolympics.overall_ranking.all()
+        ordered_teams = [[all_rankings[3]],[all_rankings[2]],[all_rankings[1]],[all_rankings[0]]]
+
+        self.brolympics._set_rankings(ordered_teams)
+
+        rank_1 = all_rankings[3]
+        rank_2 = all_rankings[2]
+        rank_3 = all_rankings[1]
+        rank_4 = all_rankings[0]
+
+        self.assertEqual(rank_1.rank, 1)
+        self.assertEqual(rank_2.rank, 2)
+        self.assertEqual(rank_3.rank, 3)
+        self.assertEqual(rank_4.rank, 4)
+
+        ordered_teams = [[all_rankings[1], all_rankings[3]], [all_rankings[0],all_rankings[2]]]
+
+        self.brolympics._set_rankings(ordered_teams)
+
+        rank_1a = all_rankings[3]
+        rank_1b = all_rankings[1]
+        rank_3a = all_rankings[2]
+        rank_3b = all_rankings[0]
+
+        self.assertEqual(rank_1a.rank, 1)
+        self.assertEqual(rank_1b.rank, 1)
+        self.assertEqual(rank_3a.rank, 3)
+        self.assertEqual(rank_3b.rank, 3)
 
     def test_is_duplicate(self):
         pairs_set = {(self.team1, self.team2)}
@@ -57,9 +154,347 @@ class BrolympicsTestCase(TestCase):
         self.assertTrue(OverallBrolympicsRanking.objects.filter(brolympics=self.brolympics, team=self.team3).exists())
         self.assertTrue(OverallBrolympicsRanking.objects.filter(brolympics=self.brolympics, team=self.team4).exists())
 
-    def test_update_overall_rankings(self):
-        # Placeholder for the update_overall_rankings test
+
+class Event_TeamInitializationTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            phone='1234567890', 
+            email='jon_doe@test.com',
+            password='Passw0rd@123',
+            first_name='John',
+            last_name='Doe',
+        )
+        self.league = League.objects.create(
+            name='Test League', 
+            league_owner=self.user
+        )
+    
+        self.brolympics = Brolympics.objects.create(
+            league=self.league, 
+            name='Test Brolympics',
+        )
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0), player_1=self.user) for i in range(8)]
+
+        self.team_event = Event_Team.objects.create(
+            brolympics=self.brolympics,
+            name="test event",
+            n_competitions=1,
+        )
+
+    def test_create_competition_and_ranking_objs_team_1(self):
+        self.team_event._create_competitions_and_ranking_objs_team()
+
+        self.assertEqual(Competition_Team.objects.count(), self.team_event.n_competitions * self.brolympics.teams.count())
+        self.assertEqual(EventRanking_Team.objects.count(), self.brolympics.teams.count())
+
+        for comp in Competition_Team.objects.filter(event=self.team_event):
+            self.assertEqual(comp.event, self.team_event)
+            self.assertIn(comp.team, self.brolympics.teams.all())
+        
+        for ranking in EventRanking_Team.objects.filter(event=self.team_event):
+            self.assertEqual(ranking.event, self.team_event)
+            self.assertIn(ranking.team, self.brolympics.teams.all())
+
+    def test_create_competition_and_ranking_objs_team_4(self):
+        self.team_event.n_competitions = 4
+        self.team_event.save()
+
+        self.team_event._create_competitions_and_ranking_objs_team()
+
+        self.assertEqual(Competition_Team.objects.count(), self.team_event.n_competitions * self.brolympics.teams.count())
+        self.assertEqual(EventRanking_Team.objects.count(), self.brolympics.teams.count())
+
+        for comp in Competition_Team.objects.filter(event=self.team_event):
+            self.assertEqual(comp.event, self.team_event)
+            self.assertIn(comp.team, self.brolympics.teams.all())
+        
+        for ranking in EventRanking_Team.objects.filter(event=self.team_event):
+            self.assertEqual(ranking.event, self.team_event)
+            self.assertIn(ranking.team, self.brolympics.teams.all())
+
+class Event_TeamUtilityTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            phone='1234567890', 
+            email='jon_doe@test.com',
+            password='Passw0rd@123',
+            first_name='John',
+            last_name='Doe',
+        )
+        self.league = League.objects.create(
+            name='Test League', 
+            league_owner=self.user
+        )
+    
+        self.brolympics = Brolympics.objects.create(
+            league=self.league, 
+            name='Test Brolympics',
+        )
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0), player_1=self.user) for i in range(8)]
+
+        self.team_event = Event_Team.objects.create(
+            brolympics=self.brolympics,
+            name="test event",
+            n_competitions=1,
+        )
+
+    def test_get_completed_event_comps_ind(self):
+        all_comps = [Competition_Team.objects.create(
+            team=self.teams[i],
+            event=self.team_event,
+            is_complete=i%2
+        )
+            for i in range(4)
+        ]
+
+        completed_comps = self.team_event._get_completed_event_comps_team()
+        self.assertEqual(completed_comps.count(), 2)
+        self.assertEqual(len(all_comps), 4)
+
+    def test_wipe_rankings(self):
+        for i in range(1,4):
+            EventRanking_Team.objects.create(
+                event=self.team_event,
+                team=self.teams[i],
+                team_total_score=10*i,
+                team_avg_score=10*i,
+            )
+    
+        all_rankings = self.team_event.event_team_event_rankings.all()
+        for ranking in all_rankings:
+            self.assertNotEqual(ranking.team_total_score, 0)
+            self.assertNotEqual(ranking.team_avg_score, 0)
+
+        self.team_event._wipe_rankings(all_rankings)
+            
+        all_rankings = self.team_event.event_team_event_rankings.all()
+
+        for ranking in all_rankings:
+            self.assertEqual(ranking.team_total_score, 0)
+            self.assertEqual(ranking.team_avg_score, 0)
+
+    def test_get_score_to_rank(self):
+        score_to_rank = self.team_event._get_score_to_rank()
+        expected_score_to_rank = {
+            1: 10, 
+            2: 8, 
+            3: 7,  
+            4: 5,  
+            5: 4,  
+            6: 3,  
+            7: 2,  
+            8: 1,
+        }
+        self.assertEqual(score_to_rank, expected_score_to_rank)
+
+class Event_TeamLifeCycleTests(TestCase):
+    def setUp(self):    
+        self.user = User.objects.create_user(
+            phone='1234567890', 
+            email='jon_doe@test.com',
+            password='Passw0rd@123',
+            first_name='John',
+            last_name='Doe',
+        )
+        self.league = League.objects.create(
+            name='Test League', 
+            league_owner=self.user
+        )
+    
+        self.brolympics = Brolympics.objects.create(
+            league=self.league, 
+            name='Test Brolympics',
+        )
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', player_1=self.user) for i in range(8)]
+        self.team_event = Event_Team.objects.create(
+            brolympics=self.brolympics,
+            name="test event",
+            n_competitions=2,
+        )
+        self.team_event.start()
+
+    def test_is_event_available_no_limit(self):
+        self.assertEqual(self.team_event.is_available, True)
+        self.team_event.is_concluded = True
+        self.team_event.save()
+        self.assertEqual(self.team_event.is_event_available(), False)
+        self.assertEqual(self.team_event.is_available, False)
+        
+        self.team_event.is_concluded = False
+        self.team_event.save()
+        self.assertEqual(self.team_event.is_event_available(), True)
+        self.assertEqual(self.team_event.is_available, True)
+
+    def test_is_event_available_limit(self):
+        self.team_event.n_active_limit = 4
+        self.team_event.save()
+
+        with patch.object(Event_Team, '_get_n_active_comps', return_value=6):
+            self.assertEqual(self.team_event.is_event_available(), False)
+            self.assertEqual(self.team_event.is_available, False)
+
+        with patch.object(Event_Team, '_get_n_active_comps', return_value=4):
+            self.assertEqual(self.team_event.is_event_available(), False)
+            self.assertEqual(self.team_event.is_available, False)
+
+        with patch.object(Event_Team, '_get_n_active_comps', return_value=3):
+            self.assertEqual(self.team_event.is_event_available(), True)
+            self.assertEqual(self.team_event.is_available, True)
+
+    def test_get_n_active_comps(self):
+        self.team_event.n_active_limit = 3
+        self.team_event.save()
+
+        all_comps = self.team_event.team_comp.all()
+        for i in range(3):
+            comp = all_comps[i]
+            comp.is_active = True
+            comp.save()
+
+        self.assertEqual(self.team_event._get_n_active_comps(), 3)
+
+        all_comps.update(is_active=False)
+
+        self.assertEqual(self.team_event._get_n_active_comps(), 0)
+
+    def test_update_event_rankings_team(self):
         pass
+
+    def test_update_average_score(self):
+        all_team1_comps = Competition_Team.objects.filter(
+            event=self.team_event,
+            team=self.teams[0],
+        )
+
+        for i, comp in enumerate(all_team1_comps):
+            comp.team_score = i+15
+            comp.is_complete = True
+            comp.save()
+
+        team_rankings = EventRanking_Team.objects.filter(team=self.teams[0], event=self.team_event)
+        
+        self.team_event._update_average_score(team_rankings)
+
+        team_ranking = team_rankings.first()
+        self.assertEqual(team_ranking.team_avg_score, 15.5)
+
+
+    def test_group_by_score(self):
+        team_rankings = self.team_event.event_team_event_rankings.all()
+        for i, team in enumerate(team_rankings):
+            team.team_avg_score = i
+            team.save()
+
+        expected_result = {
+            0: [team_rankings[0]],
+            1: [team_rankings[1]],
+            2: [team_rankings[2]],
+            3: [team_rankings[3]],
+            4: [team_rankings[4]],
+            5: [team_rankings[5]],
+            6: [team_rankings[6]],
+            7: [team_rankings[7]],
+        }
+
+        team_rankings = self.team_event.event_team_event_rankings.all()
+        score_to_team_map = self.team_event._group_by_score(team_rankings)
+
+        self.assertEqual(expected_result, score_to_team_map)
+
+        for i, team in enumerate(team_rankings):
+            team.team_avg_score = i%2
+            team.save()
+
+        expected_result = {
+            0: [team_rankings[0],team_rankings[2],team_rankings[4],team_rankings[6],],
+            1: [team_rankings[1],team_rankings[3],team_rankings[5],team_rankings[7],],
+        }
+
+        team_rankings = self.team_event.event_team_event_rankings.all()
+        score_to_team_map = self.team_event._group_by_score(team_rankings)
+
+        self.assertEqual(expected_result, score_to_team_map)
+
+    def test_order_by_score(self):
+        team_rankings = self.team_event.event_team_event_rankings.all()
+        score_map = {
+            0: [team_rankings[0]],
+            1: [team_rankings[1]],
+            2: [team_rankings[2]],
+            3: [team_rankings[3]],
+            4: [team_rankings[4]],
+            5: [team_rankings[5]],
+            6: [team_rankings[6]],
+            7: [team_rankings[7]],
+        }
+
+        team_rankings = self.team_event.event_team_event_rankings.all()
+        ordeded_scores = self.team_event._order_by_score(score_map)
+
+        expected_result = [[team_rankings[7]],[team_rankings[6]],[team_rankings[5]],[team_rankings[4]],[team_rankings[3]],[team_rankings[2]],[team_rankings[1]],[team_rankings[0]],]
+
+        self.assertEqual(expected_result, ordeded_scores)
+
+        self.team_event.is_high_score_wins = False
+        self.team_event.save()
+
+        reverse_ordeded_scores = self.team_event._order_by_score(score_map)
+        expected_result.reverse()
+        self.assertEqual(expected_result, reverse_ordeded_scores)
+
+        score_map = {
+            0: [team_rankings[0],team_rankings[2],team_rankings[4],team_rankings[6],],
+            1: [team_rankings[1],team_rankings[3],team_rankings[5],team_rankings[7],],
+        }
+
+        expected_result = [[team_rankings[0],team_rankings[2],team_rankings[4],team_rankings[6],], [team_rankings[1],team_rankings[3],team_rankings[5],team_rankings[7],]]
+
+        grouped_ordered_scores = self.team_event._order_by_score(score_map)
+        self.assertEqual(expected_result, grouped_ordered_scores)
+
+    def test_set_rankings_and_points(self):
+        team_rankings = self.team_event.event_team_event_rankings.all()
+        ordered_teams = [[team_rankings[0],team_rankings[2],team_rankings[4],team_rankings[6],], [team_rankings[1],team_rankings[3],team_rankings[5],team_rankings[7],]]
+
+        self.team_event._set_rankings_and_points(ordered_teams)
+        team_rankings = self.team_event.event_team_event_rankings.all()
+
+        for i, team in enumerate(team_rankings):
+            expected_points = 7.5 if i%2 == 0 else 2.5
+            expected_rank = 1 if i%2 == 0 else 5
+            self.assertEqual(team.points, expected_points)
+            self.assertEqual(team.rank, expected_rank)
+
+        single_ordered_teams = [[team_rankings[0]],[team_rankings[1]],[team_rankings[2]],[team_rankings[3]],[team_rankings[4]],[team_rankings[5]],[team_rankings[6]],[team_rankings[7]],]
+
+        expected_points_map = {
+            1: 10, 
+            2: 8, 
+            3: 7,  
+            4: 5,  
+            5: 4,  
+            6: 3,  
+            7: 2,  
+            8: 1,
+        }
+
+        self.team_event._set_rankings_and_points(single_ordered_teams)
+
+        for i, team in enumerate(team_rankings):
+            expected_points = expected_points_map[i+1]
+            expected_rank = i+1
+            self.assertEqual(team.points, expected_points)
+            self.assertEqual(team.rank, expected_rank)
+
+    def test_check_for_completion(self):
+        self.assertFalse(self.team_event.check_for_completion())
+
+        self.team_event.team_comp.all().update(is_complete=True)
+        self.assertTrue(self.team_event.check_for_completion())
+
+        self.team_event.start_time = None
+        self.team_event.save()
+        self.assertIsNone(self.team_event.check_for_completion())
 
 
 class Event_INDInitializationTests(TestCase):
@@ -80,7 +515,7 @@ class Event_INDInitializationTests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0)) for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0), player_1=self.user) for i in range(8)]
 
         self.ind_event = Event_IND.objects.create(
             brolympics=self.brolympics,
@@ -137,7 +572,7 @@ class Event_INDUtilityTests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0)) for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0), player_1=self.user) for i in range(8)]
 
         self.ind_event = Event_IND.objects.create(
             brolympics=self.brolympics,
@@ -225,7 +660,7 @@ class Event_INDLifeCycleTests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}') for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', player_1=self.user) for i in range(8)]
         self.ind_event = Event_IND.objects.create(
             brolympics=self.brolympics,
             name="test event",
@@ -445,7 +880,7 @@ class Event_H2HInitializationTests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0)) for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0), player_1=self.user) for i in range(8)]
         self.h2h_event = Event_H2H.objects.create(
             brolympics=self.brolympics,
             name="test event",
@@ -518,7 +953,7 @@ class Event_H2HUtilityTests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0)) for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', is_available=(i%2==0), player_1=self.user) for i in range(8)]
         self.h2h_event = Event_H2H.objects.create(
             brolympics=self.brolympics,
             name="test event",
@@ -604,7 +1039,7 @@ class Event_H2HLifeCycleTests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}') for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', player_1=self.user) for i in range(8)]
         self.h2h_event = Event_H2H.objects.create(
             brolympics=self.brolympics,
             name="test event",
@@ -688,8 +1123,8 @@ class Event_H2HLifeCycleTests(TestCase):
         team_2 = self.teams[1]
         team_3 = self.teams[2]
 
-        comp_1 = Competition_H2H.objects.create(event=self.h2h_event, team_1=team_1, team_2=team_2, is_complete=True)
-        comp_2 = Competition_H2H.objects.create(event=self.h2h_event, team_1=team_1, team_2=team_3, is_complete=True)
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=team_1, team_2=team_2, is_complete=True)
+        Competition_H2H.objects.create(event=self.h2h_event, team_1=team_1, team_2=team_3, is_complete=True)
 
         team_2_ranking = EventRanking_H2H.objects.get(team=team_2)
         team_2_ranking.wins = 3
@@ -1133,6 +1568,58 @@ class Event_H2HCleanUpTests(TestCase):
     pass
     #complete this once you've finished testing for other models
 
+class Competition_TeamTests(TestCase):
+    def setUp(self):    
+        self.user = User.objects.create_user(
+            phone='1234567890', 
+            email='jon_doe@test.com',
+            password='Passw0rd@123',
+            first_name='John',
+            last_name='Doe',
+        )
+        self.league = League.objects.create(
+            name='Test League', 
+            league_owner=self.user
+        )
+    
+        self.brolympics = Brolympics.objects.create(
+            league=self.league, 
+            name='Test Brolympics',
+        )
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', player_1=self.user) for i in range(8)]
+        self.team_event = Event_Team.objects.create(
+            brolympics=self.brolympics,
+            name="test event",
+            n_competitions=2,
+        )
+        self.team_event.start()
+
+
+    def test_start(self):
+        comp = Competition_Team.objects.filter(event=self.team_event).first()
+        comp.start()
+        self.assertTrue(comp.is_active)
+        self.assertLessEqual(comp.start_time, timezone.now())
+        self.assertFalse(comp.team.is_available)
+
+    @patch.object(EventRanking_Team, 'update_scores')
+    @patch.object(Event_Team, 'update_event_rankings_team')
+    def test_end(self, mock_update_event_rankings_team, mock_update_scores):
+        comp = Competition_Team.objects.filter(event=self.team_event).first()
+        team_score = 20
+        comp.end(team_score)
+
+        # Assert that the competition has ended correctly
+        self.assertEqual(comp.team_score, team_score)
+        self.assertEqual(comp.is_active, False)
+        self.assertEqual(comp.is_complete, True)
+
+        # Assert that the ranking's update_scores method was called
+        mock_update_scores.assert_called_once()
+
+        # Assert that the event's update_event_rankings_ind method was called
+        mock_update_event_rankings_team.assert_called_once()
+
 
 class Competition_IndTests(TestCase):
     def setUp(self):    
@@ -1152,7 +1639,7 @@ class Competition_IndTests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}') for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', player_1=self.user) for i in range(8)]
         self.ind_event = Event_IND.objects.create(
             brolympics=self.brolympics,
             name="test event",
@@ -1208,7 +1695,7 @@ class Competition_H2HTests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}') for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', player_1=self.user) for i in range(8)]
         self.h2h_event = Event_H2H.objects.create(
             brolympics=self.brolympics,
             name="test event",
@@ -1311,6 +1798,42 @@ class Competition_H2HTests(TestCase):
         self.assertEqual(team_1_ranking.win_rate, 0.50)
         self.assertEqual(team_2_ranking.win_rate, 0.50)
 
+class EventRanking_TeamTests(TestCase):
+    def setUp(self):    
+        self.user = User.objects.create_user(
+            phone='1234567890', 
+            email='jon_doe@test.com',
+            password='Passw0rd@123',
+            first_name='John',
+            last_name='Doe',
+        )
+        self.league = League.objects.create(
+            name='Test League', 
+            league_owner=self.user
+        )
+    
+        self.brolympics = Brolympics.objects.create(
+            league=self.league, 
+            name='Test Brolympics',
+        )
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', player_1=self.user) for i in range(8)]
+        self.team_event = Event_Team.objects.create(
+            brolympics=self.brolympics,
+            name="test event",
+        )
+        self.team_event.start()
+
+    def test_update_scores(self):
+        # Create and end some competitions
+        for i in range(1, 5):
+            comp = Competition_Team.objects.create(event=self.team_event, team=self.teams[0])
+            comp.end(i*10)  
+
+        event_ranking = EventRanking_Team.objects.get(event=self.team_event, team=self.teams[0])
+
+        self.assertEqual(event_ranking.team_total_score, 10+20+30+40)  # 10+20+30+40 = 100
+        self.assertEqual(event_ranking.team_avg_score, (10+20+30+40)/4)  # (10+20+30+40)/4 = 25
+
 class EventRanking_IndTests(TestCase):
     def setUp(self):    
         self.user = User.objects.create_user(
@@ -1329,7 +1852,7 @@ class EventRanking_IndTests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}') for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', player_1=self.user) for i in range(8)]
         self.ind_event = Event_IND.objects.create(
             brolympics=self.brolympics,
             name="test event",
@@ -1350,8 +1873,16 @@ class EventRanking_IndTests(TestCase):
         self.assertEqual(event_ranking.player_2_total_score, 15+30+45+60)  # 15+30+45+60 = 150
         self.assertEqual(event_ranking.player_2_avg_score, (15+30+45+60)/4)  # (15+30+45+60)/4 = 37.5
 
-        self.assertEqual(event_ranking.team_total_score, 100+150)  # 100+150 = 250
+        self.assertEqual(event_ranking.team_total_score, (100+150))  # 100+150 = 250
+        self.assertEqual(event_ranking.team_avg_score, (100+150)/4)  # 25 + 37.5 = 62.5
+        
+        self.ind_event.display_avg_scores = False
+        self.ind_event.save()
+
+        self.assertEqual(event_ranking.team_total_score, (100+150))  # 100+150 = 250
         self.assertEqual(event_ranking.team_avg_score, (100+150)/4)  # (100+150)/4 = 62.5
+
+
 
 class EventRanking_H2HTests(TestCase):
     def setUp(self):    
@@ -1371,7 +1902,7 @@ class EventRanking_H2HTests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}') for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', player_1=self.user) for i in range(8)]
         self.h2h_event = Event_H2H.objects.create(
             brolympics=self.brolympics,
             name="test event",
@@ -1414,7 +1945,7 @@ class BracketMatchupTests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}') for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', player_1=self.user) for i in range(8)]
         self.h2h_event = Event_H2H.objects.create(
             brolympics=self.brolympics,
             name="test event",
@@ -1434,7 +1965,7 @@ class BracketMatchupTests(TestCase):
 
         matchup_1.update_teams(self.teams[0], self.teams[1])
         self.assertEqual(matchup_1.team_1, self.teams[0])
-        self.assertEqual(matchup_1.team_1, self.teams[1])
+        self.assertEqual(matchup_1.team_2, self.teams[1])
 
     def test_start(self):
         all_matchups = BracketMatchup.objects.filter(bracket=self.h2h_event.bracket_4, winner_node__isnull=False)
@@ -1503,7 +2034,7 @@ class Bracket_4Tests(TestCase):
             league=self.league, 
             name='Test Brolympics',
         )
-        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}') for i in range(8)]
+        self.teams = [Team.objects.create(brolympics=self.brolympics, name=f'Team {i+1}', player_1=self.user) for i in range(8)]
         self.h2h_event = Event_H2H.objects.create(
             brolympics=self.brolympics,
             name="test event",

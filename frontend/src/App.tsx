@@ -1,14 +1,17 @@
-import { useState } from 'react'
-import Navbar from './components/navbar/Navbar'
+import  {useEffect, useState} from 'react'
+import { Routes, Route } from 'react-router-dom';
+
+import SignUp from './components/login_page/SignUp';
+import Navbar from './components/navbar/Navbar';
 
 function App() {
 
   return (
-    <div className='h-100vh'>
+    <div className='bg-offWhite'>
       <Navbar/>
-      <div className='font-bold text-[60px]'>
-
-      </div>
+      <Routes>
+        <Route path='/sign-up' element={<SignUp/>}/>
+      </Routes>
     </div>
   )
 }

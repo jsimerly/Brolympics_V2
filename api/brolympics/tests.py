@@ -1270,7 +1270,7 @@ class Event_H2HLifeCycleTests(TestCase):
         t_3_ranking.save()
 
         tie_break_order = [
-            self.h2h_event._break_head_to_head__wins, 
+            self.h2h_event._break_head_to_head_wins, 
             self.h2h_event._break_won_games_total,
             self.h2h_event._break_victory_margin
         ]
@@ -1376,7 +1376,7 @@ class Event_H2HLifeCycleTests(TestCase):
         Competition_H2H.objects.create(event=self.h2h_event, team_1=self.teams[2], team_2=self.teams[3], is_complete=True, winner=self.teams[2])
 
         # Call the function under test
-        sorted_by_head_to_head_wins = self.h2h_event._break_head_to_head__wins(team_rankings)
+        sorted_by_head_to_head_wins = self.h2h_event._break_head_to_head_wins(team_rankings)
 
         # Assert the rankings are as expected
         self.assertEqual(sorted_by_head_to_head_wins[0][0], team_rankings[0])
@@ -1559,8 +1559,8 @@ class Event_H2HLifeCycleTests(TestCase):
 
         self.assertEqual(self.h2h_event.bracket_4.championship.left.team_1, rankings[0].team)
         self.assertEqual(self.h2h_event.bracket_4.championship.left.team_2, rankings[3].team)
-        self.assertEqual(self.h2h_event.bracket_4.championship.right.team_1, rankings[1].team)
-        self.assertEqual(self.h2h_event.bracket_4.championship.right.team_2, rankings[2].team)
+        self.assertEqual(self.h2h_event.bracket_4.championship.right.team_1, rankings[2].team)
+        self.assertEqual(self.h2h_event.bracket_4.championship.right.team_2, rankings[1].team)
 
     #Go back up to event ranking when youre done with ties
 

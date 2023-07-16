@@ -15,8 +15,8 @@ def create_scores(comp):
         winning_score=1
         losing_score=0
     else:
-        winning_score=random.uniform(min_score, max_score)
-        losing_score=random.uniform(min_score, max_score)
+        winning_score=round(random.uniform(min_score, max_score), 3)
+        losing_score=round(random.uniform(min_score, max_score), 3)
     
     return winning_score, losing_score
 
@@ -41,7 +41,7 @@ def simulate_competition_ind(comp: Competition_Ind):
 
 def simulate_competition_team(comp: Competition_Team):
     comp.start()
-    score, _ = create_scores(comp)
+    _, score = create_scores(comp)
     comp.end(score)
 
     print(f'{comp.team.name}: {comp.team_score}')
@@ -73,48 +73,116 @@ def simulate_event_h2h(event: Event_H2H):
         points = ranking.points
         sos = ranking.sos_wins
         margin = ranking.score_for - ranking.score_against
-        print(f"{ranking.rank}) {name}  |  {record}  |  {points} |  {margin}  | {sos}")
+        print(f"{ranking.rank}) {name}  |  {record}  |  {points} pts |  {margin}  | {sos}")
+
+    print('\n')
+    print('--- Playoffs ---')
+
+    simulate_competition_h2h(event.bracket_4.championship.left)
+    simulate_competition_h2h(event.bracket_4.championship.right)
+    event.refresh_from_db()
+    simulate_competition_h2h(event.bracket_4.loser_bracket_finals)
+    event.refresh_from_db()
+    simulate_competition_h2h(event.bracket_4.championship)
+
+    print('\nBracket Results')
+    print(f"1) {event.bracket_4.championship.winner.name}")
+    print(f"2) {event.bracket_4.championship.loser.name}")
+    print(f"3) {event.bracket_4.loser_bracket_finals.winner.name}")
+    print(f"4) {event.bracket_4.loser_bracket_finals.loser.name}")
+
+    final_rankings = event.event_h2h_event_rankings.all().order_by('rank')
+    print(f'\nFinal {event.name} Standings')
+
+    for ranking in final_rankings:
+        name = ranking.team.name.ljust(max_name_length)
+        record = f"{ranking.wins}-{ranking.losses}"
+        points = ranking.points
+
+        print(f"{ranking.rank}) {name}  |  {record}  |  {points} pts")
 
 
-    # simulate_competition_h2h(event.bracket_4.championship.left)
-    # simulate_competition_h2h(event.bracket_4.championship.right)
-    # simulate_competition_h2h(event.bracket_4.loser_bracket_finals)
-    # simulate_competition_h2h(event.bracket_4.championship)
+    overall_rankings = event.brolympics.overall_ranking.all().order_by('rank')
+    print('\n --- Updated Overall Rankings ---')
+    for ranking in overall_rankings:
+        name = ranking.team.name.ljust(max_name_length)
+        record = f"{ranking.wins}-{ranking.losses}"
+        points = ranking.total_points
 
-    # event.finalize()
-    # print(event.event_h2h_event_rankings.all())
-
+        print(f"{ranking.rank}) {name}  |  {record}  |  {points} pts")
         
 def simulate_event_ind(event: Event_IND):
     event.start()
     counter = 0
-    for team in event.brolympics.team.all():
-        while event.get_team_next_comp_ind(team).count != 0:
-            comp = event.get_team_next_comp_ind().first()
+    
+    print(f'\n --- {event.name} Started ---')
+    for team in event.brolympics.teams.all():
+        while event.get_team_next_comp_ind(team) is not None:
+            comp = event.get_team_next_comp_ind(team)
             simulate_competition_ind(comp)
 
             counter += 1
             if counter > 100:
-                break
+                break   
 
-    event.finalize()
-    print(event.event_ind_event_rankings.all())
+    final_rankings = event.event_ind_event_rankings.all().order_by('rank')
+    print(f'\nFinal {event.name} Standings')
+    max_name_length = max(len(ranking.team.name) for ranking in final_rankings)
+    for ranking in final_rankings:
+        name = ranking.team.name.ljust(max_name_length)
+        if event.display_avg_scores:
+            score = f"{ranking.team_avg_score}"
+        else:
+            score = f"{ranking.team_total_score}"
+        points = ranking.points
+
+        print(f"{ranking.rank}) {name}  |  {score}  |  {points} pts")
+
+
+    overall_rankings = event.brolympics.overall_ranking.all().order_by('rank')
+    print('\n --- Updated Overall Rankings ---')
+    for ranking in overall_rankings:
+        name = ranking.team.name.ljust(max_name_length)
+        record = f"{ranking.wins}-{ranking.losses}"
+        points = ranking.total_points
+
+        print(f"{ranking.rank}) {name}  |  {record}  |  {points} pts")
+
+
 
 
 def simulate_event_team(event: Event_Team):
     event.start()
     counter = 0
-    for team in event.brolympics.team.all():
-        while event.get_team_next_comp_team(team).count != 0:
-            comp = event.get_team_next_comp_team().first()
+    for team in event.brolympics.teams.all():
+        while event.get_team_next_comp_team(team) is not None:
+            comp = event.get_team_next_comp_team(team)
             simulate_competition_team(comp)
 
             counter += 1
             if counter > 100:
                 break
 
-    event.finalize()
-    print(event.event_team_event_rankings.all())
+    final_rankings = event.event_team_event_rankings.all().order_by('rank')
+    print(f'\nFinal {event.name} Standings')
+    max_name_length = max(len(ranking.team.name) for ranking in final_rankings)
+    for ranking in final_rankings:
+        name = ranking.team.name.ljust(max_name_length)
+        score = ranking.team_total_score
+        points = ranking.points
+
+        print(f"{ranking.rank}) {name}  |  {score}  |  {points} pts")
+
+
+    overall_rankings = event.brolympics.overall_ranking.all().order_by('rank')
+    print('\n --- Updated Overall Rankings ---')
+    for ranking in overall_rankings:
+        name = ranking.team.name.ljust(max_name_length)
+        record = f"{ranking.wins}-{ranking.losses}"
+        points = ranking.total_points
+
+        print(f"{ranking.rank}) {name}  |  {record}  |  {points} pts")
+
 
 def simulate_event(event):
     if isinstance(event, Event_H2H):
@@ -358,13 +426,16 @@ class Simulation(TestCase):
         event_ind = brolympics.event_ind_set.all()
         event_team = brolympics.event_team_set.all()
 
-        simulate_event(event_h2h[0])
-        # for event in event_h2h:
-        #     simulate_event(event)
-        # for event in event_ind:
-        #     simulate_event(event)
-        # for event in event_team:
-        #     simulate_event(event)
+
+        for event in event_h2h:
+            print(f'\n-------------------- {event.name} -----------------')
+            simulate_event(event)
+        for event in event_ind:
+            print(f'\n-------------------- {event.name} -----------------')
+            simulate_event(event)
+        for event in event_team:
+            print(f'\n-------------------- {event.name} -----------------')
+            simulate_event(event)
 
     
 

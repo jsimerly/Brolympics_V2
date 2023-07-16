@@ -166,6 +166,7 @@ class EventAbstactBase(models.Model):
         self.start_time = timezone.now()
         self.is_available = True
         self.create_child_objects()
+        self.save()
 
     def _get_score_to_rank(self):
         n_teams = len(self.brolympics.teams.all())
@@ -325,6 +326,7 @@ class Event_Team(EventAbstactBase):
         if len(uncompleted) == 0:
             self.is_concluded = True
             self.is_available = False
+            self.finalize_rankings()
             self.save()
 
             return True
@@ -336,9 +338,22 @@ class Event_Team(EventAbstactBase):
     def finalize_rankings(self):
         self.update_event_rankings_team()
         self._set_event_rankings_final()
+        self.update_overall_rankings()
 
     def _set_event_rankings_final(self):
         self.event_team_event_rankings.all().update(is_final=True)
+
+    def update_overall_rankings(self):
+        overall_rankings = self.brolympics.overall_ranking.all()
+        for ranking in overall_rankings:
+            event_ranking = EventRanking_Team.objects.get(
+                event=self,
+                team=ranking.team
+            )
+            ranking.total_points += event_ranking.points
+            ranking.save()
+
+        self.brolympics.update_ranks()
 
     ## End of Clean Up
 
@@ -414,7 +429,7 @@ class Event_IND(EventAbstactBase):
             is_active=False
         )
         return uncompleted_competitions.first()
-
+    
     def update_event_rankings_ind(self):
         team_rankings = self.event_ind_event_rankings.all()
         self._update_average_score(team_rankings)
@@ -424,7 +439,7 @@ class Event_IND(EventAbstactBase):
         score_to_team_map = self._group_by_score(team_rankings)
         ordered_grouped_teams = self._order_by_score(score_to_team_map)
         self._set_rankings_and_points(ordered_grouped_teams)
-
+        return ordered_grouped_teams
         
     def _update_average_score(self, team_rankings):
         competitions = self.ind_comp.filter(is_complete=True)
@@ -493,6 +508,7 @@ class Event_IND(EventAbstactBase):
         if len(uncompleted) == 0:
             self.is_concluded = True
             self.is_available = False
+            self.finalize_rankings()
             self.save()
 
             return True
@@ -504,10 +520,23 @@ class Event_IND(EventAbstactBase):
     def finalize_rankings(self):
         self.update_event_rankings_ind()
         self._set_event_rankings_final()
-
+        self.update_overall_rankings()
 
     def _set_event_rankings_final(self):
         self.event_ind_event_rankings.all().update(is_final=True)
+
+    def update_overall_rankings(self):
+        overall_rankings = self.brolympics.overall_ranking.all()
+        for ranking in overall_rankings:
+            event_ranking = EventRanking_Ind.objects.get(
+                event=self,
+                team=ranking.team
+            )
+
+            ranking.total_points += event_ranking.points
+            ranking.save()
+
+        self.brolympics.update_ranks()
 
 
     ## End of Life Cylce ##
@@ -725,40 +754,43 @@ class Event_H2H(EventAbstactBase):
         grouped_teams = self._group_by_win_rate(team_rankings)
 
         tie_break_order = [
-            self._break_head_to_head__wins,
+            self._break_head_to_head_wins,
             self._break_won_games_total,
             self._break_victory_margin,
             self._break_strength_of_schedule,
-            self._break_strength_of_schedule_wins
+            self._break_strength_of_schedule_wins,
         ]
 
-        ordered_nested_teams = self._tie_break_manager(grouped_teams, tie_break_order)
-
-        if not self._is_tie_broken(ordered_nested_teams):
-            for tied_group in ordered_nested_teams:
-                random.shuffle(tied_group)
-
+        untied_teams = []
+        for group in grouped_teams:
+            untied_wr_teams = self._tie_break_manager(group, tie_break_order)
+            untied_teams.append(untied_wr_teams)
         
-        return self.flatten_1(ordered_nested_teams) #full flatten the list
+        return self.flatten_1(untied_teams) #full flatten the list
     
     def _tie_break_manager(self, tied_teams, tie_break_order_funcs):
+        tie_broken_teams = []
+        self._tie_break_manager_rec(tied_teams, tie_break_order_funcs, tie_broken_teams)
+
+        return tie_broken_teams
+    
+    def _tie_break_manager_rec(self, tied_teams, tie_break_order_funcs, tie_broken_teams):
+        if len(tied_teams) == 1:
+            tie_broken_teams.extend(tied_teams)
+            return
+        
         for tie_breaker in tie_break_order_funcs:
-            doubley_nested_teams = []
-            for group in tied_teams:
-                nested_group = tie_breaker(group)
-                doubley_nested_teams.append(nested_group)
+            ranking_to_value = tie_breaker(tied_teams)
+            nested_group = self._get_ordered_teams(ranking_to_value)
 
-            ordered_doubley_nested = []
-            for nested_group in doubley_nested_teams:
-                ordered_group = self._get_ordered_teams(nested_group)
-                ordered_doubley_nested.append(ordered_group)
-
-            tied_teams = self.flatten_2(ordered_doubley_nested)
-            
-            if self._is_tie_broken(tied_teams):
+            if len(nested_group) > 1:
+                for sub_group in nested_group:
+                    self._tie_break_manager_rec(sub_group, tie_break_order_funcs, tie_broken_teams)
                 break
-
-        return tied_teams
+        else:
+            random.shuffle(tied_teams)
+            tie_broken_teams.extend(tied_teams)
+                    
     
     def _get_ordered_teams(self, sorted_teams):
         break_value_count_teams = {}
@@ -799,16 +831,25 @@ class Event_H2H(EventAbstactBase):
             team_1__in=tied_team_ids,
             team_2__in=tied_team_ids
         )
-    
-    def _break_head_to_head__wins(self, teams):       
+        
+    def _break_head_to_head_wins(self, teams):       
         head_to_head_comps = self._get_head_to_head_comps(teams)
 
         team_h2h_wins_map = {team: 0 for team in teams}
+        team_comps_count = team_h2h_wins_map.copy()
+        zero_map = team_h2h_wins_map.copy()
         for comp in head_to_head_comps:
             for team in teams:
                 if comp.winner == team.team:
                     team_h2h_wins_map[team] += 1
+                    
+                if comp.team_1 == team.team or comp.team_2 == team.team:
+                    team_comps_count[team] += 1
 
+        comps_count = set(team_comps_count.values())
+        if len(comps_count) > 1:
+            return zero_map.items()    
+        
         sorted_by_head_to_head_wins = sorted(team_h2h_wins_map.items(), key=lambda x: x[1], reverse=True)
         return sorted_by_head_to_head_wins
 
@@ -850,6 +891,10 @@ class Event_H2H(EventAbstactBase):
         sorted_by_strength_of_schedule_vic = sorted(stength_of_schedule_vic.items(), key=lambda x: x[1], reverse=True)
         return sorted_by_strength_of_schedule_vic
     
+    def _break_random(self, tied_teams):
+        return random.shuffle(tied_teams)
+
+    
     def _set_rankings_and_points(self, team_rankings):
         score_map = self._get_score_to_rank()
 
@@ -889,6 +934,8 @@ class Event_H2H(EventAbstactBase):
         uncompleted = Competition_H2H.objects.filter(event=self, is_complete=False)
         if uncompleted.count() == 0:
             self.is_round_robin_complete = True
+            self.update_event_rankings_h2h()
+            self._update_bracket()
             self.save()
             return True
         return False
@@ -902,7 +949,8 @@ class Event_H2H(EventAbstactBase):
 
     ## Event Clean Up ##
     def finalize_rankings(self): #used by parent for finalize()
-        team_rankings = list(self.event_h2h_event_rankings.all())
+        team_rankings = list(self.event_h2h_event_rankings.all().order_by('-rank'))
+
 
         bracket_teams = [
             self.bracket_4.championship.winner,
@@ -912,17 +960,18 @@ class Event_H2H(EventAbstactBase):
         ]
         back_half_teams = team_rankings[len(bracket_teams):]
 
+
         bracket_team_rankings = [
             EventRanking_H2H.objects.get(event=self, team=team) 
             for team in bracket_teams
         ]
 
-        final_ranking = bracket_team_rankings  + back_half_teams
-        self.update_event_rankings_h2h(final_ranking)
-        self._set_event_rankings_final()
+        final_rankings = bracket_team_rankings  + back_half_teams
+        self._set_event_rankings_final(final_rankings)
         self._update_overall_rankings()
 
-    def _set_event_rankings_final(self):
+    def _set_event_rankings_final(self, final_rankings):
+        self._set_rankings_and_points(final_rankings)
         self.event_h2h_event_rankings.all().update(is_final=True)
 
     def _update_overall_rankings(self):
@@ -1053,6 +1102,7 @@ class Competition_Team(models.Model):
         team_ranking.update_scores()
 
         self.event.update_event_rankings_team()
+        self.event.check_for_completion()
         
 
 class Competition_Ind(models.Model):
@@ -1104,12 +1154,18 @@ class Competition_Ind(models.Model):
         self.is_active = False
         self.is_complete = True
 
+        self.team.is_available=True
+        self.team.save()
+
         self.save()
 
         team_ranking = EventRanking_Ind.objects.get(event=self.event, team=self.team)
         team_ranking.update_scores()
 
         self.event.update_event_rankings_ind()
+        self.event.check_for_completion()
+        
+
 
 
 class Competition_H2H_Base(models.Model):
@@ -1166,10 +1222,10 @@ class Competition_H2H_Base(models.Model):
     
 
     def start(self):
-        if not self.team_1.is_available :
+        if not self.team_1.is_available:
             raise ValueError(f"{self.team_1.name} is not currently available")
         
-        if not self.team_2.is_available :
+        if not self.team_2.is_available:
             raise ValueError(f"{self.team_2.name} is not currently available")
         
         self.start_time = timezone.now()
@@ -1451,21 +1507,25 @@ class BracketMatchup(Competition_H2H_Base):
             if self._check_for_completion_during_end():
                 self.bracket.finalize()
             return
+        
+        if self == self.bracket.championship or self == self.bracket.loser_bracket_finals:
+            return
 
-        if self.winner_node.team_1 is None:
+
+        if self == self.bracket.championship.left:
             self.winner_node.team_1 = self.winner
             self.winner_node.team_1_seed = self.team_1_seed
-        else:
-            self.winner_node.team_2 = self.winner
-            self.winner_node.team_2_seed = self.team_2_seed
-        
-        if self.loser_node.team_1 is None:
             self.loser_node.team_1 = self.loser
             self.loser_node.team_1_seed = self.team_1_seed
         else:
+            self.winner_node.team_2 = self.winner
+            self.winner_node.team_2_seed = self.team_2_seed
             self.loser_node.team_2 = self.loser
-            self.loser_node.team_2 = self.team_2_seed
+            self.loser_node.team_2_seed = self.team_2_seed
 
+
+        self.winner_node.save()
+        self.loser_node.save()
         self.save()
 
     def _check_for_completion_during_end(self):
@@ -1558,9 +1618,11 @@ class Bracket_4(models.Model):
         self.championship.left.team_1 = seed_1
         self.championship.left.team_2 = seed_4
 
-        self.championship.right.team_1 = seed_2
-        self.championship.right.team_2 = seed_3
+        self.championship.right.team_1 = seed_3
+        self.championship.right.team_2 = seed_2
 
+        self.championship.left.save()
+        self.championship.right.save()
         self.save()
         
 

@@ -3,13 +3,10 @@ import { PasswordInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
 import ErrorMessages from "./ErrorMessages.js";
 
-const LogIn = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+const LogIn = ({email, setEmail, password, setPassword, phoneNumber, setPhoneNumber}) => {
+
     const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
-
-    const [phoneNumber, setPhoneNumber] = useState('');
     const [phoneNumberError, setPhoneNumberError] = useState(false);
 
     const [errorMessages, setErrorMessages] = useState([])
@@ -36,7 +33,10 @@ const LogIn = () => {
     }
     
   return (
-        <div className="flex flex-col items-center justify-end px-3">
+        <div className="flex flex-col items-center justify-end h-[calc(100vh-160px)] px-6 absolute translate-x-[100%] w-full">
+            <div className="flex flex-1 w-full border">
+                Image Here
+            </div>
             <h2 className="text-[20px] font-bold">Sign-In</h2>
             <div className="flex flex-col w-full gap-4 py-4">
                 <input 

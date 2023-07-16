@@ -3,20 +3,14 @@ import { PhoneNumberInput, PasswordInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
 import ErrorMessages from "./ErrorMessages.js";
 
-const CreateAccount = () => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+const CreateAccount = ({firstName, setFirstName, lastName, setLastName, email, setEmail, password, setPassword, phoneNumber, setPhoneNumber}) => {
+
+
     const [firstNameError, setFirstNameError] = useState(false);
     const [lastNameError, setLastNameError] = useState(false);
-
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
-
-    const [phoneNumber, setPhoneNumber] = useState('');
     const [phoneNumberError, setPhoneNumberError] = useState(false);
-
     const [errorMessages, setErrorMessages] = useState([])
 
     const handleFirstNameChange = (e) => setFirstName(e.target.value);
@@ -47,7 +41,10 @@ const CreateAccount = () => {
     }
     
   return (
-        <div className="flex flex-col items-center justify-end px-3">
+        <div className="flex flex-col items-center justify-end h-[calc(100vh-160px)] px-6 w-screen absolute">
+            <div className="flex flex-1 w-full border">
+                Image Here
+            </div>
             <h2 className="text-[20px] font-bold">Create Your Account</h2>
             <div className="flex flex-col items-center justify-center gap-4 py-4">
                 <div className="w-full">

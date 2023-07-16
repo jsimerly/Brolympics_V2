@@ -5,6 +5,21 @@ import LogIn from './LogIn';
 
 const SignUp = () => {
     const [currentPage, setCurrentPage] = useState('createAccount')
+    
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+
+    const userState = { 
+        firstName, setFirstName, 
+        lastName, setLastName, 
+        email, setEmail, 
+        password, setPassword, 
+        phoneNumber, setPhoneNumber 
+    };
+      
 
     const handlePageChange = (page) => {
         setCurrentPage(page)
@@ -18,7 +33,7 @@ const SignUp = () => {
       });
 
   return (
-    <div className='flex flex-col h-[calc(100vh-80px)] border p-3' {...swipeHandlers}>
+    <div className='flex flex-col h-[calc(100vh-80px)] border py-3 overflow-hidden' {...swipeHandlers}>
       <div className='flex items-center justify-center w-full gap-6 p-3'>
         <button
           className={`w-1/2 text-end ${currentPage === 'createAccount' ? 'font-bold' : ''}`}
@@ -34,15 +49,11 @@ const SignUp = () => {
           Sign-In
         </button>
       </div>
-      <div className='flex flex-1 h-full mx-3 border'>
-        Image Here
+      <div className={`transition ease-out duration-200 flex relative
+      ${currentPage === 'createAccount' ? 'translate-x-0' : 'transform -translate-x-full'}`}>
+            <CreateAccount {...userState}/>
+            <LogIn {...userState}/> 
       </div>
-
-      {currentPage === 'createAccount' ? (
-        <CreateAccount/>
-      ) : (
-        <LogIn/>
-      )}
     </div>
   );
 };

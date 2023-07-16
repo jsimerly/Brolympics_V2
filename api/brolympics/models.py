@@ -27,6 +27,9 @@ class Brolympics(models.Model):
 
     is_registration_open = models.BooleanField(default=True)
 
+    projected_start_date = models.DateTimeField(blank=True, null=True)
+    projected_end_date = models.DateTimeField(blank=True, null=True)
+
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
 
@@ -154,6 +157,10 @@ class EventAbstactBase(models.Model):
     is_high_score_wins = models.BooleanField(default=True)
     max_score = models.FloatField(default=100, null=True)
     min_score = models.FloatField(default=0, null=True)
+
+
+    projected_start_date = models.DateTimeField(blank=True, null=True)
+    projected_end_date = models.DateTimeField(blank=True, null=True)
 
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)

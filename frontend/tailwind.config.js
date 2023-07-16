@@ -5,10 +5,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#4F86C6",
-        primaryLight: "#e4eaf6",
+        primary: "#339989",
+        primaryLight: "#7DE2D1",
         secondary: "#FAF3C5", 
         secondaryLight: '#ffffff',
+        neutralDark: '#131515',
+        neutral: '#2B2C28',
+        neutralLight: '#53564E',
+        offWhite: '#FFFAFB'
       },
       fontFamily: {
         roboto : ['Roboto', 'serif'],

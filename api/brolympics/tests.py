@@ -824,6 +824,7 @@ class Event_INDLifeCycleTests(TestCase):
         for i, team in enumerate(team_rankings):
             expected_points = 7.5 if i%2 == 0 else 2.5
             expected_rank = 1 if i%2 == 0 else 5
+
             self.assertEqual(team.points, expected_points)
             self.assertEqual(team.rank, expected_rank)
 

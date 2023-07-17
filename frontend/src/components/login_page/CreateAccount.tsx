@@ -41,7 +41,7 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, email, s
     }
     
   return (
-        <div className="flex flex-col items-center justify-end h-[calc(100vh-160px)] px-6 w-screen absolute">
+        <div className="flex flex-col items-center justify-end min-h-[calc(100vh-80px)] px-6 w-screen absolute">
             <div className="flex flex-1 w-full border">
                 Image Here
             </div>

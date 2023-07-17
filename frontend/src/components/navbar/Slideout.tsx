@@ -30,8 +30,8 @@ const Slideout = ({open}) => {
   return (
     <>
         {open &&
-            <div>
-                <div className='flex flex-col h-[calc(100vh-80px)] bg-neutral text-offWhite opacity-95 px-6 py-3 gap-3'>
+            <div className="fixed top-[80px] left-0 w-full">
+                <div className='flex flex-col h-[calc(100vh-80px)] bg-neutral text-offWhite opacity-[98%] px-6 py-3 gap-3'>
                     <LeaguesButtons leagues={leagues}/>
                     <CurrentBrolympics current_brolympics={current_brolympics}/>
                     <UpcomingBrolympics upcoming_brolympics={upcoming_brolympics}/>

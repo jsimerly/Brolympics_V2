@@ -158,7 +158,6 @@ class EventAbstactBase(models.Model):
     max_score = models.FloatField(default=100, null=True)
     min_score = models.FloatField(default=0, null=True)
 
-
     projected_start_date = models.DateTimeField(blank=True, null=True)
     projected_end_date = models.DateTimeField(blank=True, null=True)
 

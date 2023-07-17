@@ -6,7 +6,7 @@ import USFlag from '../../assets/svgs/UsaFlag.svg'
 
 export const PhoneNumberInput = ({value, onChange, error}) => (
     <div className="flex flex-row">
-        <div className="flex w-[100px] bg-white border border-neutral rounded-md mr-2 text-center items-center justify-center">
+        <div className="flex w-[100px] bg-white border border-gray-200 rounded-md mr-2 text-center items-center justify-center">
             <img src={USFlag} className="h-[13px] w-[24px] mr-2 rounded-sm"/> +1 
         </div>
         <MaskedInput
@@ -14,7 +14,7 @@ export const PhoneNumberInput = ({value, onChange, error}) => (
             guide={false}
             value={value}
             onChange={onChange}
-            className={`w-full border border-neutral rounded-md pl-2 outline-neutral p-2 ${error? 'border-errorRed' : null}`}
+            className={`w-full border border-gray-200 rounded-md pl-2 outline-neutral p-2 ${error? 'border-errorRed' : null}`}
             placeholder="Phone Number"
             type="text"
         />
@@ -41,7 +41,7 @@ export const PasswordInput = ({value, onChange, error}) => {
     return(
         <div className="relative">
             <input
-                className={`border border-neutral rounded-md pl-2 outline-neutral p-2 w-full ${error ? 'border-errorRed' : null}`}
+                className={`border border-gray-200 rounded-md pl-2 outline-neutral p-2 w-full ${error ? 'border-errorRed' : null}`}
                 placeholder="Password" 
                 type={showPassword ? 'text' : 'password'}
                 value={value}

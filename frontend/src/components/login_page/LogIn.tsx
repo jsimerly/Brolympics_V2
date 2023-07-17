@@ -40,7 +40,7 @@ const LogIn = ({email, setEmail, password, setPassword, phoneNumber, setPhoneNum
             <h2 className="text-[20px] font-bold">Sign-In</h2>
             <div className="flex flex-col w-full gap-4 py-4">
                 <input 
-                    className={`border border-neutral rounded-md pl-2 outline-neutral p-2 w-full ${emailError ? 'border-errorRed' : null}`}
+                    className={`border border-gray-200 rounded-md pl-2 outline-neutral p-2 w-full ${emailError ? 'border-errorRed' : null}`}
                     placeholder="Phone or Email"
                     value={email}
                     onChange={handleEmailChange}

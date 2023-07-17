@@ -49,7 +49,7 @@ const SignUp = () => {
           Sign-In
         </button>
       </div>
-      <div className={`transition ease-out duration-200 flex relative
+      <div className={`transition ease-in-out duration-200 flex relative
       ${currentPage === 'createAccount' ? 'translate-x-0' : 'transform -translate-x-full'}`}>
             <CreateAccount {...userState}/>
             <LogIn {...userState}/> 

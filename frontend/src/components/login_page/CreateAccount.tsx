@@ -57,13 +57,13 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, email, s
                 <div className="flex flex-row justify-between w-full gap-2">
 
                     <input
-                        className={`w-1/2 border border-neutral rounded-md pl-2 outline-neutral p-2 ${firstNameError? 'border-errorRed' : null}`}
+                        className={`w-1/2 border border-gray-200 rounded-md pl-2 outline-neutral p-2 ${firstNameError? 'border-errorRed' : null}`}
                         placeholder="First Name"
                         value={firstName}
                         onChange={handleFirstNameChange}
                     />
                     <input 
-                        className={`w-1/2 border border-neutral rounded-md pl-2 outline-neutral p-2 ${lastNameError ? 'border-errorRed' : null}`}
+                        className={`w-1/2 border border-gray-200 rounded-md pl-2 outline-neutral p-2 ${lastNameError ? 'border-errorRed' : null}`}
                         placeholder='Last Name'
                         value={lastName}
                         onChange={handleLastNameChange}
@@ -72,7 +72,7 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, email, s
                 <div className="flex flex-col w-full gap-4">
 
                     <input 
-                        className={`border border-neutral rounded-md pl-2 outline-neutral p-2 w-full ${emailError ? 'border-errorRed' : null}`}
+                        className={`border border-gray-200 rounded-md pl-2 outline-neutral p-2 w-full ${emailError ? 'border-errorRed' : null}`}
                         placeholder="Email Address"
                         value={email}
                         onChange={handleEmailChange}
@@ -86,7 +86,7 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, email, s
                     </div>
                 </div>
                 <ErrorMessages errorMessages={errorMessages}/>
-                <button className="w-full p-3 rounded-md bg-primary">
+                <button className="w-full p-3 font-bold text-white rounded-md bg-primary">
                     Create
                 </button>
                 <div className="text-[12px]">

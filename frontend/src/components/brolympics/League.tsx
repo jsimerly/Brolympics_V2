@@ -104,7 +104,7 @@ const League = () => {
                 {brolympics.map((brolympic, i) => {
                     if (!brolympic.is_complete){
                         return(
-                            <BrolympicsCard_Upcoming props={brolympic}/>
+                            <BrolympicsCard_Upcoming props={brolympic} key={i}/>
                         )
                     }
                 })}
@@ -114,7 +114,7 @@ const League = () => {
                 {brolympics.map((brolympic, i) => {
                     if (brolympic.is_complete){
                         return(
-                            <BrolympicsCard_Completed props={brolympic}/>
+                            <BrolympicsCard_Completed props={brolympic} key={i}/>
                         )
                     }
                 })}

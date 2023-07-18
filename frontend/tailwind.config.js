@@ -12,7 +12,8 @@ module.exports = {
         neutralDark: '#131515',
         neutral: '#2B2C28',
         neutralLight: '#53564E',
-        offWhite: '#FFFAFB'
+        offWhite: '#FFFAFB',
+        errorRed: '#941a12'
       },
       fontFamily: {
         roboto : ['Roboto', 'serif'],

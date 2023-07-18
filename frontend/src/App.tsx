@@ -16,7 +16,7 @@ function App() {
         <Route path='/sign-up' element={<SignUp/>}/>
         <Route path='/start-league' element={<StartLeague/>}/>
         <Route path='/league' element={<League/>}/>
-        <Route path='/brolympics' element={<Brolympics/>}/>
+        <Route path='/brolympics/*' element={<Brolympics/>}/>
       </Routes>
     </div>
   )

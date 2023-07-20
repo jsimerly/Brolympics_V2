@@ -5,7 +5,7 @@ const AvailableCompetition_h2h = ({name, team_name, team_record, team_img, oppon
 
 
   return (
-    <div className='p-2 border border-gray-200 rounded-md bg-neutralLight'>
+    <div className='pb-3'>
       <TeamsBlock
         name={name}
         team_1_name={team_name}

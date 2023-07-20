@@ -1,38 +1,71 @@
 import EventWrapper from './EventWrapper';
 
-const Matchup = ({team_1_name, team_1_score, team_2_name, team_2_score, result, is_active}) => {
-
-    let borderColor;
-    switch (result) {
-        case 'won':
-            borderColor = 'border-primary';
-            break;
-        case 'lost':
-            borderColor = 'border-errorRed';
-            break;
-        default:
-            borderColor = 'border-gray-200';
+const Matchup = ({team, team_1_name, team_1_score, team_2_name, team_2_score, winner, is_active}) => {
+    const getFontSize = (name) => {
+        if (name) {
+            if (name.length <= 10) {
+                return '16px';
+            } else if (name.length <= 16) {
+                return '16px';
+            } else if (name.length <= 20) {
+                return '14px';
+            } else {
+                return '12px'
+            }
+        }
     }
-    
-    return (
-    <div 
-        className={`flex items-center justify-center p-1 border rounded-md 
-        bg-neutral ${borderColor}
-        ${is_active && 'border-[2px]'}
-        `}
-    >
-        <div className='flex items-center justify-center w-full'>
-            <div className='w-2/5'> {team_1_name}</div>
-            <div className='w-1/5 text-center'>{team_1_score} : {team_2_score}</div>
-            <div className='w-2/5'> {team_2_name}</div> 
-        </div>
 
-    </div>
+    let team_1_text;
+    switch (true) {
+        case team_1_name == winner && team_1_name == team:
+            team_1_text = 'text-primaryLight font-bold';
+            break;
+        case team_2_name == winner && team_1_name == team:
+            team_1_text = 'text-errorRedLight'
+            break
+        default:
+            team_1_text = 'text-white';
+    }
+
+    let team_2_text;
+    switch (true) {
+        case team_2_name == winner && team_2_name == team:
+            team_2_text = 'text-primaryLight font-bold';
+            break;
+        case team_1_name == winner && team_2_name == team:
+            team_2_text = 'text-errorRedLight'
+            break
+        default:
+            team_2_text = 'text-white';
+    }
+
+
+    return(
+        <div 
+            className={`flex items-center justify-center px-1 
+                ${is_active && 'border rounded-md'}
+            `}
+        >
+            <div className='flex items-center justify-center w-full'>
+                <div className={`w-2/5 ${team_1_text}`} style={{fontSize : getFontSize(team_1_name)}}> 
+                    {team_1_name}
+                </div>
+                <div className='flex items-center justify-center w-1/5 text-center'>
+                    <span className={`${team_1_text} w-2/3`}>{team_1_score}</span>
+                    <span className='w-1/5'>:</span>
+                    <span className={`${team_2_text} w-2/3`}>{team_2_score}</span>
+                </div>
+                <div className={` ${team_2_text} w-2/5 text-end`} style={{fontSize : getFontSize(team_2_name)}}> 
+                    {team_2_name}
+                </div> 
+            </div>
+
+        </div>
     )
 }
     
 
-const EventDropdown_H2h = ({decimal_places, score_for, score_against, sos_wins, sos_losses, comps, is_active}) => (
+const EventDropdown_H2h = ({decimal_places, score_for, score_against, sos_wins, sos_losses, comps, is_active, team}) => (
     <div className={`py-2 border-t ${is_active ? 'border-neutral' : 'border-neutralLight'} `}>
         <div className='flex justify-between'>
             <div className='w-1/2'>
@@ -53,7 +86,7 @@ const EventDropdown_H2h = ({decimal_places, score_for, score_against, sos_wins, 
         <h4 className='pt-2 font-bold'>Competitions</h4>    
         <div className='flex flex-col gap-1 py-1'>
             {comps.map((comp, i) => (
-                <Matchup {...comp}/>
+                <Matchup {...comp} team={team}/>
             ))}
             {comps.length === 0 && 'Event has not started yet.'}
         </div>
@@ -61,7 +94,7 @@ const EventDropdown_H2h = ({decimal_places, score_for, score_against, sos_wins, 
 )
 
 
-const Event_h2h = ({name, decimal_places, wins, losses, ties, score_for, score_against, sos_losses, sos_wins, rank, points, is_final, is_active, comps}) => {
+const Event_h2h = ({name, decimal_places, wins, losses, ties, score_for, score_against, sos_losses, sos_wins, rank, points, is_final, is_active, comps, team}) => {
 
     return (
         <EventWrapper
@@ -80,6 +113,7 @@ const Event_h2h = ({name, decimal_places, wins, losses, ties, score_for, score_a
                 sos_losses={sos_losses}
                 comps={comps}
                 is_active={is_active}
+                team={team}
             />
         </EventWrapper>
     )

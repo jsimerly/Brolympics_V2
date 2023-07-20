@@ -7,9 +7,11 @@ import AvailableCompetition_team from './team/AvailableCompetition_team';
 import ActiveCompetition_team from './team/ActiveCompetition_team';
 
 const CurrentEventCard = ({name, complete_perc}) => (
-    <div className='p-2 font-bold border border-gray-200 rounded-md bg-neutralLight'>
-        {name}
-        <div className='relative h-[2px] w-full bg-gray-200 rounded-full'>
+    <div className='pb-1 rounded-md '>
+        <h3 className='pb-2'>
+            {name}
+        </h3>
+        <div className='relative h-[2px] w-full bg-gray-200 rounded-full '>
             <div 
                 className='absolute top-0 left-0 w-full h-full duration-200 ease-in-out rounded-full transition-width bg-primary'
                 style={{width: `${complete_perc}%`}}
@@ -54,11 +56,20 @@ const EventBlock = ({ title, items, component: Component , component_func}) => {
                 <ul className='flex flex-col gap-2'>
                     {
                         items.map((item, i) => {
-                            if (component_func === null){
-                                return <Component {...item} key={i}/>
-                            } else {
-                                return React.cloneElement(component_func(item.type, item), { key: i });
-                            }
+                            return (
+                                <div key={i}>
+
+                                    {component_func === null ? 
+                                        <Component {...item} /> 
+                                        : 
+                                        <div>
+                                        {i !==0 && <div className="w-full h-[1px] bg-neutralLight my-2"/>}
+                                        {React.cloneElement(component_func(item.type, item), { key: i })}
+                                        </div>
+                                    }
+                                     {/* Add divider here except for the last item */}
+                                </div>
+                            );
                         })
                     }
                 </ul>
@@ -66,6 +77,7 @@ const EventBlock = ({ title, items, component: Component , component_func}) => {
         </div>
     );
 }
+
 
 const OutOfCompetitions = () => {
     const active_events = [

@@ -47,7 +47,7 @@ const Team = () => {
       'is_active' : false,
       'comps' : [
         {
-          'result' : 'won',
+          'winner' : 'Third Dynasty of Ur',
           'team_1_name' : 'Third Dynasty of Ur',
           'team_1_score' : 21,
           'team_2_name' : 'Poland',
@@ -55,7 +55,7 @@ const Team = () => {
           'is_active': false,
         },
         {
-          'result' : 'won',
+          'winner' : 'Third Dynasty of Ur',
           'team_1_name' : 'Third Dynasty of Ur',
           'team_1_score' : 21,
           'team_2_name' : 'France',
@@ -63,7 +63,7 @@ const Team = () => {
           'is_active' : false,
         },
         {
-          'result' : 'won',
+          'winner' : 'Third Dynasty of Ur',
           'team_1_name' : 'Greece',
           'team_1_score' : 5,
           'team_2_name' : 'Third Dynasty of Ur',
@@ -71,7 +71,7 @@ const Team = () => {
           'is_active' : false,
         },
         {
-          'result' : 'won',
+          'winner' : 'Germany',
           'team_1_name' : 'Third Dynasty of Ur',
           'team_1_score' : 21,
           'team_2_name' : 'Germany',
@@ -118,7 +118,7 @@ const Team = () => {
       'is_final' : false,
       'comps' : [
         {
-          'result' : 'won',
+          'winner' : 'Third Dynasty of Ur',
           'team_1_name' : 'Third Dynasty of Ur',
           'team_1_score' : 21,
           'team_2_name' : 'Poland',
@@ -126,7 +126,7 @@ const Team = () => {
           'is_active': false,
         },
         {
-          'result' : 'lost',
+          'winner' : 'France',
           'team_1_name' : 'Third Dynasty of Ur',
           'team_1_score' : 21,
           'team_2_name' : 'France',
@@ -134,7 +134,7 @@ const Team = () => {
           'is_active' : false,
         },
         {
-          'result' : null,
+          'winner' : null,
           'team_1_name' : 'Greece',
           'team_1_score' : 0,
           'team_2_name' : 'Third Dynasty of Ur',
@@ -142,8 +142,8 @@ const Team = () => {
           'is_active' : true,
         },        
         {
-          'result' : null,
-          'team_1_name' : 'Greece',
+          'winner' : null,
+          'team_1_name' : 'Germany',
           'team_1_score' : 0,
           'team_2_name' : 'Third Dynasty of Ur',
           'team_2_score' : 0,
@@ -203,11 +203,11 @@ const Team = () => {
   const getEventComponent = (type, props) => {
     switch (type) {
       case 'h2h':
-        return <Event_h2h {...props}/>
+        return <Event_h2h {...props} team='Third Dynasty of Ur'/>
       case 'ind':
-        return <Event_ind {...props}/>
+        return <Event_ind {...props} team='Third Dynasty of Ur'/>
       case 'team':
-        return <Event_team {...props}/>
+        return <Event_team {...props} team='Third Dynasty of Ur'/>
     }
   }
   
@@ -219,9 +219,13 @@ const Team = () => {
       <div className="py-3">
         <h2 className="text-[20px] font-bold px-6">Events</h2>
         {eventRanking.map((event, i) => 
-          <div>
+          <div key={i+"_teams"}>
             {getEventComponent(event.type, event)}
-            {i !== eventRanking.length - 1  && <div className="w-full h-[1px] bg-neutralLight" />}
+            {i !== eventRanking.length - 1  && 
+            <div className="w-full px-6">
+              <div className="w-full h-[1px] bg-neutralLight" />
+            </div>
+            }
           </div>
 
         )}

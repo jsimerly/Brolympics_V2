@@ -39,7 +39,7 @@ const Toolbar = () => {
                 icon={<PeopleAltOutlinedIcon sx={{fontSize:30}}/>}
             />
             <PageButton 
-                route='/events' text='Events' 
+                route='/event' text='Events' 
                 icon={<ScoreboardOutlinedIcon sx={{fontSize:30}}/>}
             />
             <PageButton 

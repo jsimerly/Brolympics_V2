@@ -32,7 +32,7 @@ const CreateBrolympics = ({step, nextStep}) => {
                     type='text' 
                     value={brolympicsName} 
                     onChange={(e) => setBrolympicsName(e.target.value)}
-                    placeholder='Enter the name of your league'
+                    placeholder='Ex: Summer 2023'
                     className='w-full p-2 border border-gray-200 rounded-md'
                 />
             </div>

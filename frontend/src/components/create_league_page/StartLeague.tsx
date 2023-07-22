@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import StepManager from './StepManager';
 
 const StartLeague = () => {
+    
     const [step, setStep] = useState(1)
     const totalSteps = 4
     const progress = (step/totalSteps) * 100
@@ -35,7 +36,7 @@ const StartLeague = () => {
   return (
     <div 
         ref={containerRef}
-        className='flex flex-col items-center justify-start w-full h-[calc(100vh-100px)] overflow-x-hidden'
+        className='flex flex-col items-center justify-start w-full h-[calc(100vh-80px)] overflow-x-hidden'
     >
         <div className='fixed z-20 w-full'>
             <div className='flex items-center justify-center w-full px-6 py-3 bg-offWhite'>
@@ -67,7 +68,7 @@ const StartLeague = () => {
             <StepManager
                 step={step}
                 nextStep={nextStep} 
-                prevStep={prevStep} 
+                prevStep={prevStep}      
             />
         </div>
     </div>

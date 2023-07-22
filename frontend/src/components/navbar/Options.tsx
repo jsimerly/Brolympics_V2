@@ -3,7 +3,11 @@ import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import CookieIcon from '@mui/icons-material/Cookie';
 import PersonIcon from '@mui/icons-material/Person';
 
-const Options = ({currentUser}) => {
+const Options = ({currentUser, setView}) => {
+    const clickAccount = () =>{
+      setView('account')
+    }
+
     const ButtonCard = ({ Icon, text }) => (
         <div className='flex flex-col items-center justify-center'>
           <Icon sx={{fontSize:35}}/>
@@ -11,8 +15,11 @@ const Options = ({currentUser}) => {
         </div>
       );
 
-    const Account = ({img}) => (
-        <div className='h-[100px] w-[100px] rounded-full absolute -bottom-[30px] flex items-center justify-center text-neutralDark bg-neutralLight overflow-hidden'>
+    const AccountIcon = ({img}) => (
+        <div 
+          className='h-[100px] w-[100px] rounded-full absolute -bottom-[30px] flex items-center justify-center text-neutralDark bg-neutralLight overflow-hidden'
+          onClick={clickAccount}
+        >
            { img ? <img src={img} alt="Profile" className='rounded-full h-100 w-100'/> : <PersonIcon sx={{fontSize:125, mt:2}} /> }
         </div>
     )
@@ -21,7 +28,7 @@ const Options = ({currentUser}) => {
     <div className='fixed flex justify-between items-center bottom-0 w-full h-[80px] bg-gradient-to-b from-neutralDark to-neutralLight text-white p-6'>
       {currentUser !== null ?
           <div className='relative'>
-              <Account img={currentUser.img}/>
+              <AccountIcon img={currentUser.img}/>
           </div>
           :
           <a

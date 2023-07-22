@@ -28,7 +28,7 @@ export async function fetchCreateUser(phoneNumber, firstName, lastName, password
 
 export async function fetchLoginUser(phoneNumber, password){
     const userData ={
-        phoneNumber : phoneNumber,
+        phone : phoneNumber,
         password: password,
     }
 
@@ -47,6 +47,7 @@ export async function fetchLoginUser(phoneNumber, password){
         const resp = await response.json()
         setCookie('access_token', resp.access, 60);
         setCookie('refresh_token', resp.refresh, 60 * 24 * 30);
+        console.log(resp)
 
         return response
 
@@ -110,6 +111,7 @@ export async function fetchVerifyPhone(phoneNumber, firstName, lastName, passwor
         })
         return response
     } catch (error) {
+        console.log('here')
         throw error
     }
 }

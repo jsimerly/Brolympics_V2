@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import {fetchLoginUser, handleLogout, fetchUserInformation, fetchCreateUser } from '../api/fetchUser.js'
+import {getCookie} from '../api/cookies'
 
 
 export const AuthContext = createContext();
@@ -10,19 +11,17 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const token = localStorage.getItem('token'); // Assuming you're storing the JWT token in localStorage
-        if (!token) {
-          return;
-        }
-
-        const response = await fetchUserInformation()
+        // Call an endpoint that checks the validity of the token in the cookie
+        // and returns the associated user's information
+        const response = await fetchUserInformation();
         if (response.ok) {
-            const data = response.json()
-            setCurrentUser(data)
+          const data = await response.json();
+          setCurrentUser(data);
+        } else {
+          setCurrentUser(null);
         }
-
       } catch (error) {
-        setCurrentUser(null)
+        setCurrentUser(null);
         console.error(error);
       }
     };
@@ -31,13 +30,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (phone, password) => {
     const response = await fetchLoginUser(phone, password)
-    if (response.ok){
-        const data = await response.json()
-        setCurrentUser(data)
-        return
-    } else {
-        setCurrentUser(null)
-    }
+    return response
   }
 
   const logout = () => {
@@ -56,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
   // Then provide the current user in the context
   return (
-    <AuthContext.Provider value={{currentUser, login, logout, createUser}}>
+    <AuthContext.Provider value={{currentUser, login, logout, createUser, setCurrentUser}}>
       {children}
     </AuthContext.Provider>
   );

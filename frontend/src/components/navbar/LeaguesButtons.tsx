@@ -10,7 +10,7 @@ const LeaguesButtons = ({leagues}) => {
     </div>
   )
   const Card = (league_name, index) => (
-    <div className='flex items-center w-full gap-3 p-3 rounded-md'> 
+    <div className='flex items-center w-full gap-3 p-3 rounded-md' key={index}> 
       <div className='bg-white h-[40px] w-[40px] rounded-lg text-black'>
         logo
       </div>

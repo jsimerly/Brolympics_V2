@@ -23,13 +23,6 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
     const navigate = useNavigate()
     const validator = new AccountValidator() 
     
-    const cleanPhoneNumber = (phoneNumber) => {
-        let cleaned = phoneNumber.replace(/-/g, '');
-        cleaned = '+1'.concat(cleaned);
-    
-        return cleaned;
-    };
-
     const handleCreateAccount = async () => {
         validator.resetErrors()
 
@@ -45,7 +38,7 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
         }
         
         //navigate('verify')
-        const cleanedPhoneNumber = cleanPhoneNumber(phoneNumber)
+        const cleanedPhoneNumber = validator.cleanPhoneNumber(phoneNumber)
         const response = await createUser(cleanedPhoneNumber, firstName, lastName, password)
 
         if (response.ok){

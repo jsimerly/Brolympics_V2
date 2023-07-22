@@ -13,7 +13,7 @@ module.exports = {
         neutral: '#2B2C28',
         neutralLight: '#53564E',
         offWhite: '#FFFAFB',
-        errorRed: '#941a12',
+        errorRed: '#C76C63',
         errorRedLight : '#d9928d'
       },
       fontFamily: {

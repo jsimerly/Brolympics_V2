@@ -3,11 +3,17 @@ from django.contrib.auth import get_user_model
 import random
 from django.utils import timezone
 from django.db.models import Q, Avg, Sum
+from hashids import Hashids
+import os
 
 User = get_user_model()
+HASH_SALT = os.getenv('HASHID_SALT')
+hashids = Hashids(salt=HASH_SALT, min_length=6)
 
 # Create your models here.
-
+LEAGUE_IMAGES = [
+    'image_1'
+]
 class League(models.Model):
     name = models.CharField(max_length=120)
     league_owner = models.ForeignKey(
@@ -16,6 +22,23 @@ class League(models.Model):
         null=False
     )
     founded = models.DateTimeField(auto_now_add=True)
+    hashid = models.CharField(max_length=6, unique=True, blank=True, editable=False)
+    img = models.ImageField(upload_to='leagues/', null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            super().save(*args, **kwargs)
+            self.hashid = hashids.encode(self.pk)
+
+        if not self.img:
+            default_img_path = random.choice(LEAGUE_IMAGES)
+            self.img.name = default_img_path
+
+        super().save(*args, **kwargs)
+
+BROLYMPIC_IMAGES = [
+
+]
 
 class Brolympics(models.Model):
     league = models.ForeignKey(
@@ -42,6 +65,20 @@ class Brolympics(models.Model):
         blank=True,
         related_name='winner'
     )
+
+    hashid = models.CharField(max_length=6, unique=True, blank=True, editable=False)
+    img = models.ImageField(upload_to='brolympics/', null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            super().save(*args, **kwargs)
+            self.hashid = hashids.encode(self.pk)
+
+        if not self.img:
+            default_img_path = random.choice(LEAGUE_IMAGES)
+            self.img.name = default_img_path
+
+        super().save(*args, **kwargs)
 
     def get_available_teams(self):
         return self.teams.filter(is_available=True)
@@ -998,7 +1035,13 @@ class Event_H2H(EventAbstactBase):
         self.brolympics.update_ranks()
 
     ## End of Event Clean Up
-                    
+
+
+TEAM_IMAGES = [
+    'default_team/image1.jpg',
+    'default_team/image2.jpg',
+    # Add the rest of your default images paths here
+]
 
 class Team(models.Model):
     brolympics = models.ForeignKey(
@@ -1031,6 +1074,19 @@ class Team(models.Model):
     wins = models.PositiveIntegerField(default=0)
     losses = models.PositiveIntegerField(default=0)
     ties = models.PositiveIntegerField(default=0)
+
+    hashid = models.CharField(max_length=6, unique=True, blank=True, editable=False)
+    img = models.ImageField(upload_to='teams/', null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            super().save(*args, **kwargs)
+            self.hashid = hashids.encode(self.pk)
+
+        if not self.img:
+            default_img_path = random.choice(TEAM_IMAGES)
+            self.img.name = default_img_path
+        super().save(*args, **kwargs)
 
     def add_player(self, player):
         if self.player_1 is None:

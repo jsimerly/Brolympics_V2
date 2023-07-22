@@ -169,6 +169,14 @@ export default class AccountValidator {
         this.errors = []
     }
 
+    cleanPhoneNumber = (phoneNumber) => {
+        let cleaned = phoneNumber.replace(/-/g, '');
+        cleaned = '+1'.concat(cleaned);
+    
+        return cleaned;
+    };
+
+
 }
 
 

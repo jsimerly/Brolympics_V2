@@ -1,14 +1,14 @@
-import { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext'
 
-import { useState } from "react"
+import { AuthContext } from '../../context/AuthContext'
+import { useState, useContext } from "react"
+import { useNavigate } from 'react-router-dom';
 import { PasswordInput, PhoneNumberInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
 import ErrorMessages from "./ErrorMessages.js";
 
 
 const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber}) => {
-    const {login} = useContext(AuthContext)
+    const {login, setCurrentUser} = useContext(AuthContext)
 
     const [passwordError, setPasswordError] = useState(false);
     const [phoneNumberError, setPhoneNumberError] = useState(false);
@@ -19,7 +19,7 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber}) => {
     const handlePhoneNumberChange = (e) => setPhoneNumber(e.target.value);
     const handlePasswordChange = (e) => setPassword(e.target.value);
 
-
+    const navigate = useNavigate()
     const validator = new AccountValidator()    
 
     const handleSignIn = async () => {
@@ -33,7 +33,19 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber}) => {
         if (validator.errors.lenght > 0){
             return
         }
-        login(phoneNumber, password)
+
+        const cleanedPhoneNumber = validator.cleanPhoneNumber(phoneNumber)
+        const response = await login(cleanedPhoneNumber, password)
+
+        if (response.ok){
+            const data = await response.json
+            setCurrentUser(data)
+            navigate('/')
+        } else {    
+            
+            console.log(response)
+            console.log('bad')
+        }
     }
     
   return (
@@ -59,7 +71,10 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber}) => {
                 </div>
             </div>
             <ErrorMessages errorMessages={errorMessages}/>
-            <button className="w-full p-3 font-bold text-white rounded-md bg-primary">
+            <button 
+                className="w-full p-3 font-bold text-white rounded-md bg-primary"
+                onClick={handleSignIn}
+            >
                 Login
             </button>
             <div>

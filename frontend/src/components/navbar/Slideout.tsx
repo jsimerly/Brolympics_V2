@@ -1,6 +1,6 @@
 
 
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext'
 
 import CurrentBrolympics from "./CurrentBrolympics"
@@ -8,9 +8,15 @@ import LeaguesButtons from "./LeaguesButtons"
 import Options from "./Options"
 import UpcomingBrolympics from "./UpcomingBrolympics"
 import UpcomingCompetitions from "./UpcomingComps"
+import Account from './Account';
 
 const Slideout = ({open}) => {
-    const {login, logout, currentUser} = useContext(AuthContext)
+    const [view, setView] = useState('leagues')
+    const {currentUser} = useContext(AuthContext)
+
+    useEffect(() => {
+
+    },[currentUser])
 
     const leagues = [
         {'name':'League 1'},
@@ -33,21 +39,25 @@ const Slideout = ({open}) => {
         },
     ]
 
-
   return (
     <>
         {open &&
             <div className="fixed top-[80px] left-0 w-full z-30">
-                <div className='flex flex-col h-[calc(100vh-80px)] bg-neutral text-offWhite opacity-[98%] px-6 py-3 gap-3'>
-                    <LeaguesButtons leagues={leagues}/>
-                    <CurrentBrolympics current_brolympics={current_brolympics}/>
-                    <UpcomingBrolympics upcoming_brolympics={upcoming_brolympics}/>
-                    <UpcomingCompetitions upcoming_competitions={upcoming_competitions}/>
+                {view === 'account' ?
+                    <Account setView={setView}/>
+                :
+                    <div className='flex flex-col h-[calc(100vh-80px)] bg-neutral text-white opacity-[99%] px-6 py-3 gap-3'>
+                        <LeaguesButtons leagues={leagues}/>
+                        <CurrentBrolympics current_brolympics={current_brolympics}/>
+                        <UpcomingBrolympics upcoming_brolympics={upcoming_brolympics}/>
+                        <UpcomingCompetitions upcoming_competitions={upcoming_competitions}/>
 
-                    
-                </div>
+                        
+                    </div>
+                }
+
                 <div>
-                    <Options currentUser={currentUser}/>
+                    <Options currentUser={currentUser} setView={setView}/>
                 </div>
             </div>
         }

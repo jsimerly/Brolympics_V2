@@ -8,13 +8,10 @@ from django.utils.translation import gettext_lazy as _
 from uuid import uuid4
 
 class UserManager(BaseUserManager):
-    def create_user(self, password, phone, first_name, last_name, email):       
+    def create_user(self, password, phone, first_name, last_name):       
         if not password:
             raise ValueError("User must have a password.")
         
-        if not email:
-            raise ValueError("User must hvae an email.")
-
         if not phone:
             raise ValueError("User must have a phone number.")
         
@@ -26,7 +23,6 @@ class UserManager(BaseUserManager):
 
         user = self.model(
             phone = phone,
-            email = email,
             first_name = first_name,
             last_name = last_name,
         )
@@ -57,15 +53,16 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     uuid = models.UUIDField(default=uuid4, editable=False)
     
-    email=models.EmailField(
-        verbose_name='Email',
-        max_length=255,
-        unique=True
-    )
-
     phone = models.CharField(
         verbose_name='Phone Number',
         max_length=20,
+        unique=True,
+    )
+
+    email = models.EmailField(
+        verbose_name='Email',
+        null=True,
+        blank=True
     )
 
     password=models.CharField(
@@ -73,18 +70,17 @@ class User(AbstractBaseUser):
         verbose_name='Password'
     )
 
-
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
 
-    is_phone_verified = models.BooleanField(default=False)
+    is_email_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
 
-    EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'phone'
+    USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
 
     objects = UserManager()

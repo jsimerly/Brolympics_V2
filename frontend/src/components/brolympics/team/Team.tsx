@@ -190,7 +190,7 @@ const Team = () => {
             </span>
           </div>
           <div className="flex">
-            <img src={Podium} className="text-white h-[30px] w-[40px]"/>
+            <img src={Podium} className="text-white h-[26px] w-[26px]"/>
             <span className="text-[16px] font-bold pl-3">
               {total_podiums}
             </span>

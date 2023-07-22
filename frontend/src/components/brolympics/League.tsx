@@ -4,7 +4,7 @@ import Bronze from '../../assets/svgs/bronze.svg'
 
 
 const BrolympicsCard_Upcoming = ({props}) => (
-    <div className='p-3 border rounded-md bg-neutralLight'>
+    <div className='p-3 border rounded-md border-primary'>
         <div className="flex items-center justify-between">
             <div className="flex gap-3 item-center">
                 <div className='bg-white h-[40px] w-[40px] rounded-lg text-black'>
@@ -40,7 +40,7 @@ const BrolympicsCard_Upcoming = ({props}) => (
 )
 
 const BrolympicsCard_Completed = ({props}) => (
-    <div className='p-3 border rounded-md bg-neutralLight'>
+    <div className='p-3 border rounded-md border-primary'>
         <div className="flex items-center justify-between">
             <div className="flex gap-3 item-center">
                 <div className='bg-white h-[40px] w-[40px] rounded-lg text-black'>

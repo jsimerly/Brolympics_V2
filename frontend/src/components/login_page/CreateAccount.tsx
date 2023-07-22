@@ -1,33 +1,40 @@
 import { useContext, useState } from "react"
+import { AuthContext } from '../../context/AuthContext'
+import { useNavigate } from "react-router-dom";
+
 import { PhoneNumberInput, PasswordInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
 import ErrorMessages from "./ErrorMessages.js";
 
-const CreateAccount = ({firstName, setFirstName, lastName, setLastName, email, setEmail, password, setPassword, phoneNumber, setPhoneNumber}) => {
-
+const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password, setPassword, phoneNumber, setPhoneNumber}) => {
+    const {createUser} = useContext(AuthContext)
 
     const [firstNameError, setFirstNameError] = useState(false);
     const [lastNameError, setLastNameError] = useState(false);
-    const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
     const [phoneNumberError, setPhoneNumberError] = useState(false);
     const [errorMessages, setErrorMessages] = useState([])
 
     const handleFirstNameChange = (e) => setFirstName(e.target.value);
     const handleLastNameChange = (e) => setLastName(e.target.value);
-    const handleEmailChange = (e) => setEmail(e.target.value);
     const handlePasswordChange = (e) => setPassword(e.target.value);
     const handlePhoneNumberChange = (e) => setPhoneNumber(e.target.value);
 
-
-    const validator = new AccountValidator()    
+    const navigate = useNavigate()
+    const validator = new AccountValidator() 
+    
+    const cleanPhoneNumber = (phoneNumber) => {
+        let cleaned = phoneNumber.replace(/-/g, '');
+        cleaned = '+1'.concat(cleaned);
+    
+        return cleaned;
+    };
 
     const handleCreateAccount = async () => {
         validator.resetErrors()
 
         validator.validateFirstName(firstName, setFirstNameError)
         validator.validateLastName(lastName, setLastNameError)
-        validator.validateEmail(email, setEmailError)
         validator.validatePassword(password, setPasswordError)
         validator.validatePhoneNumber(phoneNumber, setPhoneNumberError)
 
@@ -36,26 +43,32 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, email, s
         if (validator.errors.lenght > 0){
             return
         }
+        
+        //navigate('verify')
+        const cleanedPhoneNumber = cleanPhoneNumber(phoneNumber)
+        const response = await createUser(cleanedPhoneNumber, firstName, lastName, password)
 
-        //make your call to create account
+        if (response.ok){
+            navigate('verify', { state: { 
+                phoneNumber: cleanedPhoneNumber, 
+                firstName: firstName,
+                lastName: lastName,
+                password: password, 
+            }});
+        } else{
+            const data = await response.json()
+            console.log(data)
+        }
     }
     
   return (
-        <div className="flex flex-col items-center justify-end min-h-[calc(100vh-80px)] px-6 w-screen absolute">
+        <div className="flex flex-col items-center justify-end min-h-[calc(100vh-160px)] px-6 w-screen absolute">
             <div className="flex flex-1 w-full border">
                 Image Here
             </div>
             <h2 className="text-[20px] font-bold">Create Your Account</h2>
             <div className="flex flex-col items-center justify-center gap-4 py-4">
-                <div className="w-full">
-                    <PhoneNumberInput 
-                        value={phoneNumber}
-                        onChange={handlePhoneNumberChange}
-                        error={phoneNumberError}
-                    />
-                    </div>
                 <div className="flex flex-row justify-between w-full gap-2">
-
                     <input
                         className={`w-1/2 border border-gray-200 rounded-md pl-2 outline-neutral p-2 ${firstNameError? 'border-errorRed' : null}`}
                         placeholder="First Name"
@@ -71,12 +84,13 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, email, s
                 </div>
                 <div className="flex flex-col w-full gap-4">
 
-                    <input 
-                        className={`border border-gray-200 rounded-md pl-2 outline-neutral p-2 w-full ${emailError ? 'border-errorRed' : null}`}
-                        placeholder="Email Address"
-                        value={email}
-                        onChange={handleEmailChange}
-                    />
+                    <div className="w-full">
+                        <PhoneNumberInput 
+                            value={phoneNumber}
+                            onChange={handlePhoneNumberChange}
+                            error={phoneNumberError}
+                        />
+                    </div>
                     <div className="relative">
                         <PasswordInput
                             value={password}
@@ -86,7 +100,10 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, email, s
                     </div>
                 </div>
                 <ErrorMessages errorMessages={errorMessages}/>
-                <button className="w-full p-3 font-bold text-white rounded-md bg-primary">
+                <button 
+                    className="w-full p-3 font-bold text-white rounded-md bg-primary"
+                    onClick={handleCreateAccount}
+                >
                     Create
                 </button>
                 <div className="text-[12px]">

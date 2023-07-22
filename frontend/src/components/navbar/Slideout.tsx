@@ -1,3 +1,8 @@
+
+
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext'
+
 import CurrentBrolympics from "./CurrentBrolympics"
 import LeaguesButtons from "./LeaguesButtons"
 import Options from "./Options"
@@ -5,6 +10,8 @@ import UpcomingBrolympics from "./UpcomingBrolympics"
 import UpcomingCompetitions from "./UpcomingComps"
 
 const Slideout = ({open}) => {
+    const {login, logout, currentUser} = useContext(AuthContext)
+
     const leagues = [
         {'name':'League 1'},
         {'name':'League 2'}
@@ -40,7 +47,7 @@ const Slideout = ({open}) => {
                     
                 </div>
                 <div>
-                    <Options/>
+                    <Options currentUser={currentUser}/>
                 </div>
             </div>
         }

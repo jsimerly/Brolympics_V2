@@ -1,18 +1,22 @@
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext'
+
 import { useState } from "react"
-import { PasswordInput } from "../Util/Inputs"
+import { PasswordInput, PhoneNumberInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
 import ErrorMessages from "./ErrorMessages.js";
 
-const LogIn = ({email, setEmail, password, setPassword, phoneNumber, setPhoneNumber}) => {
 
-    const [emailError, setEmailError] = useState(false);
+const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber}) => {
+    const {login} = useContext(AuthContext)
+
     const [passwordError, setPasswordError] = useState(false);
     const [phoneNumberError, setPhoneNumberError] = useState(false);
 
     const [errorMessages, setErrorMessages] = useState([])
 
 
-    const handleEmailChange = (e) => setEmail(e.target.value);
+    const handlePhoneNumberChange = (e) => setPhoneNumber(e.target.value);
     const handlePasswordChange = (e) => setPassword(e.target.value);
 
 
@@ -21,7 +25,6 @@ const LogIn = ({email, setEmail, password, setPassword, phoneNumber, setPhoneNum
     const handleSignIn = async () => {
         validator.resetErrors()
 
-        validator.validateEmail(email, setEmailError)
         validator.validatePassword(password, setPasswordError)
         validator.validatePhoneNumber(phoneNumber, setPhoneNumberError)
 
@@ -30,6 +33,7 @@ const LogIn = ({email, setEmail, password, setPassword, phoneNumber, setPhoneNum
         if (validator.errors.lenght > 0){
             return
         }
+        login(phoneNumber, password)
     }
     
   return (
@@ -39,12 +43,13 @@ const LogIn = ({email, setEmail, password, setPassword, phoneNumber, setPhoneNum
             </div>
             <h2 className="text-[20px] font-bold">Sign-In</h2>
             <div className="flex flex-col w-full gap-4 py-4">
-                <input 
-                    className={`border border-gray-200 rounded-md pl-2 outline-neutral p-2 w-full ${emailError ? 'border-errorRed' : null}`}
-                    placeholder="Phone or Email"
-                    value={email}
-                    onChange={handleEmailChange}
-                />
+                <div className="w-full">
+                    <PhoneNumberInput 
+                        value={phoneNumber}
+                        onChange={handlePhoneNumberChange}
+                        error={phoneNumberError}
+                    />
+                </div>
                 <div className="relative">
                     <PasswordInput
                         value={password}
@@ -54,8 +59,8 @@ const LogIn = ({email, setEmail, password, setPassword, phoneNumber, setPhoneNum
                 </div>
             </div>
             <ErrorMessages errorMessages={errorMessages}/>
-            <button className="w-full p-3 rounded-md bg-primary">
-                Create
+            <button className="w-full p-3 font-bold text-white rounded-md bg-primary">
+                Login
             </button>
             <div>
                 <p className="underline text-[12px] pt-5 pb-7">I've Forgotten My Password</p>

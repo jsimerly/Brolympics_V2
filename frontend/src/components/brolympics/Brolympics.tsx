@@ -9,17 +9,7 @@ import InCompetition from './InCompetition';
 
 const Brolympics = () => {
   
-  const [activeComp, setActiveComp] = useState({
-    'name' : 'Go Karting',
-    'type' : 'team',
-    'team_name' : 'Third Dynasty of Ur',
-    'player_1_name' : 'Jacob Simerly',
-    'player_2_name' : 'Frank Sergi',
-    'decimal_places' : 3,
-    'max_score' : 40,
-    'min_score' : 20,
-  }
-  )
+  const [activeComp, setActiveComp] = useState(null)
   const [is_available, setIsAvailable]= useState(activeComp === null)
   
   const navigate = useNavigate();

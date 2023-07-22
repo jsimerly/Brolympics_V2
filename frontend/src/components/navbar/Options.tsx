@@ -3,7 +3,7 @@ import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import CookieIcon from '@mui/icons-material/Cookie';
 import PersonIcon from '@mui/icons-material/Person';
 
-const Options = ({img}) => {
+const Options = ({currentUser}) => {
     const ButtonCard = ({ Icon, text }) => (
         <div className='flex flex-col items-center justify-center'>
           <Icon sx={{fontSize:35}}/>
@@ -19,9 +19,19 @@ const Options = ({img}) => {
     
   return (
     <div className='fixed flex justify-between items-center bottom-0 w-full h-[80px] bg-gradient-to-b from-neutralDark to-neutralLight text-white p-6'>
-        <div className='relative'>
-            <Account img={img}/>
-        </div>
+      {currentUser !== null ?
+          <div className='relative'>
+              <Account img={currentUser.img}/>
+          </div>
+          :
+          <a
+            className='text-[24px] underline'
+            href='/sign-up'
+          >
+            Sign In
+          </a>  
+      }
+
         <div className='flex gap-10'>
             <ButtonCard Icon={CookieIcon} text="Policies"/>
             <ButtonCard Icon={HelpCenterIcon} text="Support"/>

@@ -25,6 +25,8 @@ class League(models.Model):
     hashid = models.CharField(max_length=6, unique=True, blank=True, editable=False)
     img = models.ImageField(upload_to='leagues/', null=True, blank=True)
 
+    players = models.ManyToManyField(User, related_name='leagues', blank=True)
+
     def save(self, *args, **kwargs):
         if not self.pk:
             super().save(*args, **kwargs)
@@ -68,6 +70,8 @@ class Brolympics(models.Model):
 
     hashid = models.CharField(max_length=6, unique=True, blank=True, editable=False)
     img = models.ImageField(upload_to='brolympics/', null=True, blank=True)
+
+    players = models.ManyToManyField(User, related_name='brolympics', blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:

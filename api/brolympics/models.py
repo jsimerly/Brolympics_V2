@@ -3,12 +3,9 @@ from django.contrib.auth import get_user_model
 import random
 from django.utils import timezone
 from django.db.models import Q, Avg, Sum
-from hashids import Hashids
-import os
+from uuid import uuid4
 
 User = get_user_model()
-HASH_SALT = os.getenv('HASHID_SALT')
-hashids = Hashids(salt=HASH_SALT, min_length=6)
 
 # Create your models here.
 LEAGUE_IMAGES = [
@@ -22,21 +19,18 @@ class League(models.Model):
         null=False
     )
     founded = models.DateTimeField(auto_now_add=True)
-    hashid = models.CharField(max_length=6, unique=True, blank=True, editable=False)
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
     img = models.ImageField(upload_to='leagues/', null=True, blank=True)
 
     players = models.ManyToManyField(User, related_name='leagues', blank=True)
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            super().save(*args, **kwargs)
-            self.hashid = hashids.encode(self.pk)
-
         if not self.img:
             default_img_path = random.choice(LEAGUE_IMAGES)
             self.img.name = default_img_path
 
         super().save(*args, **kwargs)
+
 
 BROLYMPIC_IMAGES = [
 
@@ -68,20 +62,15 @@ class Brolympics(models.Model):
         related_name='winner'
     )
 
-    hashid = models.CharField(max_length=6, unique=True, blank=True, editable=False)
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
     img = models.ImageField(upload_to='brolympics/', null=True, blank=True)
 
     players = models.ManyToManyField(User, related_name='brolympics', blank=True)
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            super().save(*args, **kwargs)
-            self.hashid = hashids.encode(self.pk)
-
         if not self.img:
             default_img_path = random.choice(LEAGUE_IMAGES)
             self.img.name = default_img_path
-
         super().save(*args, **kwargs)
 
     def get_available_teams(self):
@@ -591,7 +580,7 @@ class Event_IND(EventAbstactBase):
 
 class Event_H2H(EventAbstactBase):
     #add validation that it's an even number and no more than n_teams-1
-    n_matches = models.PositiveIntegerField(null=False, blank=False)
+    n_matches = models.PositiveIntegerField(null=False, blank=False, default=4)
     n_active_limit = models.PositiveIntegerField(blank=True, null=True)
     n_bracket_teams = models.PositiveIntegerField(default=4)
 
@@ -1079,18 +1068,8 @@ class Team(models.Model):
     losses = models.PositiveIntegerField(default=0)
     ties = models.PositiveIntegerField(default=0)
 
-    hashid = models.CharField(max_length=6, unique=True, blank=True, editable=False)
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
     img = models.ImageField(upload_to='teams/', null=True, blank=True)
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            super().save(*args, **kwargs)
-            self.hashid = hashids.encode(self.pk)
-
-        if not self.img:
-            default_img_path = random.choice(TEAM_IMAGES)
-            self.img.name = default_img_path
-        super().save(*args, **kwargs)
 
     def add_player(self, player):
         if self.player_1 is None:

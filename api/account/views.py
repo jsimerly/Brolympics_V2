@@ -11,7 +11,7 @@ User = get_user_model()
 class CreateUserView(APIView):
     def post(self, request):
         serializer = CreateUserSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             phone = serializer.validated_data.get('phone')
             send_verification_code(phone)

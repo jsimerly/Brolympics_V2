@@ -12,8 +12,14 @@ export async function fetchLeagues(){
     }
 }
 
-export async function createAllLeague(data){
-    const dataa = {data}
+export async function createAllLeague(league, brolympics, h2h, ind, team){
+    const data = {
+        league: league,
+        brolympics: brolympics,
+        h2h_event: h2h,
+        ind_event: ind,
+        team_event: team,
+    }
     try{
         const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/create-all-league/`,
         {
@@ -22,7 +28,7 @@ export async function createAllLeague(data){
                 'Content-Type': 'application/json',
                 'X-CSRFTOKEN' : getCookie('csrftoken'),
             },
-            body: JSON.stringify(userData),
+            body: JSON.stringify(data),
         })
 
         return response

@@ -9,6 +9,7 @@ import Brolympics from './components/brolympics/Brolympics';
 import League from './components/brolympics/League';
 import Leagues from './components/brolympics/Leagues';
 import VerifyPhone from './components/login_page/VerifyPhone';
+import LeagueInvite from './components/invites/LeagueInvite';
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
           <Route path='/' element={<Leagues/>}/>
           <Route path='/league' element={<League/>}/>
           <Route path='/brolympics/*' element={<Brolympics/>}/>
+          <Route path='/invite/league/:uuid' element={<LeagueInvite/>}/>
         </Routes>
       </AuthProvider>
     </div>

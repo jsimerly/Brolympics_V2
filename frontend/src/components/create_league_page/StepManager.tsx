@@ -3,6 +3,7 @@ import CreateLeaguePage from "./CreateLeaguePage"
 import CreateBrolympics from "./CreateBrolympics"
 import AddEvent from "./AddEvent"
 import AddPlayers from "./AddPlayers"
+import { createAllLeague} from '../../api/fetchLeague.js'
 
 const StepManager = ({step, nextStep, prevStep,}) => {
     const [league, setLeague] = useState({})
@@ -12,8 +13,23 @@ const StepManager = ({step, nextStep, prevStep,}) => {
     const [teamEvents, setTeamEvents] = useState([])
     const [link, setLink] = useState()
     
-    const createAll = () => {
-        console.log('creating league, brolypics, and events')
+    const createAll = async () => {
+      const response = await createAllLeague(
+        league,
+        brolympics,
+        h2hEvents,
+        indEvents,
+        teamEvents
+      )
+      if (response.ok){
+        const data = await response.json()
+        setLink(data.hashid)
+        console.log(data)
+        nextStep()
+      } else {
+        const data = await response.json()
+        console.log(data)
+      }
     }
   return (
     <div
@@ -34,7 +50,6 @@ const StepManager = ({step, nextStep, prevStep,}) => {
         />
         <AddEvent 
           step={3} 
-          nextStep={nextStep} 
           setH2hEvents={setH2hEvents} 
           setIndEvents={setIndEvents} 
           setTeamEvents={setTeamEvents} 

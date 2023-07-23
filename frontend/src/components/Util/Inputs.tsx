@@ -21,15 +21,15 @@ export const PhoneNumberInput = ({value, onChange, error}) => (
     </div>
 )
 
-export const DateOfBirthInput = ({value, onChange, error}) =>(
+export const DateInput = ({value, onChange, error}) =>(
     <MaskedInput
         mask={[/\d/, /\d/, "-", /\d/, /\d/,  "-", /\d/, /\d/, /\d/, /\d/,]}
         guide={false}
         value={value}
         onChange={onChange}
         className={`w-full border border-primary rounded-md pl-2 outline-primary p-2 ${error ? 'border-errorRed' : null}`}
-        placeholder="Date of Birth"
-        type="text"
+        placeholder="Date"
+        type="date"
     />
 )
 

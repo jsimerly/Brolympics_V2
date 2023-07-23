@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import CreateWrapper from "./CreateWrapper";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import ImageCropper, {readImageFile, getCroppedImg} from '../Util/ImageCropper';
+import ImageCropper, {readImageFile} from '../Util/ImageCropper';
 
 const CreateLeaguePage = ({step, nextStep, setLeague}) => {
     const [league, setLeagueData] = useState({name: "", img: null, imgSrc: null});
@@ -64,12 +64,12 @@ const CreateLeaguePage = ({step, nextStep, setLeague}) => {
                     <input 
                             type='file' 
                             accept="image/*"
-                            id='file' 
+                            id='file_league' 
                             onChange={handleImageUpload}
                             hidden      
                         />
                     <label 
-                        htmlFor='file'  
+                        htmlFor='file_league'  
                         className='inline-flex bg-white border border-gray-200 rounded-md cursor-pointer'
                     >
                         { league.img ?
@@ -81,12 +81,10 @@ const CreateLeaguePage = ({step, nextStep, setLeague}) => {
                         }
                     </label>
                     {cropping &&
-                        <div className='border'>
-                            <ImageCropper 
-                                img={league.imgSrc} 
-                                setCroppedImage={setCroppedImage}
-                            />
-                        </div>
+                        <ImageCropper 
+                            img={league.imgSrc} 
+                            setCroppedImage={setCroppedImage}
+                        />
                     }
                 </div>
             </div>

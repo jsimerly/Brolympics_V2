@@ -1,21 +1,54 @@
 import { useState } from 'react';
 import CreateWrapper from './CreateWrapper'
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import ImageCropper, {readImageFile} from '../Util/ImageCropper';
+import { DateInput } from '../Util/Inputs';
 
-const CreateBrolympics = ({step, nextStep}) => {
-    const [brolympicsName, setBrolympicsName] = useState()
-    const [brolympicsImage, setBrolympicsImage] = useState()
-    const [estStartDate, setEstStartDate] = useState()
-    
+const CreateBrolympics = ({step, nextStep, setBrolympics}) => {
+    const [brolympics, setBrolympicsData] = useState({name: "", img: null, imgSrc: null, date:''})
+    const [cropping, setCropping] = useState(false)
+
+        
     
     const handleCreateClicked = () => {
-        console.log('CREATE Brolmpycs')
-        nextStep()
+        if (brolympics.name) {
+            console.log('CREATE Brolmpycs')
+            nextStep()
+            setBrolympics(brolympics)
+        }
+
     }
 
-    const handleImageUpload = (event) => {
-        setBrolympicsImage(event.target.files[0]);
+    const handleImageUpload = async (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            let imageDataUrl = await readImageFile(file);
+            
+            setBrolympicsData(prevBro => ({...prevBro, img: file, imgSrc: imageDataUrl }));
+            setCropping(true);
+            console.log('corppin')
+        }
+        console.log('but here')
+    };
+
+    const setCroppedImage = (croppedImage) => {
+        setBrolympicsData(prevBro => ({...prevBro, img: croppedImage}))
+        setCropping(false)
     }
+
+    const handleNameChange = (e) => {
+        setBrolympicsData(prevBro => ({
+            ...prevBro,
+            name: e.target.value
+        }))
+    }
+
+    const handleDateChange = (e) => {
+        setBrolympics(prevBrolympics => ({
+            ...prevBrolympics,
+            date: e.target.value
+        }));
+    };
 
   return (
     <CreateWrapper
@@ -30,8 +63,8 @@ const CreateBrolympics = ({step, nextStep}) => {
                 <h3 className='ml-1'>Name *</h3>
                 <input 
                     type='text' 
-                    value={brolympicsName} 
-                    onChange={(e) => setBrolympicsName(e.target.value)}
+                    value={brolympics.name} 
+                    onChange={handleNameChange}
                     placeholder='Ex: Summer 2023'
                     className='w-full p-2 border border-gray-200 rounded-md'
                 />
@@ -40,8 +73,8 @@ const CreateBrolympics = ({step, nextStep}) => {
                 <h3 className='ml-1'>Start Date <span className='text-[12px]'> (Optional)</span></h3>
                 <input 
                     type='date' 
-                    value={brolympicsName} 
-                    onChange={(e) => setEstStartDate(e.target.value)}
+                    value={brolympics.date}
+                    onChange={handleDateChange}
                     className='w-full p-2 border border-gray-200 rounded-md'
                 />
             </div>
@@ -50,16 +83,28 @@ const CreateBrolympics = ({step, nextStep}) => {
                 <input 
                         type='file' 
                         accept="image/*"
-                        id='file' 
+                        id='file_bro' 
                         onChange={handleImageUpload}
                         hidden      
                     />
                 <label 
-                    htmlFor='file'  
-                    className='inline-flex p-4 bg-white border border-gray-200 rounded-md cursor-pointer'
+                    htmlFor='file_bro'  
+                    className='inline-flex bg-white border rounded-md cursor-pointer'
                 >
-                    <CameraAltIcon className='bg-white text-neutral' sx={{fontSize:40}}/>
+                    { brolympics.img ?
+                        <img src={brolympics.img} className='max-w-[100px] rounded-md'/>
+                        :
+                        <div className='w-[100px] h-[100px] rounded-md flex items-center justify-center'>
+                            <CameraAltIcon className='bg-white w-[100px] text-neutral' sx={{fontSize:60}}/>
+                        </div>
+                    }
                 </label>
+                { cropping &&
+                    <ImageCropper 
+                        img={brolympics.imgSrc} 
+                        setCroppedImage={setCroppedImage}
+                    />
+                }
             </div>
         </div>
     </CreateWrapper>

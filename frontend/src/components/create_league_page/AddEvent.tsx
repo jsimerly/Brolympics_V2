@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react'
 import CreateWrapper from './CreateWrapper'
 import CreateEventManger from './events/CreateEventManger'
 
-const AddEvent = ({step, nextStep}) => {
+const AddEvent = ({step, setH2hEvents, setIndEvents, setTeamEvents, createAll, setLink}) => {
     const [addedEvents, setAddedEvents] = useState([])
     let is_event_added = !(addedEvents.length === 0)
 
     const handleCreateClicked = () => {
-        console.log('CREATE Event')
-        nextStep()
+        createAll()
     }
 
     useEffect(() => {
@@ -30,6 +29,9 @@ const AddEvent = ({step, nextStep}) => {
         <CreateEventManger 
           addedEvents={addedEvents} 
           setAddedEvents={setAddedEvents}
+          setH2hEvents={setH2hEvents}
+          setIndEvents={setIndEvents}
+          setTeamEvents={setTeamEvents}
         />
         <div>
           <h3 className='pt-6 text-[18px] font-bold text-neutralDark'>Your Events</h3>

@@ -3,6 +3,7 @@ import Podium from '../../../assets/svgs/podium.svg'
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined';
 import DiamondOutlinedIcon from '@mui/icons-material/DiamondOutlined';
 import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
+import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
 
 import Event_h2h from "./events/Event_h2h";
 import Event_ind from "./events/Event_ind";
@@ -190,7 +191,8 @@ const Team = () => {
             </span>
           </div>
           <div className="flex">
-            <img src={Podium} className="text-white h-[26px] w-[26px]"/>
+            <LeaderboardOutlinedIcon className="text-primary"/>
+            {/* <img src={Podium} className="text-white h-[26px] w-[26px]"/> */}
             <span className="text-[16px] font-bold pl-3">
               {total_podiums}
             </span>

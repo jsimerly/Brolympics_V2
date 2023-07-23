@@ -6,9 +6,8 @@ from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from brolympics.models import *
 from brolympics.serializers import *
-from PIL import Image
-from io import BytesIO
 import base64
+from django.shortcuts import get_object_or_404
 
 
 User = get_user_model()
@@ -94,3 +93,62 @@ class GetAllLeagues(APIView):
         serializer = self.serializer_class(leagues, many=True, context={'request': request})
         
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class GetLeagueInfo(APIView):
+    serializer_class = AllLeaguesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, uuid):
+        league = get_object_or_404(League, uuid=uuid)
+        serializer = self.serializer_class(league, context={'request' : request})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class JoinLeague(APIView):
+    def post(self, request, uuid):
+        league = get_object_or_404(League, uuid=uuid)
+        user = request.user
+        league.players.add(user)
+
+        return Response(status=status.HTTP_200_OK)
+        
+class GetBrolympicsInfo(APIView):
+    serializer_class = AllLeaguesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, uuid):
+        broylmpics = get_object_or_404(Brolympics, uuid=uuid)
+        serializer = self.serializer_class(broylmpics)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class JoinBrolympics(APIView):
+    def post(self, request, uuid):
+        brolympics = get_object_or_404(Brolympics, uuid=uuid)
+        league = brolympics.league
+        user = request.user
+
+        brolympics.players.add(user)
+        league.players.add(user)
+
+        return Response(status=status.HTTP_200_OK)
+        
+
+class GetTeamInfo(APIView):
+    serializer_class = AllLeaguesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, uuid):
+        team = get_object_or_404(Team, uuid=uuid)
+        serializer = self.serializer_class(team)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class JoinTeam(APIView):
+    def post(self, request, uuid):
+        team = get_object_or_404(Team, uuid=uuid)
+        user = request.user
+        team.add_player(user)
+
+        return Response(status=status.HTTP_200_OK)
+        

@@ -1,9 +1,5 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import CloseIcon from '@mui/icons-material/Close';
-import {fetchLeagues} from '../../api/fetchLeague.js'
-
 
 const LeagueCard = ({name, img, founded}) => {    
     return (
@@ -21,20 +17,7 @@ const LeagueCard = ({name, img, founded}) => {
 }
 
 
-const Leagues = () => {
-    const [leagues, setLeagues] = useState([])
-
-    useEffect(()=> {
-        const getLeagues = async () => {
-            const response = await fetchLeagues()
-            if (response.ok){
-                const data = await response.json()
-                console.log(data)
-                setLeagues(data)
-            } 
-        }
-        getLeagues()
-    },[])
+const Leagues = ({leagues}) => {
 
     const navigate = useNavigate()
 

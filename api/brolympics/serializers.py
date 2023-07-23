@@ -7,10 +7,11 @@ User = get_user_model()
 class AllLeaguesSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
     founded = serializers.SerializerMethodField()
+    league_owner = serializers.SerializerMethodField()
 
     class Meta:
         model = League
-        fields = ['uuid', 'name', 'img' ,'is_owner', 'founded']
+        fields = ['uuid', 'name', 'img' ,'is_owner', 'founded', 'league_owner']
 
     def get_is_owner(self, obj):
         request = self.context.get('request')
@@ -20,6 +21,9 @@ class AllLeaguesSerializer(serializers.ModelSerializer):
     
     def get_founded(self, obj):
         return str(obj.founded.year)
+    
+    def get_league_owner(self, obj):
+        return f"{obj.league_owner.first_name} {obj.league_owner.last_name}"
     
 class LeagueCreateSerializer(serializers.ModelSerializer):
     league_owner = serializers.SerializerMethodField()

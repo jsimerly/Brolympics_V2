@@ -7,7 +7,7 @@ import AccountValidator from '../Util/input_validation.js';
 import ErrorMessages from "./ErrorMessages.js";
 
 
-const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber}) => {
+const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) => {
     const {login, setCurrentUser} = useContext(AuthContext)
 
     const [passwordError, setPasswordError] = useState(false);
@@ -40,7 +40,7 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber}) => {
         if (response.ok){
             const data = await response.json
             setCurrentUser(data)
-            navigate('/')
+            navigate(endPath)
         } else {    
             
             console.log(response)

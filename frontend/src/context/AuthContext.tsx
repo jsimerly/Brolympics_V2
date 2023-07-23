@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import {fetchLoginUser, handleLogout, fetchUserInformation, fetchCreateUser } from '../api/fetchUser.js'
 import {getCookie} from '../api/cookies'
 
@@ -11,8 +11,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const getUser = async () => {
       try {
-        // Call an endpoint that checks the validity of the token in the cookie
-        // and returns the associated user's information
         const response = await fetchUserInformation();
         if (response.ok) {
           const data = await response.json();

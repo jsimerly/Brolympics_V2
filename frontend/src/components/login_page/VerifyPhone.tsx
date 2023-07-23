@@ -32,13 +32,13 @@ const VerifyPhone = ({route, navigation}) => {
   }
 
   const location = useLocation()
-  const {phoneNumber, firstName, lastName, password} = location.state
+  const {phoneNumber, firstName, lastName, password, endPath} = location.state
   
   const verifyCode = async () => {
     console.log(phoneNumber)
     const response = await fetchVerifyPhone(phoneNumber, firstName, lastName, password, code.join(''))
     if (response.ok){
-      navigate('/')
+      navigate(endPath)
     } else {
       //throw error message
     }

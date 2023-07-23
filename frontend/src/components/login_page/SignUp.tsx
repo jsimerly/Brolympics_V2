@@ -3,7 +3,7 @@ import { useSwipeable } from 'react-swipeable';
 import CreateAccount from './CreateAccount';
 import LogIn from './LogIn';
 
-const SignUp = () => {
+const SignUp = ({endPath='/'}) => {
     const [currentPage, setCurrentPage] = useState('createAccount')
     
     const [firstName, setFirstName] = useState('');
@@ -51,8 +51,8 @@ const SignUp = () => {
       </div>
       <div className={`transition ease-in-out duration-200 flex relative
       ${currentPage === 'createAccount' ? 'translate-x-0' : 'transform -translate-x-full'}`}>
-            <CreateAccount {...userState}/>
-            <LogIn {...userState}/> 
+            <CreateAccount {...userState} endPath={endPath}/>
+            <LogIn {...userState} endPath={endPath}/> 
       </div>
     </div>
   );

@@ -37,6 +37,7 @@ const Account = ({setView}) => {
     }
 
     const handleLogout = () => {
+        console.log('logout')
         logout()
     }
 
@@ -115,7 +116,7 @@ const Account = ({setView}) => {
                     className='text-primary'
                     onClick={handleSave}
                 />
-                {currentUser.email !== null &&
+                {!currentUser &&
                     <div>
                         {userInfo.email_verified ? 
                         <span className='text-[10px] p-1 text-primary flex items-center gap-1'>

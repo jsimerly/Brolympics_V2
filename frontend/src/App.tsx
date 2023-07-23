@@ -9,22 +9,36 @@ import Brolympics from './components/brolympics/Brolympics';
 import League from './components/brolympics/League';
 import Leagues from './components/brolympics/Leagues';
 import VerifyPhone from './components/login_page/VerifyPhone';
-import LeagueInvite from './components/invites/LeagueInvite';
+import Invites from './components/invites/Invites';
+
+import {fetchLeagues} from './api/fetchLeague.js'
 
 function App() {
+    const [leagues, setLeagues] = useState([])
+
+    useEffect(()=> {
+        const getLeagues = async () => {
+            const response = await fetchLeagues()
+            if (response.ok){
+                const data = await response.json()
+                setLeagues(data)
+            } 
+        }
+        getLeagues()
+    },[])
 
   return (
     <div className='min-h-screen bg-offWhite text-neutralDark'>
       <AuthProvider>
-        <Navbar/>
+        <Navbar leagues={leagues}/>
         <Routes>
           <Route path='/sign-up/*' element={<SignUp/>}/>
           <Route path='/sign-up/verify' element={<VerifyPhone/>}/>
           <Route path='/start-league' element={<StartLeague/>}/>
-          <Route path='/' element={<Leagues/>}/>
+          <Route path='/' element={<Leagues leagues={leagues}/>}/>
           <Route path='/league' element={<League/>}/>
           <Route path='/brolympics/*' element={<Brolympics/>}/>
-          <Route path='/invite/league/:uuid' element={<LeagueInvite/>}/>
+          <Route path='/invite/*' element={<Invites/>}/>
         </Routes>
       </AuthProvider>
     </div>

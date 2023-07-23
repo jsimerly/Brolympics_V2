@@ -3,7 +3,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Slideout from './Slideout';
 
-const Navbar = () => {
+const Navbar = ({leagues}) => {
     const [slideOpen, setSlideOpen]= useState(false)
 
     const menuClick = () => {
@@ -26,6 +26,7 @@ const Navbar = () => {
         </div>
         <div className='h-[80px]'/>
         <Slideout 
+            leagues={leagues}
             open={slideOpen}
         />
     </>

@@ -20,7 +20,7 @@ const CreateWrapper = ({button_text, step, submit, title, description, grey_out=
             className={`flex justify-between w-full p-3  font-bold text-white rounded-md  ${grey_out ? 'bg-neutralLight' : 'bg-primary'}`}
             onClick={submit}
         >
-            <div className='pr-6'/>
+        <div className='pr-6'/>
             {button_text}
             <ArrowForwardIcon/>
         </button>

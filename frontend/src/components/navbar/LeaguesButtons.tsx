@@ -9,13 +9,12 @@ const LeaguesButtons = ({leagues}) => {
       <AddCircleOutlineIcon/>
     </div>
   )
-  const Card = (league_name, index) => (
+  const Card = (league, index) => (
     <div className='flex items-center w-full gap-3 p-3 rounded-md' key={index}> 
-      <div className='bg-white h-[40px] w-[40px] rounded-lg text-black'>
-        logo
-      </div>
+      <img src={league.img} className=' h-[40px] w-[40px] rounded-md'/>
+
       <div className='text-[18px]'>
-        {league_name.name}
+        {league.name}
       </div>
     </div>
   )

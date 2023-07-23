@@ -10,7 +10,7 @@ import UpcomingBrolympics from "./UpcomingBrolympics"
 import UpcomingCompetitions from "./UpcomingComps"
 import Account from './Account';
 
-const Slideout = ({open}) => {
+const Slideout = ({open, leagues}) => {
     const [view, setView] = useState('leagues')
     const {currentUser} = useContext(AuthContext)
 
@@ -18,10 +18,6 @@ const Slideout = ({open}) => {
 
     },[currentUser])
 
-    const leagues = [
-        {'name':'League 1'},
-        {'name':'League 2'}
-    ]
     const current_brolympics = []
 
     const upcoming_brolympics = [
@@ -50,9 +46,7 @@ const Slideout = ({open}) => {
                         <LeaguesButtons leagues={leagues}/>
                         <CurrentBrolympics current_brolympics={current_brolympics}/>
                         <UpcomingBrolympics upcoming_brolympics={upcoming_brolympics}/>
-                        <UpcomingCompetitions upcoming_competitions={upcoming_competitions}/>
-
-                        
+                        <UpcomingCompetitions upcoming_competitions={upcoming_competitions}/>                        
                     </div>
                 }
 

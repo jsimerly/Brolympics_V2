@@ -2,15 +2,19 @@ from django.urls import path
 from brolympics.views import *
 
 urlpatterns = [
-    path('create-league/', CreateLeagueView.as_view(), name='create_league'),
+    #create
     path('create-all-league/', CreateAllLeagueView.as_view(), name='create_all_league'),
-    path('all-leagues/', GetAllLeagues.as_view(), name='get_all_leagues'),
 
+    #get info
+    path('all-leagues/', GetAllLeagues.as_view(), name='get_all_leagues'),
+    path('league-info/<uuid:uuid>', GetLeagueInfo.as_view(), name='get_league_info'),
+    path('get-brolympics-home/<uuid:uuid>', GetBrolympicsHome.as_view(), name='get_brolympics_home'),
+    
     #invites
-    path('league-invite/<uuid:uuid>', GetLeagueInfo.as_view(), name='league_invite'),
+    path('league-invite/<uuid:uuid>', GetLeagueInvite.as_view(), name='league_invite'),
     path('join-league/<uuid:uuid>', JoinLeague.as_view(), name='join_league'),
-    path('brolympics-invite/<uuid:uuid>', GetBrolympicsInfo.as_view(), name='brolympics_invite'),
+    path('brolympics-invite/<uuid:uuid>', GetBrolympicsInvite.as_view(), name='brolympics_invite'),
     path('join-brolympics/<uuid:uuid>', JoinBrolympics.as_view(), name='join_brolympics'),
-    path('team-invite/<uuid:uuid>', GetTeamInfo.as_view(), name='team_invite'),
+    path('team-invite/<uuid:uuid>', GetTeamInvite.as_view(), name='team_invite'),
     path('join-team/<uuid:uuid>', JoinTeam.as_view(), name='join_team'),
 ]

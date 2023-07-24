@@ -12,6 +12,16 @@ export async function fetchLeagues(){
     }
 }
 
+export async function fetchLeagueInfo(uuid){
+    try {
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/league-info/${uuid}`)
+
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 export async function createAllLeague(league, brolympics, h2h, ind, team){
     const data = {
         league: league,

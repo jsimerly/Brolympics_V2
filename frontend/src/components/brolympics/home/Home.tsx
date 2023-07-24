@@ -1,11 +1,12 @@
-import OutOfCompetitions from './OutOfCompetition'
+import HomeActive from './HomeActive'
+
 
 
 const Home = () => {
 
   return (
     <div>
-        <OutOfCompetitions/>
+        <HomeActive/>
     </div>
   )
 }

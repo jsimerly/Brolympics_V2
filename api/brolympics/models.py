@@ -195,6 +195,8 @@ class EventAbstactBase(models.Model):
     end_time = models.DateTimeField(blank=True, null=True)
     is_concluded = models.BooleanField(default=False)
 
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
+
     class Meta:
         abstract = True
 
@@ -1045,7 +1047,6 @@ class Team(models.Model):
     )
 
     name = models.CharField(max_length=120)
-    team_picture = models.ImageField(null=True, blank=True)
 
     player_1 = models.ForeignKey(
         User,
@@ -1123,6 +1124,8 @@ class Competition_Team(models.Model):
     is_active = models.BooleanField(default=False)
     is_complete = models.BooleanField(default=False)
 
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
+
     def start(self):
         if not self.team.is_available:
             raise ValueError("This team is not currently available")
@@ -1176,6 +1179,7 @@ class Competition_Ind(models.Model):
     is_active = models.BooleanField(default=False)
     is_complete = models.BooleanField(default=False)
 
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
 
     def start(self):
         if not self.team.is_available:
@@ -1261,6 +1265,8 @@ class Competition_H2H_Base(models.Model):
 
     is_active = models.BooleanField(default=False)
     is_complete = models.BooleanField(default=False)
+
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
 
     class Meta:
         abstract = True
@@ -1349,6 +1355,7 @@ class EventRankingAbstractBase(models.Model):
 
     is_final = models.BooleanField(default=False)
 
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
     class Meta:
         abstract = True
 
@@ -1371,6 +1378,7 @@ class EventRanking_Team(models.Model):
     points = models.FloatField(default=0)
 
     is_final = models.BooleanField(default=False)
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
 
     def update_scores(self):
         all_completed_comps = Competition_Team.objects.filter(
@@ -1418,6 +1426,7 @@ class EventRanking_Ind(models.Model):
     points = models.FloatField(default=0)
 
     is_final = models.BooleanField(default=False)
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
 
     def update_scores(self):
         all_completed_comps = Competition_Ind.objects.filter(
@@ -1482,6 +1491,7 @@ class EventRanking_H2H(models.Model):
     sos_ties = models.PositiveIntegerField(default=0)
 
     is_final = models.BooleanField(default=False)
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
 
     def get_win_rate(self):
         if (self.wins + self.ties + self.losses) > 0:
@@ -1604,6 +1614,7 @@ class Bracket_4(models.Model):
     is_active = models.BooleanField(default=False)
     is_complete = models.BooleanField(default=False)
     is_losers_bracket = models.BooleanField(default=True)
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
 
     def finalize(self):
         c_win_bool = self.championship.winner is not None

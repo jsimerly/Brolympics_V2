@@ -79,7 +79,7 @@ const EventBlock = ({ title, items, component: Component , component_func}) => {
 }
 
 
-const OutOfCompetitions = () => {
+const HomeActive = () => {
     const active_events = [
         {'name' : 'Cornhole', 'complete_perc' : 20},
         {'name' : 'Beer Pong', 'complete_perc' : 90},
@@ -134,7 +134,7 @@ const OutOfCompetitions = () => {
     <div className='px-6 py-3'>
         <div className='flex flex-col gap-3'>
             <EventBlock 
-                title="Current Event"
+                title="Active Event"
                 items={active_events} 
                 component={CurrentEventCard} 
                 component_func={null}
@@ -156,4 +156,4 @@ const OutOfCompetitions = () => {
   )
 }
 
-export default OutOfCompetitions
+export default HomeActive

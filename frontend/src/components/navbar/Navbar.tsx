@@ -1,14 +1,21 @@
 import {useState} from 'react'
+import { useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Slideout from './Slideout';
 
 const Navbar = ({leagues}) => {
     const [slideOpen, setSlideOpen]= useState(false)
+    const navigate = useNavigate()
 
     const menuClick = () => {
         setSlideOpen(prevState => !prevState);
       };
+
+
+    const logoClick = () => {
+        navigate('/')
+    }
 
   return (
     <>
@@ -20,7 +27,9 @@ const Navbar = ({leagues}) => {
                 {slideOpen ?<CloseIcon sx={{fontSize: 35}}/> : <MenuIcon sx={{fontSize: 35}}/>}   
              
             </div>
-            <div>
+            <div
+                onClick={logoClick}
+            >
                 Logo
             </div>
         </div>

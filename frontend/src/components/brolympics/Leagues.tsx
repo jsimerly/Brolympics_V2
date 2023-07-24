@@ -1,9 +1,24 @@
 import { useNavigate } from 'react-router-dom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import SettingsIcon from '@mui/icons-material/Settings';
 
-const LeagueCard = ({name, img, founded}) => {    
+const LeagueCard = ({name, img, founded, is_owner, uuid}) => {    
+    const navigate = useNavigate()
+
+    const onLeagueClick = () => {
+        navigate(`/league/${uuid}`)
+    }
+
+    const onSettingsClick = () => {
+        //deal with later
+        navigate('/')
+    }
+    
     return (
-        <div className='flex items-center px-3 py-6'>
+        <div 
+            className='flex items-center px-3 py-6'
+            onClick={onLeagueClick}
+        >
             <img
                 className='h-[60px] min-w-[60px] w-[60px] rounded-md'
                 src={img}                
@@ -12,6 +27,11 @@ const LeagueCard = ({name, img, founded}) => {
                 <h2 className='text-[30px] font-bold w-full text-center'> {name}</h2>
                 <span className=' text-center text-[14px]'>Founded: {founded}</span>
             </div>
+            {is_owner &&
+                <div className='text-primary'>
+                    <SettingsIcon sx={{fontSize: 30}}/>
+                </div>
+            }
         </div>
     )
 }

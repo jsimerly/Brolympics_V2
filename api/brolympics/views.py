@@ -8,6 +8,7 @@ from brolympics.models import *
 from brolympics.serializers import *
 import base64
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import PermissionDenied
 
 
 User = get_user_model()
@@ -75,11 +76,7 @@ class CreateAllLeagueView(APIView):
         all_league_serializer = AllLeaguesSerializer(league, context={'request' : request})
         return Response(all_league_serializer.data, status=status.HTTP_201_CREATED )
 
-class CreateLeagueView(APIView):
-    def post(self, request):
-        pass
-
-
+# Get Info
 class GetAllLeagues(APIView):
     serializer_class = AllLeaguesSerializer
     permission_classes = [IsAuthenticated]
@@ -94,15 +91,53 @@ class GetAllLeagues(APIView):
         
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+
 class GetLeagueInfo(APIView):
-    serializer_class = AllLeaguesSerializer
+    serializer_class = LeagueInfoSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request, uuid):
         league = get_object_or_404(League, uuid=uuid)
         serializer = self.serializer_class(league, context={'request' : request})
 
+
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+    
+class GetBrolympicsHome(APIView):
+    serializer_class = BrolympicsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, uuid):
+        brolympics = get_object_or_404(Brolympics, uuid=uuid)
+        serializer = self.serializer_class(brolympics, context={'request':request})
+
+        ## Need a new serializer to get active events
+        #this will need to be a check, then we feed it to a different serializer to get the information we need. [pre, active, post]
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+## Invites ##
+class GetLeagueInvite(APIView):
+    serializer_class = AllLeaguesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, uuid):
+        league = get_object_or_404(League, uuid=uuid)
+        
+        if self.request.user not in league.players.all() and self.request.user != league.owner:
+            raise PermissionDenied("You do not have permission to view this league's info.")
+
+        return league
+
+    def get(self, request, uuid):
+        league = self.get_object(League, uuid=uuid)
+        serializer = self.serializer_class(league, context={'request' : request})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+
     
 class JoinLeague(APIView):
     def post(self, request, uuid):
@@ -112,7 +147,7 @@ class JoinLeague(APIView):
 
         return Response(status=status.HTTP_200_OK)
         
-class GetBrolympicsInfo(APIView):
+class GetBrolympicsInvite(APIView):
     serializer_class = AllLeaguesSerializer
     permission_classes = [IsAuthenticated]
 
@@ -120,8 +155,9 @@ class GetBrolympicsInfo(APIView):
         broylmpics = get_object_or_404(Brolympics, uuid=uuid)
         serializer = self.serializer_class(broylmpics)
 
+
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+            
 class JoinBrolympics(APIView):
     def post(self, request, uuid):
         brolympics = get_object_or_404(Brolympics, uuid=uuid)
@@ -134,7 +170,7 @@ class JoinBrolympics(APIView):
         return Response(status=status.HTTP_200_OK)
         
 
-class GetTeamInfo(APIView):
+class GetTeamInvite(APIView):
     serializer_class = AllLeaguesSerializer
     permission_classes = [IsAuthenticated]
 
@@ -142,8 +178,8 @@ class GetTeamInfo(APIView):
         team = get_object_or_404(Team, uuid=uuid)
         serializer = self.serializer_class(team)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+        return Response(serializer.data, status=status.HTTP_200_OK)   
+             
 class JoinTeam(APIView):
     def post(self, request, uuid):
         team = get_object_or_404(Team, uuid=uuid)

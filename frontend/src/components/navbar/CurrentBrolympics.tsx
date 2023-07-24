@@ -1,8 +1,19 @@
 import DataList from './DataList';
+import {useNavigate} from 'react-router-dom'
 
-const CurrentBrolympics = ({current_brolympics}) => {
-    const Card = (info, index) => (
-        <div className='flex items-center w-full gap-3 p-3 rounded-md fex-items-center' key={index}> 
+const Card = (info, index, setOpen) => {
+    const navigate = useNavigate()
+    const onClick = () => {
+      navigate(`/b/${info.uuid}`)
+      setOpen(false)
+    }
+    
+    return(
+        <div 
+            className='flex items-center w-full gap-3 p-3 rounded-md fex-items-center' 
+            key={index}
+            onClick={onClick}
+        > 
             <div className='bg-white h-[40px] w-[40px] rounded-lg text-black'>
                 logo
             </div>
@@ -14,6 +25,11 @@ const CurrentBrolympics = ({current_brolympics}) => {
             </div>
         </div>
     );
+}
+
+
+
+const CurrentBrolympics = ({current_brolympics, setOpen}) => {
 
     return (
         <>
@@ -23,6 +39,7 @@ const CurrentBrolympics = ({current_brolympics}) => {
                 title="Current Brolympics"
                 data={current_brolympics}
                 card={Card}
+                setOpen={setOpen}
             /> 
         }
         </>

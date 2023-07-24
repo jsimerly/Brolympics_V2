@@ -47,3 +47,13 @@ export async function createAllLeague(league, brolympics, h2h, ind, team){
         throw (error)
     }
 }
+
+export async function fetchUpcoming(){
+    try {
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/upcoming`)
+
+        return response
+    } catch (error) {
+        throw error
+    }
+}

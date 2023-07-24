@@ -36,6 +36,7 @@ const Navbar = ({leagues}) => {
         <div className='h-[80px]'/>
         <Slideout 
             leagues={leagues}
+            setOpen={setSlideOpen}
             open={slideOpen}
         />
     </>

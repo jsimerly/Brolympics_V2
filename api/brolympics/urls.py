@@ -9,6 +9,7 @@ urlpatterns = [
     path('all-leagues/', GetAllLeagues.as_view(), name='get_all_leagues'),
     path('league-info/<uuid:uuid>', GetLeagueInfo.as_view(), name='get_league_info'),
     path('get-brolympics-home/<uuid:uuid>', GetBrolympicsHome.as_view(), name='get_brolympics_home'),
+    path('upcoming/', GetUpcoming.as_view(), name='get_upcoming'),
     
     #invites
     path('league-invite/<uuid:uuid>', GetLeagueInvite.as_view(), name='league_invite'),

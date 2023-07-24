@@ -9,6 +9,7 @@ from brolympics.serializers import *
 import base64
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
+from django.db.models import Q
 
 
 User = get_user_model()
@@ -117,6 +118,61 @@ class GetBrolympicsHome(APIView):
         #this will need to be a check, then we feed it to a different serializer to get the information we need. [pre, active, post]
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+class GetUpcoming(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+
+        brolympics = Brolympics.objects.filter(players__in=[user])
+        upcoming_bro = brolympics.filter(start_time__isnull=True, is_complete=False)
+        current_bro = Brolympics.objects.filter(start_time__isnull=False, is_complete=False)
+
+        upcoming_comp_h2h = Competition_H2H.objects.filter(
+            Q(team_1__player_1=user) | Q(team_1__player_2=user) | 
+            Q(team_2__player_1=user) | Q(team_2__player_2=user),
+            is_complete=False,
+            start_time=None
+        )
+        upcoming_bracket_matchup = BracketMatchup.objects.filter(
+            Q(team_1__player_1=user) | Q(team_1__player_2=user) | 
+            Q(team_2__player_1=user) | Q(team_2__player_2=user),
+            is_complete=False,
+            start_time=None
+        )
+        upcoming_comp_ind = Competition_Ind.objects.filter(
+            Q(team__player_1=user) | Q(team__player_2=user),
+            is_complete=False,
+            start_time=None
+        )
+        upcoming_comp_team = Competition_Team.objects.filter(
+            Q(team__player_1=user) | Q(team__player_2=user),
+            is_complete=False,
+            start_time=None
+        )
+
+        upcoming_bro_serializer = BrolympicsSerializer(upcoming_bro, context={'request':request}, many=True)
+        current_bro_serializer = BrolympicsSerializer(current_bro, context={'request':request}, many=True)
+
+        h2h_serializer = EventBasicSerializer_H2h(upcoming_comp_h2h, many=True)
+        bracket_serializer = EventBasicSerializer_H2h(upcoming_bracket_matchup, many=True)
+        ind_serializer = EventBasicSerializer_Ind(upcoming_comp_ind, many=True)
+        team_serializer = EventBasicSerializer_Team(upcoming_comp_team, many=True)
+
+
+        data = {
+            'current_brolympics' :  current_bro_serializer.data,
+            'upcoming_brolympics' : upcoming_bro_serializer.data,
+            'upcoming_competitions' : h2h_serializer.data + bracket_serializer.data + ind_serializer.data + team_serializer.data
+        }
+        
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+
+
 
 ## Invites ##
 class GetLeagueInvite(APIView):

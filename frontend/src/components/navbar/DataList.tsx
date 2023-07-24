@@ -1,4 +1,4 @@
-const DataList = ({title, data, card}) => {
+const DataList = ({title, data, card, setOpen}) => {
     return (
         <div className="">
             <h2 className="text-[20px]">
@@ -8,7 +8,7 @@ const DataList = ({title, data, card}) => {
                 {data.length === 0 ? 
                     `No ${title}`
                     :
-                    data.map(card)
+                    data.map((item, index) => card(item, index, setOpen))
                 }
             </div>
         </div>

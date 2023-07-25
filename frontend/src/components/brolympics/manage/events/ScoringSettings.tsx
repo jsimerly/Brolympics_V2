@@ -52,14 +52,14 @@ const ScoringSettings = ({highScoreWins, highScoreToggle}) => {
             <h2 className="py-2">Date & Time</h2>
             <div className="flex flex-col w-full gap-3">
                 <div className='flex flex-col'>
-                    <span className='ml-1 text-[12px] font-semibold'>Start Date</span>
+                    <span className='ml-1 text-[12px] font-semibold'>Start Date (optional)</span>
                     <input 
                     className='flex w-full p-2 border rounded-md border-primary'
                     type='datetime-local'
                     />
                 </div>
                 <div className='flex flex-col font-semibold'>
-                    <span className='ml-1 text-[12px]'>End Date</span>
+                    <span className='ml-1 text-[12px]'>End Date (options)</span>
                     <input 
                     className='flex w-full p-2 border rounded-md border-primary'
                     type='datetime-local'

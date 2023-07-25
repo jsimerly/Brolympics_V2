@@ -1,17 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import SettingsIcon from '@mui/icons-material/Settings';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 const LeagueCard = ({name, img, founded, is_owner, uuid}) => {    
     const navigate = useNavigate()
 
     const onLeagueClick = () => {
         navigate(`/league/${uuid}`)
-    }
-
-    const onSettingsClick = () => {
-        //deal with later
-        navigate('/')
     }
     
     return (
@@ -29,7 +24,7 @@ const LeagueCard = ({name, img, founded, is_owner, uuid}) => {
             </div>
             {is_owner &&
                 <div className='text-primary'>
-                    <SettingsIcon sx={{fontSize: 30}}/>
+                    <AutoAwesomeIcon sx={{fontSize: 30}}/>
                 </div>
             }
         </div>

@@ -1,5 +1,4 @@
 import ManageEventWrapper from "./ManageEventWrapper"
-import ToggleButton from "../../../Util/ToggleButton"
 import {useState} from 'react'
 import ScoringSettings from "./ScoringSettings"
 
@@ -28,7 +27,7 @@ const ManageEvent_h2h = ({name}) => {
             <div className="flex items-center justify-between min-h-[50px]">
                 <div>
                     <h3 className="font-semibold">Max Concurrent Matches</h3>
-                    <p className="text-[10px]">The number of max possible simulatnious matches. <br/> Ex: 2 sets of cornhole boards.</p>
+                    <p className="text-[10px]">The number of max possible simulatnious matches. <br/> Ex: 2 sets of cornhole boards. Leave blank for no max.</p>
                 </div>
                 <input 
                     className="p-1 border rounded-md border-primary h-[40px] w-[60px] bg-white text-center"

@@ -1,11 +1,9 @@
 import {useState} from 'react'
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import ImageCropper, {readImageFile} from '../..//Util/ImageCropper';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import CopyWrapper from '../../Util/CopyWrapper';
 
 const ManageBro = () => {
-    const [copySuccess, setCopySuccess] = useState(false);
     const [cropping, setCropping] = useState(false)
     const [broData, setBroData] = useState()
 
@@ -18,21 +16,6 @@ const ManageBro = () => {
         }
       };
 
-      const copyToClipboard = async (text) => {
-        if (!navigator.clipboard) {
-          // Clipboard API not available
-          return;
-        }
-        try {
-          await navigator.clipboard.writeText(text);
-          setCopySuccess(true);
-          setTimeout(() => {
-            setCopySuccess(false);
-          }, 3000);
-        } catch (err) {
-          console.log('Could not copy.')
-        }
-      }
 
       const setCroppedImage = (croppedImage) => {
         setBroData(prevData => ({...prevData, img: croppedImage}))
@@ -98,14 +81,15 @@ const ManageBro = () => {
         </div>
         <div className='mt-3'>
         <h4 className='pb-1 font-bold'>Copy the Link and Share with Friends</h4>
+        
+
           <div 
-            className='flex justify-between p-2 bg-white border rounded-md'
-            onClick={()=>copyToClipboard('https://sleeper.com/i/k7N5Yxx00Ywz')}
+            className='flex p-2 bg-white border rounded-md'
           >
-            https://sleeper.com/i/k7N5Yxx00Ywz
-            <ContentCopyOutlinedIcon className='text-primary'/>
+            <CopyWrapper copyString={'https://sleeper.com/i/k7N5Yxx00Ywz'}>
+                <span className='flex flex-1'>https://sleeper.com/i/k7N5Yxx00Ywz</span>
+            </CopyWrapper>
           </div>
-          {copySuccess && <div className='text-primary'>Copied!</div>}
         </div>
       </div>
       <button className='w-full p-2 mt-6 font-semibold text-white rounded-md bg-primary'>

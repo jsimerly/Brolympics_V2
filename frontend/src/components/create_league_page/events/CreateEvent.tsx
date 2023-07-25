@@ -4,8 +4,14 @@ import PersonIcon from '@mui/icons-material/Person';
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 import EmojiObjectsOutlinedIcon from '@mui/icons-material/EmojiObjectsOutlined';
 
-const CreateEvent = ({setType, selected, handleEventAdded, eventName, setEventName}) => {
+const CreateEvent = ({handleEventAdded}) => {
+    const [selectedType, setSelectedType] = useState('ind');
+    const [eventName, setEventName] = useState("")
     
+    const addClicked = () => {
+        handleEventAdded(eventName, selectedType)
+    }
+
     const TypeCard = ({e_type, description, examples, Icon}) => (
         <div 
             className="flex w-full h-[115px] rounded-md p-2 border bg-white"
@@ -27,23 +33,23 @@ const CreateEvent = ({setType, selected, handleEventAdded, eventName, setEventNa
     )
 
     const handleIndClick = () => {
-        setType('ind')
+        setSelectedType('ind')
     }
     const handleH2hClick = () => {
-        setType('h2h')
+        setSelectedType('h2h')
     }
     const handleTeamClick = () => {
-        setType('team')
+        setSelectedType('team')
     }
 
     const getEventText = () => {
-        if (selected === 'ind'){
+        if (selectedType === 'ind'){
             return 'Individual Event'
         }
-        if (selected === 'h2h'){
+        if (selectedType === 'h2h'){
             return 'Head to Head Event'
         }
-        if (selected === 'team'){
+        if (selectedType === 'team'){
             return 'Team Event'
         }
         return ''
@@ -57,7 +63,7 @@ const CreateEvent = ({setType, selected, handleEventAdded, eventName, setEventNa
         </div>
         <div
             onClick={handleIndClick}
-            className={`${selected == 'ind' ? 'outline rounded-md outline-primary outline-2' :''}`}
+            className={`${selectedType == 'ind' ? 'outline rounded-md outline-primary outline-2' :''}`}
         >
             <TypeCard
                 e_type='Individual Event'
@@ -68,7 +74,7 @@ const CreateEvent = ({setType, selected, handleEventAdded, eventName, setEventNa
         </div>
         <div
             onClick={handleH2hClick}
-            className={`${selected == 'h2h' ? 'outline rounded-md outline-primary outline-2' :''}`}
+            className={`${selectedType == 'h2h' ? 'outline rounded-md outline-primary outline-2' :''}`}
         >
             <TypeCard
                 e_type='Head to Head Event'
@@ -80,7 +86,7 @@ const CreateEvent = ({setType, selected, handleEventAdded, eventName, setEventNa
 
         <div
             onClick={handleTeamClick}
-            className={`${selected == 'team' ? 'outline rounded-md outline-primary outline-2' :''}`}
+            className={`${selectedType == 'team' ? 'outline rounded-md outline-primary outline-2' :''}`}
         >
             <TypeCard
                 e_type='Team Event'
@@ -101,7 +107,7 @@ const CreateEvent = ({setType, selected, handleEventAdded, eventName, setEventNa
         </div>
         <button 
             className='w-full p-3 font-bold text-white rounded-md bg-primary'
-            onClick={handleEventAdded}
+            onClick={addClicked}
         >
             Add {getEventText()}
         </button>

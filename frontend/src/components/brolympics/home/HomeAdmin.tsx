@@ -53,10 +53,9 @@ const HomeAdmin = () => {
           <span className='text-[12px]'>Make sure you fully update all of your event settings before your Brolympics begins.</span>
       </h3>
       <ManageEvents/>
+      <div className='my-3'/>
       <ManageTeams/>
-
-
-
+      <div className='my-3'/>
       <ManageBro/>
     </div>
   )

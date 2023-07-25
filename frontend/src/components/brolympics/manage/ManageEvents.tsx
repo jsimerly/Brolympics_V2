@@ -3,8 +3,21 @@ import ManageEvent_h2h from './events/ManageEvent_h2h'
 import ManageEvent_ind from './events/ManageEvent_ind'
 import ManageEvent_team from './events/ManageEvent_team'
 
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import CreateEvent from '../../create_league_page/events/CreateEvent';
+
 
 const ManageEvents = () => {
+    const [addingEvent, setAddingEvent] = useState(false)
+    const toggleAddEvent = () => {
+        setAddingEvent(addingEvent => !addingEvent)
+    }
+
+    const handleEventAdd = () => {
+        console.log('Add event here')
+        setAddingEvent(false)
+    }
+
     const events = [
         {'name' : 'Cornholio', 'type':'h2h'},
         {'name' : 'Golf', 'type':'ind'},
@@ -31,9 +44,18 @@ const ManageEvents = () => {
                 ))
             }
         </div>
-        <button>
+        <button
+            className='flex gap-3  text-[16px]'
+            onClick={toggleAddEvent}
+        >
             Add Event
+            <AddCircleOutlineIcon className='text-neutralLight'/>
         </button>
+        {addingEvent &&
+            <CreateEvent
+                handleEventAdded={handleEventAdd}
+            />
+        }
     </div>
   )
 }

@@ -33,13 +33,13 @@ const LeaguesButtons = ({leagues, setOpen}) => {
     setOpen(false)
   }
   const AddLeagueButton = () => (
-    <div 
+    <button 
       className='flex gap-3 p-3 text-[16px]'
       onClick={addLeagueClick}
     >
       Add League
       <AddCircleOutlineIcon/>
-    </div>
+    </button>
   )
 
   return (

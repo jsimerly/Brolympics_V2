@@ -3,10 +3,9 @@ import {useHistory} from 'react'
 import CreateEvent from './CreateEvent';
 
 const CreateEventManger = ({addedEvents, setAddedEvents ,setH2hEvents, setIndEvents, setTeamEvents}) => {
-    const [selectedType, setSelectedType] = useState('ind');
-    const [eventName, setEventName] = useState("")
 
-    const handleEventAdded = () => {
+
+    const handleEventAdded = (eventName, selectedType) => {
         setAddedEvents(prevEvents => [...prevEvents, eventName]);
         setEventName("");   
 
@@ -26,13 +25,7 @@ const CreateEventManger = ({addedEvents, setAddedEvents ,setH2hEvents, setIndEve
 
   return (
     <div className="w-full">
-        <CreateEvent 
-            selected={selectedType} 
-            setType={setSelectedType} 
-            handleEventAdded={handleEventAdded}
-            eventName={eventName}
-            setEventName={setEventName}
-        />
+        <CreateEvent handleEventAdded={handleEventAdded}/>
     </div>
   )
 }

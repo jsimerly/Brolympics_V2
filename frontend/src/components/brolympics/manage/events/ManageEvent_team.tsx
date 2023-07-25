@@ -52,6 +52,9 @@ const ManageEvent_team = ({name}) => {
             highScoreWins={highScoreWins} 
             highScoreToggle={highScoreToggle}
         />
+        <button className="w-full p-2 mt-3 font-semibold text-white rounded-md bg-primary">
+            Update {name}
+        </button>
     </ManageEventWrapper>
   )
 }

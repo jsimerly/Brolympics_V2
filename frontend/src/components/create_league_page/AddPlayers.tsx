@@ -4,6 +4,7 @@ import { PhoneNumberInput, PasswordInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
+import CopyWrapper from '../Util/CopyWrapper.js';
 
 const PhoneList = ({ label, values, setValues }) => (
   <div>
@@ -70,23 +71,6 @@ const AddPlayers = ({ step, nextStep }) => {
     nextStep();
   }
 
-  const [copySuccess, setCopySuccess] = useState(false);
-
-  const copyToClipboard = async (text) => {
-    if (!navigator.clipboard) {
-      // Clipboard API not available
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopySuccess(true);
-      setTimeout(() => {
-        setCopySuccess(false);
-      }, 3000);
-    } catch (err) {
-      console.log('Could not copy.')
-    }
-  }
 
   return (
     <CreateWrapper
@@ -110,14 +94,12 @@ const AddPlayers = ({ step, nextStep }) => {
 
       <h4 className='pb-1 font-bold'>Copy the Link and Share with Friends</h4>
       <div 
-        className='flex justify-between p-2 bg-white border rounded-md'
-        onClick={()=>copyToClipboard('https://sleeper.com/i/k7N5Yxx00Ywz')}
+        className='flex p-2 bg-white border rounded-md'
       >
-        https://sleeper.com/i/k7N5Yxx00Ywz
-        <ContentCopyOutlinedIcon className='text-primary'/>
-      </div>
-      {copySuccess && <div className='text-primary'>Copied!</div>}
-      
+          <CopyWrapper copyString={'https://sleeper.com/i/k7N5Yxx00Ywz'}>
+              <span className='flex flex-1'>https://sleeper.com/i/k7N5Yxx00Ywz</span>
+          </CopyWrapper>
+      </div>      
     </CreateWrapper>
   )
 }

@@ -51,6 +51,12 @@ const ManageEvent_ind = ({name}) => {
             highScoreWins={highScoreWins} 
             highScoreToggle={highScoreToggle}
         />
+        <button className="w-full p-2 mt-3 font-semibold text-white rounded-md bg-primary">
+            Update {name}
+        </button>
+        <button className="w-full p-2 mt-3 font-semibold text-white rounded-md bg-errorRed">
+            Delete
+        </button>
     </ManageEventWrapper>
   )
 }

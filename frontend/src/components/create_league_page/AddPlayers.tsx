@@ -116,7 +116,7 @@ const AddPlayers = ({ step, nextStep }) => {
         https://sleeper.com/i/k7N5Yxx00Ywz
         <ContentCopyOutlinedIcon className='text-primary'/>
       </div>
-      {copySuccess ? <div className='text-primary'>Copied!</div> : null}
+      {copySuccess && <div className='text-primary'>Copied!</div>}
       
     </CreateWrapper>
   )

@@ -27,8 +27,16 @@ const Card = (league, index, setOpen) => {
 }
 
 const LeaguesButtons = ({leagues, setOpen}) => {
+  const navigate = useNavigate()
+  const addLeagueClick = () => {
+    navigate(`/start-league`)
+    setOpen(false)
+  }
   const AddLeagueButton = () => (
-    <div className='flex gap-3 p-3 text-[16px]'>
+    <div 
+      className='flex gap-3 p-3 text-[16px]'
+      onClick={addLeagueClick}
+    >
       Add League
       <AddCircleOutlineIcon/>
     </div>

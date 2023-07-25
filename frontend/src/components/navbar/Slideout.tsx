@@ -28,7 +28,6 @@ const Slideout = ({open, leagues, setOpen}) => {
                 setCurrentBro(data['current_brolympics'])
                 setUpcomingBro(data['upcoming_brolympics'])
                 setUpcomingComps(data['upcoming_competitions'])
-                console.log(data)
             } else {
                 console.log('error')
             }

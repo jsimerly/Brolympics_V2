@@ -2,7 +2,10 @@ import React from 'react'
 
 const HomePre = () => {
   return (
-    <div>HomePre</div>
+    <div>HomePre
+
+      Pre Page
+    </div>
   )
 }
 

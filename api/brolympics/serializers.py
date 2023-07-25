@@ -137,7 +137,7 @@ class BrolympicsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Brolympics
-        fields = ['name', 'is_registration_open', 'projected_start_date', 'projected_end_date', 'start_time', 'end_time', 'is_complete', 'winner', 'uuid', 'img', 'teams', 'events', 'is_owner']
+        fields = ['name', 'is_registration_open', 'projected_start_date', 'projected_end_date', 'start_time', 'end_time', 'is_complete', 'winner', 'uuid', 'img', 'teams', 'events', 'is_owner', 'is_active']
 
     def get_teams(self, obj):
         return TeamSerializer(obj.teams.all(), many=True, context=self.context).data

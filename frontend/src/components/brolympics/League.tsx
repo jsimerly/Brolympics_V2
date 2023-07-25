@@ -36,7 +36,10 @@ const BrolympicsCard_Upcoming = ({img, name, events, teams, projected_start_date
                 </div>
                 <div className="flex flex-wrap gap-2">
                     {events.map((event, i) => (
-                        <div className='p-1 border rounded-md border-primaryLight'>
+                        <div 
+                            className='p-1 border rounded-md border-primaryLight'
+                            key={i+'bro_card_event'}
+                        >
                             {event.name}
                         </div>
                     ))}
@@ -116,7 +119,7 @@ const League = () => {
             <div className="flex flex-col gap-3">
                 {leagueInfo &&
                     leagueInfo.upcoming_brolympics.map((brolympic, i) => (
-                        <BrolympicsCard_Upcoming {...brolympic} key={i}/>
+                        <BrolympicsCard_Upcoming {...brolympic} key={i+'_upcoming_bro_card'}/>
                     ))
                 }
                 {leagueInfo && leagueInfo.upcoming_brolympics.length === 0 && "You have do not have any upcoming Brolympics."}
@@ -125,7 +128,7 @@ const League = () => {
             <div className="flex flex-col gap-3">
                 {leagueInfo &&
                     leagueInfo.completed_brolympics.map((brolympic, i) => (
-                        <BrolympicsCard_Completed {...brolympic} key={i}/>
+                        <BrolympicsCard_Completed {...brolympic} key={i+"_complete_bro_card"}/>
                     ))
                 }
                 {leagueInfo && leagueInfo.completed_brolympics.length === 0 && "You have not completed any Brolympics."}

@@ -14,7 +14,19 @@ const Brolympics = () => {
   const [broInfo, setBroInfo] = useState()
   const [is_available, setIsAvailable]= useState(activeComp === null)
   const {uuid} = useParams()
-  
+
+  const [status, setStatus] = useState('active')
+
+  useEffect(() => {
+    if (broInfo) {
+      broInfo.is_active && setStatus('active');
+      !broInfo.is_active && !broInfo.is_complete && broInfo.is_owner && setStatus('pre_admin');
+      !broInfo.is_active && !broInfo.is_complete && !broInfo.is_owner && setStatus('pre');
+      broInfo.is_complete && setStatus('post');
+    }
+    console.log(status)
+  }, [broInfo]); 
+
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,7 +60,7 @@ const Brolympics = () => {
     <div className='bg-neutral min-h-[calc(100vh-80px)] text-white'>
       <div 
         className={`w-full p-3 text-center 
-         ${page !== 'manage' ? 'border-b border-neutralLight' : 'bg-offWhite text-neutralDark'} `
+         ${page === 'manage' || (status === 'pre_admin' && page === 'home') ?  'bg-offWhite text-neutralDark': 'border-b border-neutralLight'} `
         }
       >
         <h1 className='w-full font-bold leading-none text-[30px] '>
@@ -57,8 +69,7 @@ const Brolympics = () => {
         <span>Stuck in Highschool</span>
       </div>
         <Routes>
-            <Route index element={<Home/>}/>
-            <Route path="home" element={<Home />} />
+            <Route path="home" element={<Home brolympics={broInfo} status={status}/>} />
             <Route path="standings" element={<Standings />} />
             <Route path="team" element={<Team />} />
             <Route path="team/:teamUuid" element={<Team />} />

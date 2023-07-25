@@ -52,6 +52,7 @@ class Brolympics(models.Model):
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
 
+    is_active = models.BooleanField(default=False)
     is_complete = models.BooleanField(default=False)
 
     winner = models.ForeignKey(
@@ -140,11 +141,14 @@ class Brolympics(models.Model):
     def start(self):
         self.start_time = timezone.now()
         self.is_registration_open = False
+        self.is_active = True
         self._create_ranking_objs()
         self.save()
 
     def end(self):
         self.end_time = timezone.now()
+        self.is_active = False
+        self.save()
         #finish ending
 
 class OverallBrolympicsRanking(models.Model):

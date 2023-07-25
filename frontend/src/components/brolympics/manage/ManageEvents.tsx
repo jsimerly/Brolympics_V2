@@ -5,6 +5,7 @@ import ManageEvent_team from './events/ManageEvent_team'
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CreateEvent from '../../create_league_page/events/CreateEvent';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 
 const ManageEvents = () => {
@@ -45,11 +46,11 @@ const ManageEvents = () => {
             }
         </div>
         <button
-            className='flex gap-3  text-[16px]'
+            className='flex gap-3  text-[16px] text-neutralLight'
             onClick={toggleAddEvent}
         >
             Add Event
-            <AddCircleOutlineIcon className='text-neutralLight'/>
+            {addingEvent ? <RemoveIcon/> : <AddCircleOutlineIcon/> }
         </button>
         {addingEvent &&
             <CreateEvent

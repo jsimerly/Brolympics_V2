@@ -1,9 +1,12 @@
-import {useState} from 'react'
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import RemoveIcon from '@mui/icons-material/Remove';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+
+import {useState} from 'react'
 import CopyWrapper from '../../Util/CopyWrapper';
+import PopupContinue from '../../Util/PopupContinue';
 
 
 const TeamCard = ({name, player_1, player_2}) => {
@@ -15,6 +18,16 @@ const TeamCard = ({name, player_1, player_2}) => {
     const onRemovePlayer = (player) => {
         console.log(player)
     }
+
+    const deleteClicked = () => {
+        setPopupOpen(true)
+    }
+
+    const deleteFunc = () => {
+        console.log('delete')
+    }
+
+    const [popupOpen, setPopupOpen] = useState(false)
 
     return(
         <div className='relative flex items-center gap-3 p-2 border rounded-md border-primary'>
@@ -30,18 +43,24 @@ const TeamCard = ({name, player_1, player_2}) => {
                     <div className='text-[16px]'>
                         {editing ? 
                             <div className='flex flex-col'>
-                                <div
-                                    onClick={()=>onRemovePlayer(player_1)}
-                                >
-                                    <RemoveIcon className='text-errorRed' sx={{fontSize:20}}/>
-                                    {player_1}
-                                </div>
-                                <div
-                                    onClick={()=>onRemovePlayer(player_2)}
-                                >
-                                    <RemoveIcon className='text-errorRed' sx={{fontSize:20}}/>
-                                    {player_2}
-                                </div>
+                                {player_1 &&
+                                    <div
+                                        onClick={()=>onRemovePlayer(player_1)}
+                                    >
+                                        <RemoveIcon className='text-errorRed' sx={{fontSize:20}}/>
+                                        {player_1}
+                                    </div>                              
+                                }
+
+                                {player_2 &&
+                                    <div
+                                        onClick={()=>onRemovePlayer(player_2)}
+                                    >
+                                        <RemoveIcon className='text-errorRed' sx={{fontSize:20}}/>
+                                        {player_2}
+                                    </div>
+                                }
+
                             </div>
 
                             :
@@ -62,7 +81,10 @@ const TeamCard = ({name, player_1, player_2}) => {
                     }
                 </button>
                 {editing &&
-                    <button className='p-1 px-2 text-white rounded-md bg-errorRed text-[12px] mt-3 absolute bottom-2 right-2'>
+                    <button 
+                        className='p-1 px-2 text-white rounded-md bg-errorRed text-[12px] mt-3 absolute bottom-2 right-2'
+                        onClick={deleteClicked}
+                    >
                         Delete Team
                     </button>
                 }
@@ -77,6 +99,14 @@ const TeamCard = ({name, player_1, player_2}) => {
                     </div>
                 }
             </div>
+            <PopupContinue 
+                open={popupOpen}
+                setOpen={setPopupOpen}
+                header={'Delete Jacob from Team'}
+                desc={'Doing this will perminately remove Jacob from the team, but you can invite them back later.'}
+                continueText={'Delete'}
+                continueFunc={deleteFunc}
+            />
         </div>
     )
 }
@@ -84,6 +114,11 @@ const TeamCard = ({name, player_1, player_2}) => {
 
 
 const ManageTeams = () => {
+    const [addingTeam, setAddingTeam] = useState(false)
+    const toggleAddingTeam = () => {
+        setAddingTeam(addingTeam => !addingTeam)
+    }
+    
     const teams = [
         {'name' : 'El Salvador', 'player_1' : "Jacob", 'player_2': 'Javi'},
         {'name' : 'Great Britian', 'player_1' : "Noah", 'player_2': 'Anthony'},
@@ -98,7 +133,23 @@ const ManageTeams = () => {
                 <TeamCard {...team}/>
             ))}
         </div>
-        <div>Create Team</div>
+        <button
+            className='flex gap-3  text-[16px] text-neutralLight'
+            onClick={toggleAddingTeam}
+        >
+            Add Team
+            {addingTeam ? <RemoveIcon/> : <AddCircleOutlineIcon/> }
+            
+        </button>
+        {addingTeam &&
+            <div className=''>
+                <h4 className='font-semibold'> Team Name </h4>
+                <input className='w-full p-2 border rounded-md outline-none border-primary'/>
+                <button className='w-full p-3 mt-3 font-semibold text-white rounded-md bg-primary'>
+                    Create Team
+                </button>
+            </div>
+        }
     </div>
   )
 }

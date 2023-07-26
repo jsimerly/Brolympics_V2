@@ -3,9 +3,9 @@ import { deleteCookie, fetchWrapper, getCookie, setCookie } from "./cookies";
 
 export async function fetchUpdateEvent(event){
     try{
-        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/update-event/`,
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/create-all-league/`,
         {
-            method: 'PUT',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFTOKEN' : getCookie('csrftoken'),

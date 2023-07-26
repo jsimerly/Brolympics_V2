@@ -6,7 +6,7 @@ import HomeAdminPre from './HomeAdminPre'
 import { useState, useEffect } from 'react'
 
 
-const Home = ({brolympics, status}) => {
+const Home = ({brolympics, status, setStatus}) => {
   const componentMap = {
     'active': HomeActive,
     'pre_admin': HomeAdminPre,
@@ -18,7 +18,7 @@ const Home = ({brolympics, status}) => {
     
   return (
     <div>
-        <Component {...brolympics}/>
+        <Component {...brolympics} setStatus={setStatus}/>
     </div>
   )
 }

@@ -21,6 +21,45 @@ def convert_to_img_file(base_64_img):
     return data
 
 # Create your views here.
+
+## Active Brolympics ##
+class StartBrolympics(APIView):
+    def get_object(self, uuid):
+        brolympics = get_object_or_404(Brolympics, uuid=uuid)
+
+        if self.request.user != brolympics.league.league_owner:
+            raise PermissionDenied('You do not have permission to start this Brolympcs.')
+        
+        return brolympics
+
+        
+    def put(self, request):
+        uuid = request.data.get('uuid')
+        brolympics = self.get_object(uuid)
+
+        brolympics.start()
+        return Response(status=status.HTTP_200_OK)
+    
+class UnstartedEvents(APIView):
+    def get(self, request, uuid):
+        brolympics = get_object_or_404(Brolympics, uuid=uuid)
+        all_events = brolympics.get_all_events()
+
+        h2h = all_events['h2h'].filter(is_active=False, is_complete=False)
+        ind = all_events['ind'].filter(is_active=False, is_complete=False)
+        team = all_events['team'].filter(is_active=False, is_complete=False)
+
+        h2h_serializer = EventBasicSerializer_H2h(h2h, many=True)
+        ind_serializer = EventBasicSerializer_Ind(ind, many=True) 
+        team_serializer = EventBasicSerializer_Team(team, many=True)
+
+        serializers = h2h_serializer.data + ind_serializer.data + team_serializer.data
+
+        return Response(serializers, status=status.HTTP_200_OK)
+        
+        
+
+
 class CreateAllLeagueView(APIView):
     def post(self, request):
         league_data = request.data.get('league')

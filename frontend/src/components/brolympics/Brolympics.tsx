@@ -70,7 +70,7 @@ const Brolympics = () => {
         <span>Stuck in Highschool</span>
       </div>
         <Routes>
-            <Route path="home" element={<Home brolympics={broInfo} status={status}/>} />
+            <Route path="home" element={<Home brolympics={broInfo} status={status} setStatus={setStatus}/>} />
             <Route path="standings" element={<Standings />} />
             <Route path="team" element={<Team />} />
             <Route path="team/:teamUuid" element={<Team />} />

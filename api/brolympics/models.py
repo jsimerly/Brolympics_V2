@@ -77,6 +77,13 @@ class Brolympics(models.Model):
     def get_available_teams(self):
         return self.teams.filter(is_available=True)
     
+    def get_all_events(self):
+        h2h_events = self.event_h2h_set.all()
+        ind_events = self.event_ind_set.all()
+        team_events = self.event_team_set.all()
+
+        return {'h2h':h2h_events, 'ind':ind_events, 'team':team_events}
+
     def _is_duplicate(self, team_1, team_2, pairs_set):
         return (team_1, team_2) in pairs_set or (team_2, team_1) in pairs_set
     
@@ -172,6 +179,9 @@ class OverallBrolympicsRanking(models.Model):
     losses = models.PositiveIntegerField(default=0)
     ties = models.PositiveIntegerField(default=0)
 
+    def __str__(self):
+        return self.team.name + ' - ' + self.brolympics.name
+
 score_type = (
     ('B', 'Binary'),
     ('I', 'Integer'),
@@ -200,7 +210,9 @@ class EventAbstactBase(models.Model):
 
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
-    is_concluded = models.BooleanField(default=False)
+
+    is_active = models.BooleanField(default=False)
+    is_complete = models.BooleanField(default=False)
 
     uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
 
@@ -228,8 +240,12 @@ class EventAbstactBase(models.Model):
 
     def finalize(self):
         self.end_time = timezone.now()
-        self.is_concluded = True
+        self.is_complete = True
         self.finalize_rankings()
+
+    def __str__(self):
+        return self.name + ' - ' + self.brolympics.name
+
 
 class Event_Team(EventAbstactBase):
     display_avg_scores = models.BooleanField(default=True)
@@ -278,7 +294,7 @@ class Event_Team(EventAbstactBase):
     ## Life Cycle ## 
 
     def is_event_available(self):
-        if self.is_concluded:
+        if self.is_complete:
             self.is_available = False
         else:
             self.is_available = self.n_active_limit is None or self._get_n_active_comps() < self.n_active_limit
@@ -364,12 +380,12 @@ class Event_Team(EventAbstactBase):
             rank_counter += n_teams_in_group
 
     def check_for_completion(self):
-        if self.start_time == None or self.is_concluded:
+        if self.start_time == None or self.is_complete:
             return None
         
         uncompleted = self.team_comp.filter(is_complete=False)
         if len(uncompleted) == 0:
-            self.is_concluded = True
+            self.is_complete = True
             self.is_available = False
             self.finalize_rankings()
             self.save()
@@ -454,7 +470,7 @@ class Event_IND(EventAbstactBase):
 
     ## Event Life Cycle ##
     def is_event_available(self):
-        if self.is_concluded:
+        if self.is_complete:
             self.is_available = False
         else:
             self.is_available = self.n_active_limit is None or self._get_n_active_comps() < self.n_active_limit
@@ -546,12 +562,12 @@ class Event_IND(EventAbstactBase):
             rank_counter += n_teams_in_group
 
     def check_for_completion(self):
-        if self.start_time == None or self.is_concluded:
+        if self.start_time == None or self.is_complete:
             return None
         
         uncompleted = self.ind_comp.filter(is_complete=False)
         if len(uncompleted) == 0:
-            self.is_concluded = True
+            self.is_complete = True
             self.is_available = False
             self.finalize_rankings()
             self.save()

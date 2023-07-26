@@ -1,10 +1,11 @@
-import React from 'react'
+import React, {useState} from 'react'
 import AvailableCompetition_h2h from './h2h/AvailableCompetition_h2h';
 import ActiveCompetition_h2h from './h2h/ActiveCompetition_h2h';
 import AvailableCompetition_ind from './ind/AvailableCompetition_ind';
 import ActiveCompetition_ind from './ind/ActiveCompetition_ind';
 import AvailableCompetition_team from './team/AvailableCompetition_team';
 import ActiveCompetition_team from './team/ActiveCompetition_team';
+import  HomeAdminActive  from './HomeAdminActive';
 
 const CurrentEventCard = ({name, complete_perc}) => (
     <div className='pb-1 rounded-md '>
@@ -78,8 +79,37 @@ const EventBlock = ({ title, items, component: Component , component_func}) => {
     );
 }
 
+const AdminSwitch = ({adminView, setAdminView}) => {
+    const homeClick = () => {
+        setAdminView(false)
+    }
+    const adminClick = () =>{
+        setAdminView(true)
+    }
+    
+    return (
+        <div className='flex items-center justify-center w-full pb-3 font-semibold'>
+            <button 
+                className={`${adminView ? 'text-neutralLight' : 'text-white opacity-60'}`}
+                onClick={homeClick}
+            >
+                Home
+            </button> 
+             <span className='px-6 opacity-60'>|</span>
+             <button
+                className={`${!adminView ? 'text-neutralLight' : 'text-white opacity-60'}`}
+                onClick={adminClick}
+             >
+                Admin
+            </button>
+        </div>
+    )
+}
 
-const HomeActive = () => {
+
+const HomeActive = ({is_owner}) => {
+    const [adminView, setAdminView] = useState(false)
+    
     const active_events = [
         {'name' : 'Cornhole', 'complete_perc' : 20},
         {'name' : 'Beer Pong', 'complete_perc' : 90},
@@ -132,6 +162,12 @@ const HomeActive = () => {
     
   return (
     <div className='px-6 py-3'>
+        {is_owner &&
+            <AdminSwitch adminView={adminView} setAdminView={setAdminView}/>
+        }
+        {adminView ? 
+            <HomeAdminActive/>
+        :
         <div className='flex flex-col gap-3'>
             <EventBlock 
                 title="Active Event"
@@ -152,6 +188,8 @@ const HomeActive = () => {
                 component_func={getActiveComponent}
             />
         </div>
+        }
+
     </div>
   )
 }

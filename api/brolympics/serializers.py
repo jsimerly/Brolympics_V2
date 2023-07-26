@@ -102,7 +102,7 @@ class TeamSerializer(serializers.ModelSerializer):
         return team
 
 
-eventAbstractFields = [ 'name', 'is_high_score_wins', 'max_score', 'min_score', 'projected_start_date', 'projected_end_date', 'is_concluded', 'uuid']
+eventAbstractFields = [ 'name', 'is_high_score_wins', 'max_score', 'min_score', 'projected_start_date', 'projected_end_date', 'is_complete', 'uuid']
 
 def create_decimal_value(obj):
     score_type_mapping = {

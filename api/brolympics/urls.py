@@ -27,4 +27,8 @@ urlpatterns = [
     path('join-brolympics/<uuid:uuid>', JoinBrolympics.as_view(), name='join_brolympics'),
     path('team-invite/<uuid:uuid>', GetTeamInvite.as_view(), name='team_invite'),
     path('join-team/<uuid:uuid>', JoinTeam.as_view(), name='join_team'),
+
+    #Active Brolympics
+    path('start-brolympics/', StartBrolympics.as_view(), name='start_brolympics'),
+    path('events-unstarted/<uuid:uuid>', UnstartedEvents.as_view(), name='unstarted-events'),
 ]

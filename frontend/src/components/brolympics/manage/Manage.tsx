@@ -20,7 +20,7 @@ const ManageButton = ({header, desc, nav}) => {
 const Manage = () => {
 
   return (
-    <div className='flex flex-col gap-3 p-6'>
+    <div className='flex flex-col gap-3'>
         <ManageButton 
             header='Manage Brolympics' 
             desc={'Manage your Brolympics settings including: start date, end date, invites, etc.'}

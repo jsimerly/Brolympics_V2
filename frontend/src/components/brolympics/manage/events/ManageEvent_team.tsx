@@ -1,20 +1,47 @@
 import ManageEventWrapper from "./ManageEventWrapper"
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import ScoringSettings from "./ScoringSettings"
+import {fetchUpdateEvent} from '../../../../api/fetchEvents.js'
 import ToggleButton from "../../../Util/ToggleButton"
 
-const ManageEvent_team = ({name}) => {
-    const [highScoreWins, setHighScoreWins] = useState(true)
-    const highScoreToggle = () => {
-        setHighScoreWins(bool => !bool)
+const ManageEvent_team = ({event}) => {
+    const [formValues, setFormValues] = useState({});
+
+    useEffect(() => {
+        if (event) {
+            setFormValues({...event});
+        }
+    }, [event]);
+        
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormValues(prevFormValues => ({
+            ...prevFormValues,
+            [name]: value
+        }));
+    };    
+    
+    const displayAvgToggle = () => {
+        setFormValues({
+            ...formValues,
+            display_avg_scores: !formValues.display_avg_scores
+        })
     }
 
-    const [displayAvg, setDisplayAvg] = useState(false)
-    const displayAvgToggle = () => {
-        setDisplayAvg(bool => !bool)
+    const handleUpdateClicked = async () => {
+        const response = await fetchUpdateEvent(formValues)
+
+        if (response.ok){
+            const data = await response.json()
+            console.log(data)
+        } else {
+            const data = await response.json()
+            console.log(data)
+        }
     }
+    
   return (
-    <ManageEventWrapper name={name}>
+    <ManageEventWrapper name={event.name}>
         <h2 className="py-2">Competition Settings</h2>
         <div className="flex items-center justify-between min-h-[50px]">
             <div>
@@ -22,6 +49,9 @@ const ManageEvent_team = ({name}) => {
                 <p className="text-[10px]">The number of times each team will complete this event. Ex: Completing 2 relay races.</p>
             </div>
             <input 
+                value={formValues.n_competitions || ''}
+                name='n_competitions'
+                onChange={handleInputChange}
                 className="p-1 border rounded-md border-primary h-[40px] w-[60px] bg-white text-center"
                 type='number'
             />
@@ -32,6 +62,9 @@ const ManageEvent_team = ({name}) => {
                 <p className="text-[10px]">The number of max possible simulatnious competitions. <br/> Ex: 2 relay race courses. Leave blank for no max.</p>
             </div>
             <input 
+                value={formValues.n_active_limit || ''}
+                name='n_active_limit'
+                onChange={handleInputChange}
                 className="p-1 border rounded-md border-primary h-[40px] w-[60px] bg-white text-center"
                 type='number'
             />
@@ -39,21 +72,25 @@ const ManageEvent_team = ({name}) => {
         <div className="flex items-center justify-between min-h-[50px]">
             <div>
                 <h3 className="font-semibold">Display Average Scores</h3>
-                <p className="text-[10px]"> Do you want to display average scores or combined scores? <br/> Currently set to: <span className="font-bold">{displayAvg ? 'Average Score' : 'Combined Score'}</span></p>
+                <p className="text-[10px]"> Do you want to display average scores or combined scores? <br/> Currently set to: <span className="font-bold">{formValues.display_avg_scores ? 'Average Score' : 'Combined Score'}</span></p>
             </div>
             <button
                 onClick={displayAvgToggle}
                 className="text-primary w-[60px]"
             >
-                <ToggleButton size={50} on={displayAvg}/>
+                <ToggleButton size={50} on={formValues.display_avg_scores}/>
             </button>
         </div>
         <ScoringSettings
-            highScoreWins={highScoreWins} 
-            highScoreToggle={highScoreToggle}
+            formValues={formValues}
+            setFormValues={setFormValues}
+            handleInputChange={handleInputChange}
         />
-        <button className="w-full p-2 mt-3 font-semibold text-white rounded-md bg-primary">
-            Update {name}
+        <button 
+            className="w-full p-2 mt-3 font-semibold text-white rounded-md bg-primary"
+            onClick={handleUpdateClicked}           
+        >
+            Update {event.name}
         </button>
     </ManageEventWrapper>
   )

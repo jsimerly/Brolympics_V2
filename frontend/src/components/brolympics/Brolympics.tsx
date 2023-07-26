@@ -38,6 +38,7 @@ const Brolympics = () => {
       if (response.ok){
         const data = await response.json()
         setBroInfo(data)
+        console.log(data)
       } else {
         
       }
@@ -76,7 +77,7 @@ const Brolympics = () => {
             <Route path="event" element={<Events />} />
             <Route path="event/:eventUuid" element={<Events />} />
             <Route path='competition/:compUuid' element={<InCompetition comp={activeComp}/>}/>
-            <Route path='manage/*' element={<ManageRouter/>}/>
+            <Route path='manage/*' element={<ManageRouter brolympics={broInfo}/>}/>
             <Route 
                 path="*" 
                 element={<Navigate to="home" replace/>} 

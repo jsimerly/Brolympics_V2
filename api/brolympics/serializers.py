@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from brolympics.models import *
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
@@ -40,25 +42,64 @@ class LeagueCreateSerializer(serializers.ModelSerializer):
     
 
 class PlayerSerializer(serializers.ModelSerializer):
-    shortened_name = serializers.SerializerMethodField() 
+    short_name = serializers.SerializerMethodField() 
     full_name = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'shortened_name', 'full_name']            
+        fields = ['first_name', 'last_name', 'short_name', 'full_name', 'uuid']            
 
-    def get_shortened_name(self, obj):
+    def get_short_name(self, obj):
         return f"{obj.first_name[0]}. {obj.last_name}"
     
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
 
 class TeamSerializer(serializers.ModelSerializer):
-    player_1 = PlayerSerializer()
-    player_2 = PlayerSerializer()
+    player_1 = PlayerSerializer(required=False)
+    player_2 = PlayerSerializer(required=False)
+    brolympics_uuid = serializers.UUIDField(write_only=True)
 
     class Meta:
         model = Team
-        fields = ['name', 'player_1', 'player_2', 'is_available', 'score', 'wins', 'losses', 'ties', 'uuid', 'img']
+        fields = ['name', 'player_1', 'player_2', 'is_available', 'score', 'wins', 'losses', 'ties', 'uuid', 'img', 'brolympics_uuid']
+
+    def create(self, validated_data):
+    
+        player_1_uuid = validated_data.pop('player_1', None)
+        player_2_uuid = validated_data.pop('player_2', None)
+        img_data = validated_data.pop('img', None)
+        brolympics_uuid = validated_data.pop('brolympics_uuid', None)
+        print(brolympics_uuid)
+
+        brolympics = get_object_or_404(Brolympics, uuid=brolympics_uuid)
+
+        team = Team.objects.create(brolympics=brolympics, **validated_data)
+
+        if player_1_uuid:
+            try:
+                user_1 = User.objects.get(uuid=player_1_uuid)
+                team.player_1 = user_1
+                team.save()
+            except ObjectDoesNotExist:
+                pass
+
+        if player_2_uuid:
+            try:
+                user_2 = User.objects.get(uuid=player_2_uuid)
+                team.player_2 = user_2
+                team.save()
+            except ObjectDoesNotExist:
+                pass 
+
+        if img_data:
+            team.img = img_data
+            team.save()
+
+        if img_data:
+            team.img = img_data
+            team.save()
+
+        return team
 
 
 eventAbstractFields = [ 'name', 'is_high_score_wins', 'max_score', 'min_score', 'projected_start_date', 'projected_end_date', 'is_concluded', 'uuid']

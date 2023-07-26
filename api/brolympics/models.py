@@ -151,6 +151,9 @@ class Brolympics(models.Model):
         self.save()
         #finish ending
 
+    def __str__(self):
+        return self.name + ' - ' + self.league.name
+
 class OverallBrolympicsRanking(models.Model):
     brolympics = models.ForeignKey(
         Brolympics,
@@ -189,8 +192,8 @@ class EventAbstactBase(models.Model):
 
     score_type = models.CharField(max_length=1, choices=score_type, default='I')
     is_high_score_wins = models.BooleanField(default=True)
-    max_score = models.FloatField(default=100, null=True)
-    min_score = models.FloatField(default=0, null=True)
+    max_score = models.FloatField(default=None, null=True, blank=True)
+    min_score = models.FloatField(default=0, null=True, blank=True)
 
     projected_start_date = models.DateTimeField(blank=True, null=True)
     projected_end_date = models.DateTimeField(blank=True, null=True)
@@ -1046,7 +1049,6 @@ class Team(models.Model):
     brolympics = models.ForeignKey(
         Brolympics,
         on_delete=models.CASCADE,
-        null=True,
         related_name='teams'
     )
 
@@ -1055,14 +1057,17 @@ class Team(models.Model):
     player_1 = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='player_1_set'
+        related_name='player_1_set',
+        null=True,
+        blank=True,
     )
 
     player_2 = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         null=True,
-        related_name='player_2_set'
+        blank=True,
+        related_name='player_2_set',
     )
 
     is_available = models.BooleanField(default=True)
@@ -1106,6 +1111,9 @@ class Team(models.Model):
     
     def _is_empty_team(self):
         return self.player_1 is None and self.player_2 is None
+    
+    def __str__(self):
+        return self.name + ' - ' + str(self.brolympics.name)
     
 class Competition_Team(models.Model):
     event = models.ForeignKey(

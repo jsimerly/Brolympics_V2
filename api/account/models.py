@@ -79,6 +79,8 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
 
+    uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
+
     EMAIL_FIELD = 'phone'
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []

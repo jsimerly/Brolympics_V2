@@ -1,7 +1,7 @@
 import HomeActive from './HomeActive'
-import HomeAdmin from './HomeAdmin'
 import HomePost from './HomePost'
 import HomePre from './HomePre'
+import HomeAdminPre from './HomeAdminPre'
 
 import { useState, useEffect } from 'react'
 
@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react'
 const Home = ({brolympics, status}) => {
   const componentMap = {
     'active': HomeActive,
-    'pre_admin': HomeAdmin,
+    'pre_admin': HomeAdminPre,
     'pre': HomePre,
     'post': HomePost,
   }

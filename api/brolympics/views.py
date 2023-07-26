@@ -76,6 +76,17 @@ class CreateAllLeagueView(APIView):
 
         all_league_serializer = AllLeaguesSerializer(league, context={'request' : request})
         return Response(all_league_serializer.data, status=status.HTTP_201_CREATED )
+    
+class CreateSingleTeam(APIView):
+    serializer_class = TeamSerializer
+    def post(self, request):
+        print(request.data)
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            team = serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
 
 # Get Info
 class GetAllLeagues(APIView):
@@ -169,10 +180,79 @@ class GetUpcoming(APIView):
         
 
         return Response(data, status=status.HTTP_200_OK)
+    
+class GetLeagueTeams(APIView):
+    serializer_class = TeamSerializer
+    def get(self, request, uuid):
+        pass
 
 
+## Updates ##
+class UpdateEvent(APIView):
+    
+    def put(self, request):
+        event_uuid = request.data.get('uuid')
+        event_type = request.data.get('type')
 
+        if event_type == 'h2h':
+            event = get_object_or_404(Event_H2H, uuid=event_uuid)
+            serializer = EventBasicSerializer_H2h(event, data=request.data)
 
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+        elif event_type == 'ind':
+            event = get_object_or_404(Event_IND, uuid=event_uuid)
+            serializer = EventBasicSerializer_Ind(event, data=request.data)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+        elif event_type == 'team':
+            event = get_object_or_404(Event_Team, uuid=event_uuid)
+            serializer = EventBasicSerializer_Team(event, data=request.data)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+## Delete ##
+
+class DeleteTeam(APIView):
+    def get_object(self, uuid):
+        team = get_object_or_404(Team, uuid=uuid)
+
+        if self.request.user != team.player_1 and \
+            self.request.user != team.player_2 and \
+            self.request.user != team.brolympics.league.league_owner:
+            raise PermissionDenied("You do not have permission to delete this league.")
+        return team
+
+    def delete(self, request, uuid):
+        team = self.get_object(uuid)
+        team.delete()
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class RemovePlayerFromTeam(APIView):
+    def get_object(self, player_uuid, team_uuid):
+        player = get_object_or_404(User, uuid=player_uuid)
+        team = get_object_or_404(Team, uuid=team_uuid)
+
+        if self.request.user != player and \
+            self.request.user !=  team.brolympics.league.league_owner:
+            raise PermissionDenied("You do not have permission to remove this player from this team.")
+        return player, team     
+
+    def delete(self, request, player_uuid, team_uuid):
+        player, team = self.get_object(player_uuid, team_uuid)
+        team.remove_player(player)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 ## Invites ##
 class GetLeagueInvite(APIView):

@@ -8,7 +8,7 @@ import CreateEvent from '../../create_league_page/events/CreateEvent';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 
-const ManageEvents = () => {
+const ManageEvents = ({events}) => {
     const [addingEvent, setAddingEvent] = useState(false)
     const toggleAddEvent = () => {
         setAddingEvent(addingEvent => !addingEvent)
@@ -18,12 +18,6 @@ const ManageEvents = () => {
         console.log('Add event here')
         setAddingEvent(false)
     }
-
-    const events = [
-        {'name' : 'Cornholio', 'type':'h2h'},
-        {'name' : 'Golf', 'type':'ind'},
-        {'name' : 'Trivia', 'type':'team'}
-    ]
 
     const CompToType = {
         'h2h' : <ManageEvent_h2h/>,
@@ -39,7 +33,7 @@ const ManageEvents = () => {
                 events.map((event, i) => (
                     <>
                         {i !== 0 && <div className='w-full h-[1px] bg-neutralLight'/>}
-                        {React.cloneElement(CompToType[event.type], {key: i, ...event})}
+                        {React.cloneElement(CompToType[event.type], {key: i+"_eventCard", event: event})}
                         
                     </>
                 ))

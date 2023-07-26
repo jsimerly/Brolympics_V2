@@ -22,43 +22,6 @@ def convert_to_img_file(base_64_img):
 
 # Create your views here.
 
-## Active Brolympics ##
-class StartBrolympics(APIView):
-    def get_object(self, uuid):
-        brolympics = get_object_or_404(Brolympics, uuid=uuid)
-
-        if self.request.user != brolympics.league.league_owner:
-            raise PermissionDenied('You do not have permission to start this Brolympcs.')
-        
-        return brolympics
-
-        
-    def put(self, request):
-        uuid = request.data.get('uuid')
-        brolympics = self.get_object(uuid)
-
-        brolympics.start()
-        return Response(status=status.HTTP_200_OK)
-    
-class UnstartedEvents(APIView):
-    def get(self, request, uuid):
-        brolympics = get_object_or_404(Brolympics, uuid=uuid)
-        all_events = brolympics.get_all_events()
-
-        h2h = all_events['h2h'].filter(is_active=False, is_complete=False)
-        ind = all_events['ind'].filter(is_active=False, is_complete=False)
-        team = all_events['team'].filter(is_active=False, is_complete=False)
-
-        h2h_serializer = EventBasicSerializer_H2h(h2h, many=True)
-        ind_serializer = EventBasicSerializer_Ind(ind, many=True) 
-        team_serializer = EventBasicSerializer_Team(team, many=True)
-
-        serializers = h2h_serializer.data + ind_serializer.data + team_serializer.data
-
-        return Response(serializers, status=status.HTTP_200_OK)
-        
-        
-
 
 class CreateAllLeagueView(APIView):
     def post(self, request):
@@ -205,10 +168,10 @@ class GetUpcoming(APIView):
         upcoming_bro_serializer = BrolympicsSerializer(upcoming_bro, context={'request':request}, many=True)
         current_bro_serializer = BrolympicsSerializer(current_bro, context={'request':request}, many=True)
 
-        h2h_serializer = EventBasicSerializer_H2h(upcoming_comp_h2h, many=True)
-        bracket_serializer = EventBasicSerializer_H2h(upcoming_bracket_matchup, many=True)
-        ind_serializer = EventBasicSerializer_Ind(upcoming_comp_ind, many=True)
-        team_serializer = EventBasicSerializer_Team(upcoming_comp_team, many=True)
+        h2h_serializer = CompetitionSerializer_H2h(upcoming_comp_h2h, many=True)
+        bracket_serializer = BracketCompetitionSerializer_H2h(upcoming_bracket_matchup, many=True)
+        ind_serializer = CompetitionSerializer_Ind(upcoming_comp_ind, many=True)
+        team_serializer = CompetitionSerializer_Team(upcoming_comp_team, many=True)
 
 
         data = {

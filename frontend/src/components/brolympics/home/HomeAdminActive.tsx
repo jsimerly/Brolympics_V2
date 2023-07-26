@@ -1,9 +1,18 @@
-import {fetchEventsUnstarted} from '../../../api/activeBro/fetchAdmin.js'
+import {fetchEventsUnstarted, fetchStartEvent} from '../../../api/activeBro/fetchAdmin.js'
 import {useState, useEffect} from 'react'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 
 
-const UnstartedEventCard = ({name, projected_start_date}) => {
+const UnstartedEventCard = ({name, projected_start_date, uuid, type}) => {
+    const onStartClick = async () => {
+        const response = await fetchStartEvent(uuid, type)
+        if (response.ok){
+            
+        } else {
+            console.log('handle error start event')
+        }
+    }
+
     return (
         <div className='flex items-center justify-between p-3 border rounded-md border-primary'>
             <div>
@@ -13,7 +22,10 @@ const UnstartedEventCard = ({name, projected_start_date}) => {
 
                 {projected_start_date}
             </div>
-            <button className='min-w-[100px] rounded-md bg-primary py-1'>
+            <button 
+                className='min-w-[100px] rounded-md bg-primary py-1'
+                onClick={onStartClick}
+            >
                 Start
             </button>
         </div>
@@ -30,7 +42,6 @@ const HomeAdminActive = () => {
             const response = await fetchEventsUnstarted(uuid)
             if (response.ok){
                 const data = await response.json()
-                console.log(data)
                 setUnstartedEvents(data)
             }
         }
@@ -41,7 +52,7 @@ const HomeAdminActive = () => {
     <div>
         <div className='space-y-3'>
             {unstartedEvents.map((event, i) => (
-                <UnstartedEventCard {...event}/>
+                <UnstartedEventCard {...event} key={i+'_unstarted_events'}/>
             ))}
         </div>
     </div>

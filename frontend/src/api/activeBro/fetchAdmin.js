@@ -29,3 +29,23 @@ export async function fetchEventsUnstarted(uuid){
         throw (error)
     }
 }
+
+export async function fetchStartEvent(uuid, type){
+    const data = {uuid: uuid, type: type}
+    try{
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/start-event/`,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+            body: JSON.stringify(data),
+        })
+
+        return response
+
+    } catch (error) {
+        throw (error)
+    }
+}

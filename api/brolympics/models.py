@@ -221,6 +221,7 @@ class EventAbstactBase(models.Model):
 
     def start(self):
         self.start_time = timezone.now()
+        self.is_active = True
         self.is_available = True
         self.create_child_objects()
         self.save()
@@ -240,8 +241,11 @@ class EventAbstactBase(models.Model):
 
     def finalize(self):
         self.end_time = timezone.now()
+        self.is_active = False
+        self.is_available = False
         self.is_complete = True
         self.finalize_rankings()
+        self.save()
 
     def __str__(self):
         return self.name + ' - ' + self.brolympics.name
@@ -1144,6 +1148,7 @@ class Competition_Team(models.Model):
         related_name='team_competition_team',
     )
 
+    display_avg_score = models.BooleanField(default=True)
     team_score = models.FloatField(blank=True, null=True)
 
     start_time = models.DateTimeField(null=True, blank=True)
@@ -1179,6 +1184,9 @@ class Competition_Team(models.Model):
 
         self.event.update_event_rankings_team()
         self.event.check_for_completion()
+
+    def __str__(self):
+        return self.event.name + ' - ' + self.team.name
         
 
 class Competition_Ind(models.Model):
@@ -1241,6 +1249,10 @@ class Competition_Ind(models.Model):
 
         self.event.update_event_rankings_ind()
         self.event.check_for_completion()
+
+    def __str__(self):
+        return self.event.name + ' - ' + self.team.name
+    
         
 
 
@@ -1363,6 +1375,9 @@ class Competition_H2H_Base(models.Model):
             winner, loser = self.team_2, self.team_1
         
         return winner, loser
+    
+    def __str__(self):
+        return self.event.name + ' - ' + self.team_1.name + ' vs ' + self.team_2.name
 
 class Competition_H2H(Competition_H2H_Base):
     def end(self, team_1_score, team_2_score):
@@ -1386,6 +1401,7 @@ class EventRankingAbstractBase(models.Model):
     uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
     class Meta:
         abstract = True
+
 
 class EventRanking_Team(models.Model):
     event = models.ForeignKey(
@@ -1428,6 +1444,10 @@ class EventRanking_Team(models.Model):
         self.team_avg_score = team_avg_score
 
         self.save()
+
+    def __str__(self):
+        return self.event.name + ' Ranking: ' + self.team.name
+    
 
 
 class EventRanking_Ind(models.Model):
@@ -1490,6 +1510,9 @@ class EventRanking_Ind(models.Model):
 
         self.save()
 
+    def __str__(self):
+        return self.event.name + ' Ranking: ' + self.team.name
+
          
 class EventRanking_H2H(models.Model):
     event = models.ForeignKey(
@@ -1528,6 +1551,9 @@ class EventRanking_H2H(models.Model):
             win_rate = 0
 
         return win_rate
+
+    def __str__(self):
+        return self.event.name + ' Ranking: ' + self.team.name
 
 
 class BracketMatchup(Competition_H2H_Base):

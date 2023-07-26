@@ -1,5 +1,6 @@
 from django.urls import path
 from brolympics.views import *
+from brolympics.active_views import *
 
 urlpatterns = [
     #Create
@@ -31,4 +32,5 @@ urlpatterns = [
     #Active Brolympics
     path('start-brolympics/', StartBrolympics.as_view(), name='start_brolympics'),
     path('events-unstarted/<uuid:uuid>', UnstartedEvents.as_view(), name='unstarted-events'),
+    path('start-event/', StartEvents.as_view(), name='start_event'),
 ]

@@ -227,26 +227,37 @@ class LeagueInfoSerializer(serializers.ModelSerializer):
         return BrolympicsSerializer(upcoming, many=True, context=self.context).data
 
 
-    
-
-class BrolympicsCreateSerializer(serializers.ModelSerializer):
+h2h_comp_fields = [
+    'event', 'team_1', 'team_2', 'team_1_score', 'team_2_score',
+    'winner', 'loser', 'start_time', 'end_time', 'is_complete', 'uuid', 'is_active', 
+]
+class CompetitionSerializer_H2h(serializers.ModelSerializer):
     class Meta:
-        model = Brolympics
-        fields = ['league', 'name', 'projected_start_date', 'img']
+        model = Competition_H2H
+        fields = [] + h2h_comp_fields
 
-class EventTeamCreateAllSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Event_Team
-        fields = ['name', 'brolympics']
 
-class EventIndCreateAllSerializer(serializers.ModelSerializer):
+class BracketCompetitionSerializer_H2h(serializers.ModelSerializer):
     class Meta:
-        model = Event_IND
-        fields = ['name', 'brolympics']
+        model = BracketMatchup
+        fields = ['team_1_seed', 'team_2_seed'] + h2h_comp_fields
 
-class EventH2HCreateAllSerializer(serializers.ModelSerializer):
+
+class CompetitionSerializer_Ind(serializers.ModelSerializer):
     class Meta:
-        model = Event_H2H
-        fields = ['name', 'brolympics']
+        model = Competition_Ind
+        fields = ['event', 'team', 'player_1_score', 'player_2_score', 'display_avg_score', 'team_score', 'avg_score', 'start_time', 'end_time', 'is_active', 'is_complete',  'uuid']
+
+
+
+class CompetitionSerializer_Team(serializers.ModelSerializer):
+    user_won = serializers.SerializerMethodField()
+    class Meta:
+        model = Competition_Team
+        fields = ['event', 'team', 'display_avg_score', 'team_score', 'avg_score', 'start_time', 'end_time', 'is_active', 'is_complete', 'uuid']
+
+
+
+
 
 

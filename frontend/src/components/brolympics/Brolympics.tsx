@@ -7,12 +7,11 @@ import Home from "./home/Home"
 import Team from "./team/Team"
 import InCompetition from './InCompetition';
 import ManageRouter from './manage/ManageRouter.js';
-import {fetchBrolympicsHome} from '../../api/fetchBrolympics.js'
+import {fetchBrolympicsHome, fetchInCompetition} from '../../api/fetchBrolympics.js'
 
 const Brolympics = () => {
-  const [activeComp, setActiveComp] = useState(null)
+
   const [broInfo, setBroInfo] = useState()
-  const [is_available, setIsAvailable]= useState(activeComp === null)
   const {uuid} = useParams()
 
   const [status, setStatus] = useState('active')
@@ -25,10 +24,6 @@ const Brolympics = () => {
       broInfo.is_complete && setStatus('post');
     }
   }, [broInfo]); 
-
-  
-  const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(()=> {
     const getBrolympicsInfo = async () => {
@@ -44,16 +39,53 @@ const Brolympics = () => {
     getBrolympicsInfo()
   },[])
 
+  const navigate = useNavigate();
+  const location = useLocation();
   const page = location.pathname.split("/")[3]
 
+  const [activeComp, setActiveComp] = useState({
+    is_available: true,
+    comp_uuid: '',
+    type: ''
+  })
+
   useEffect(() => {
-    if (!is_available) {
-      setIsAvailable(activeComp === null)
-      navigate('/brolympics/competition');
-    } else if (location.pathname === '/brolympics/competition') {
-      navigate('/brolympics/home');
+    if (broInfo && broInfo.is_active){
+      const getIsAvailable = async () => {
+        const response = await fetchInCompetition()
+
+        if (response.ok){
+          const data = await response.json()
+
+          if (!data.is_available){
+            if (activeComp.is_available){
+              setActiveComp(data)
+            }
+
+            if (!location.pathname.includes(
+              `/b/${uuid}/competition/${data.comp_uuid}`
+            )){
+              navigate(`/b/${uuid}/competition/${data.comp_uuid}`)
+            }
+          }
+
+          if (data.is_available){
+            if (!activeComp.is_available){
+              setActiveComp(data)
+            }
+
+            if (location.pathname.includes(
+              `/b/${uuid}/competition/`
+            )){
+              navigate(`/b/${uuid}/home`)
+            }
+          }
+        }
+      }
+      getIsAvailable()
+
     }
-  }, [activeComp, navigate]);
+  }, [location, broInfo]);
 
   return (
     <div className='bg-neutral min-h-[calc(100vh-80px)] text-white'>
@@ -74,19 +106,18 @@ const Brolympics = () => {
             <Route path="team/:teamUuid" element={<Team />} />
             <Route path="event" element={<Events />} />
             <Route path="event/:eventUuid" element={<Events />} />
-            <Route path='competition/:compUuid' element={<InCompetition comp={activeComp}/>}/>
+            <Route path='competition/:compUuid' element={<InCompetition activeComp={activeComp}/>}/>
             <Route path='manage/*' element={<ManageRouter brolympics={broInfo}/>}/>
             <Route 
                 path="*" 
                 element={<Navigate to="home" replace/>} 
             />
         </Routes>
-        {is_available &&
+        {!activeComp && 
           <Toolbar
             is_owner={broInfo?.is_owner}
           />
         }
-        
     </div>
   )
 }

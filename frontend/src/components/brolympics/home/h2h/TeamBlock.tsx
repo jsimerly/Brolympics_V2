@@ -19,9 +19,8 @@ const TeamsBlock = ({name, team_1_name, team_1_record, team_1_img, team_2_name, 
         return (
           <div className=''>
             <div className={`flex ${reverse ? 'flex-row-reverse justify-start' : 'flex-row justify-start'} gap-2`}>
-              <div className='h-[60px] w-[60px] min-w-[60px] bg-white rounded-md'>
-                img
-              </div>
+              <img src={img} className='h-[60px] w-[60px] min-w-[60px] rounded-md'/>
+                
               <div className={`flex flex-col justify-center items-${reverse ? 'end' : 'start'}`}>
                 <div 
                   className={`flex font-bold items-center ${reverse ? 'justify-end text-end' : 'justify-start text-start'}`}

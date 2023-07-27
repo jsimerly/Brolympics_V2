@@ -11,3 +11,68 @@ export async function fetchHome(uuid){
         throw error
     }
 }
+
+export async function fetchStartComp(uuid, type){
+    const data = {uuid: uuid, type: type}
+    try{
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/start-competition/`,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+            body: JSON.stringify(data),
+        })
+
+        return response
+
+    } catch (error) {
+        throw (error)
+    }
+}
+
+export async function fetchActiveComp_h2h(uuid){
+    try {
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/get-comp-h2h/${uuid}`)
+
+        return response
+        
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function fetchSubmitComp_h2h(uuid, team_1_score, team_2_score){
+
+}
+
+export async function fetchActiveComp_ind(uuid){
+    try {
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/get-comp-ind/${uuid}`)
+
+        return response
+        
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function fetchSubmitComp_ind(uuid, player_1_score, player_2_score){
+    
+}
+
+export async function fetchActiveComp_team(uuid){
+    try {
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/get-comp-team /${uuid}`)
+
+        return response
+        
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function fetchSubmitComp_team(uuid, team_score){
+    
+}

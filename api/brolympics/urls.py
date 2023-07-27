@@ -33,5 +33,10 @@ urlpatterns = [
     path('start-brolympics/', StartBrolympics.as_view(), name='start_brolympics'),
     path('events-unstarted/<uuid:uuid>', UnstartedEvents.as_view(), name='unstarted-events'),
     path('start-event/', StartEvents.as_view(), name='start_event'),
-    path('get-active-home/<uuid:uuid>', GetActiveHome.as_view(), name='get_active_home')
+    path('get-active-home/<uuid:uuid>', GetActiveHome.as_view(), name='get_active_home'),
+    path('start-competition/', StartCompetition.as_view(), name='start_competition'),
+    path('is-in-competition/', IsInCompetition.as_view(), name='is_in_competition'),
+    path('get-comp-h2h/<uuid:uuid>', GetCompH2h.as_view(), name='get_comp_h2h'),
+    path('get-comp-ind/<uuid:uuid>', GetCompInd.as_view(), name='get_comp_ind'),
+    path('get-comp-team/<uuid:uuid>', GetCompTeam.as_view(), name='get_comp_team')
 ]

@@ -286,7 +286,7 @@ class TeamRankingsSerializer_Team(serializers.ModelSerializer):
 
 h2h_comp_fields = [
     'event', 'team_1', 'team_2', 'team_1_score', 'team_2_score',
-    'winner', 'loser', 'start_time', 'end_time', 'is_complete', 'uuid', 'is_active', 'is_bracket'
+    'winner', 'loser', 'start_time', 'end_time', 'is_complete', 'uuid', 'is_active', 'is_bracket', 'type'
 ]         
 
 class BaseCompetitionSerializer(serializers.ModelSerializer):
@@ -300,6 +300,11 @@ class BaseCompetitionSerializer(serializers.ModelSerializer):
         model = Competition_H2H
         fields = [] + h2h_comp_fields
 
+    def to_representation(self, instance):
+        self.fields['team_1'].context.update(self.context)
+        self.fields['team_2'].context.update(self.context)
+        return super().to_representation(instance)
+    
     def get_event(self, obj):
         return obj.event.name
     
@@ -308,39 +313,56 @@ class BaseCompetitionSerializer(serializers.ModelSerializer):
             return True
         return False
 
+
+
 class CompetitionSerializer_H2h(BaseCompetitionSerializer):
+    type = serializers.SerializerMethodField()
     class Meta(BaseCompetitionSerializer.Meta):
-        fields = BaseCompetitionSerializer.Meta.fields
+        fields = ['type'] + BaseCompetitionSerializer.Meta.fields
+
+    def get_type(self, obj):
+        return 'h2h'
 
 
 class BracketCompetitionSerializer_H2h(BaseCompetitionSerializer):
     team_1_seed = serializers.IntegerField()
     team_2_seed = serializers.IntegerField()
+    type = serializers.SerializerMethodField()
 
     class Meta(BaseCompetitionSerializer.Meta):
         model = BracketMatchup
-        fields = ['team_1_seed', 'team_2_seed'] + BaseCompetitionSerializer.Meta.fields
+        fields = ['team_1_seed', 'team_2_seed', 'type'] + BaseCompetitionSerializer.Meta.fields
 
-
+    def get_type(self, obj):
+        return 'bracket'
+    
 
 class CompetitionSerializer_Ind(serializers.ModelSerializer):
     team = TeamSerializer()
     event = serializers.SerializerMethodField()
+    type = serializers.SerializerMethodField()
     class Meta:
         model = Competition_Ind
-        fields = ['event', 'team', 'player_1_score', 'player_2_score', 'display_avg_score', 'team_score', 'avg_score', 'start_time', 'end_time', 'is_active', 'is_complete',  'uuid']
+        fields = ['event', 'team', 'player_1_score', 'player_2_score', 'display_avg_score', 'team_score', 'avg_score', 'start_time', 'end_time', 'is_active', 'is_complete',  'uuid', 'type']
 
     def get_event(self, obj):
         return obj.event.name
+    
+    def get_type(self, obj):
+        return 'ind'
     
     
 class CompetitionSerializer_Team(serializers.ModelSerializer):
     team = TeamSerializer()
     event = serializers.SerializerMethodField()
+    type = serializers.SerializerMethodField()
     class Meta:
         model = Competition_Team
-        fields = ['event', 'team', 'display_avg_score', 'team_score', 'avg_score', 'start_time', 'end_time', 'is_active', 'is_complete', 'user_won', 'uuid']
+        fields = ['event', 'team', 'display_avg_score', 'team_score', 'avg_score', 'start_time', 'end_time', 'is_active', 'is_complete', 'user_won', 'uuid', 'type']
 
     def get_event(self, obj):
         return obj.event.name
+    
+    def get_type(self, obj):
+        return 'team'
     

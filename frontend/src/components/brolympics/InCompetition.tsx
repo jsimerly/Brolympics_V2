@@ -4,16 +4,16 @@ import InCompetition_ind from './inCompetitions/InCompetition_ind'
 import InCompetition_team from './inCompetitions/InCompetition_team'
 
 
-const InCompetition = ({comp}) => {
+const InCompetition = ({activeComp}) => {
 
-  const getCompComponent = (type, props) => {
+  const getCompComponent = (type, uuid) => {
     switch (type) {
       case 'h2h':
-        return <InCompetitions_h2h {...props}/>
+        return <InCompetitions_h2h/>
       case 'ind':
-        return <InCompetition_ind {...props}/>
+        return <InCompetition_ind />
       case 'team':
-        return <InCompetition_team {...props}/>
+        return <InCompetition_team />
       default:
         return null
     }
@@ -21,8 +21,8 @@ const InCompetition = ({comp}) => {
 
   return (
     <div className=''>
-      {comp &&
-        getCompComponent(comp.type, comp)
+      {!activeComp.is_available &&
+        getCompComponent(activeComp.type, activeComp.comp_uuid)
       }
     </div>
   )

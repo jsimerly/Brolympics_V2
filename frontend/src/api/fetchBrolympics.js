@@ -11,3 +11,14 @@ export async function fetchBrolympicsHome(uuid){
         throw error
     }
 }
+
+export async function fetchInCompetition(){
+    try {
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/is-in-competition/`)
+
+        return response
+        
+    } catch (error) {
+        throw error
+    }
+}

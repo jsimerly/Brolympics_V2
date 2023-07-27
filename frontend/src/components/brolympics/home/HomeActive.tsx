@@ -42,6 +42,8 @@ const getActiveComponent = (type, props) => {
     switch (type) {
         case 'h2h':
           return <ActiveCompetition_h2h {...props} />;
+        case 'bracket':
+            return <ActiveCompetition_h2h {...props} />;
         case 'ind':
           return <ActiveCompetition_ind {...props} />;
         case 'team':
@@ -117,7 +119,9 @@ const HomeActive = ({is_owner}) => {
         {
             'active_events' : [],
             'available_competitions' : [],
+            'available_bracket_comps':[],
             'active_competitions' : [],
+            'active_bracket_comps' : [],
         }
     )
     
@@ -130,55 +134,10 @@ const HomeActive = ({is_owner}) => {
             if (response.ok){
                 const data = await response.json()
                 setHomeData(data)
-                console.log(data)
             }
         }
         getHomeInfo()
     },[])
-    
-    const available_competitions = [
-        {
-            'name' : 'Cornhole',
-            'type' : 'h2h',
-            'team_name' : 'Third Dynasty of Ur',
-            'team_record' : '2-0',
-            'team_img' : '',
-            'opponent_name' : 'Poland',
-            'opponent_record' : '0-1',
-            'opponent_image' : ''
-        },
-        {
-            'name' : 'Home Run Derby',
-            'type' : 'ind',
-            'team_name' : 'Third Dynasty of Ur',
-            'team_img' : ''
-         }
-    ]
-    
-    const active_competitions = [
-        {
-            'name' : 'Beer Pong',
-            'type' : 'h2h',
-            'team_1_name' : 'El Salvador',
-            'team_1_record' : '1-2',
-            'team_2_name' : 'France',
-            'team_2_record' : '1-0',
-        },
-        {
-            'name' : 'Cornhole',
-            'type' : 'h2h',
-            'team_1_name' : 'USA',
-            'team_1_record' : '1-2',
-            'team_2_name' : 'St. Vincent and the Grenadines',
-            'team_2_record' : '1-0',
-        },        
-        {
-            'name' : 'Home Run Derby',
-            'type' : 'ind',
-            'team_name' : 'USA',
-        },
-    ]
-
     
   return (
     <div className='px-6 py-3'>
@@ -201,13 +160,13 @@ const HomeActive = ({is_owner}) => {
 
             <EventBlock 
                 title="Available Competition" 
-                items={available_competitions} 
+                items={homeData.available_competitions} 
                 component={AvailableCompetition_h2h}
                 component_func={getAvailableComponent}
             />
             <EventBlock 
                 title="Active Competition" 
-                items={active_competitions} 
+                items={homeData.active_competitions} 
                 component={ActiveCompetition_h2h} 
                 component_func={getActiveComponent}
             />

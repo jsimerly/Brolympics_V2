@@ -752,9 +752,6 @@ class Event_H2H(EventAbstactBase):
     ## End of Initialization ##
 
     ## Utility ## 
-
-
-    
     def _get_percent_complete(self):
         all_h2h_comps = Competition_H2H.objects.filter(event=self)
         all_bracket_comps = BracketMatchup.objects.filter(event=self)
@@ -1235,6 +1232,26 @@ class Team(models.Model):
 
         if self._is_empty_team():
             self.delete()
+
+    def start_comp(self):
+        self.is_available = False
+        if self.player_1:
+            self.player_1.is_available = False
+            self.player_1.save()
+        if self.player_2:
+            self.player_2.is_available = False
+            self.player_2.save()
+        self.save()
+
+    def end_comp(self):
+        self.is_available = True
+        self.player_1.is_available = True
+        self.player_2.is_available = True
+
+        self.player_1.save()
+        self.player_2.save()
+        self.save()      
+
     
     def _is_empty_team(self):
         return self.player_1 is None and self.player_2 is None
@@ -1272,8 +1289,7 @@ class Competition_Team(models.Model):
         
         self.start_time = timezone.now()
         self.is_active = True
-        self.team.is_available = False
-        self.team.save()
+        self.team.start_comp()
         self.save()
 
     def end(self, team_score):
@@ -1330,8 +1346,8 @@ class Competition_Ind(models.Model):
         
         self.start_time = timezone.now()
         self.is_active = True
-        self.team.is_available = False
-        self.team.save()
+
+        self.team.start_comp()
         self.save()
 
     def end(self, player_1_score, player_2_score):
@@ -1426,6 +1442,9 @@ class Competition_H2H_Base(models.Model):
         if not self.team_2.is_available:
             raise ValueError(f"{self.team_2.name} is not currently available")
         
+        self.team_1.start_comp()
+        self.team_2.start_comp()
+
         self.start_time = timezone.now()
         self.is_active = True
         self.team_1.is_available, self.team_2.is_available = False, False
@@ -1467,6 +1486,8 @@ class Competition_H2H_Base(models.Model):
 
         team_1_ranking.save()
         team_2_ranking.save()
+        self.team_1.save()
+        self.team_2.save()
 
         self.is_complete=True
         self.is_active=False
@@ -1484,7 +1505,12 @@ class Competition_H2H_Base(models.Model):
         return winner, loser
     
     def __str__(self):
-        return self.event.name + ' - ' + self.team_1.name + ' vs ' + self.team_2.name
+        name = self.event.name
+        if self.team_1:
+            name += ' - ' + self.team_1.name
+        if self.team_2:
+            name += ' vs ' + self.team_2.name
+        return name
 
 class Competition_H2H(Competition_H2H_Base):
     def end(self, team_1_score, team_2_score):

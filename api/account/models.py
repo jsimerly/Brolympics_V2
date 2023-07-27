@@ -81,6 +81,9 @@ class User(AbstractBaseUser):
 
     uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
 
+    #brolypmics
+    is_available=models.BooleanField(default=True)
+
     EMAIL_FIELD = 'phone'
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []

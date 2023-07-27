@@ -24,7 +24,6 @@ const Brolympics = () => {
       !broInfo.is_active && !broInfo.is_complete && !broInfo.is_owner && setStatus('pre');
       broInfo.is_complete && setStatus('post');
     }
-    console.log(status)
   }, [broInfo]); 
 
   
@@ -38,7 +37,6 @@ const Brolympics = () => {
       if (response.ok){
         const data = await response.json()
         setBroInfo(data)
-        console.log(data)
       } else {
         
       }

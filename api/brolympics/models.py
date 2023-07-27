@@ -83,6 +83,13 @@ class Brolympics(models.Model):
         team_events = self.event_team_set.all()
 
         return {'h2h':h2h_events, 'ind':ind_events, 'team':team_events}
+    
+    def get_active_events(self):
+        h2h_events = self.event_h2h_set.filter(is_active=True)
+        ind_events = self.event_ind_set.filter(is_active=True)
+        team_events = self.event_team_set.filter(is_active=True)
+
+        return {'h2h':h2h_events, 'ind':ind_events, 'team':team_events}
 
     def _is_duplicate(self, team_1, team_2, pairs_set):
         return (team_1, team_2) in pairs_set or (team_2, team_1) in pairs_set
@@ -247,6 +254,10 @@ class EventAbstactBase(models.Model):
         self.finalize_rankings()
         self.save()
 
+    def get_percent_complete(self):
+        return self._get_percent_complete()
+
+
     def __str__(self):
         return self.name + ' - ' + self.brolympics.name
 
@@ -259,6 +270,13 @@ class Event_Team(EventAbstactBase):
     is_available = models.BooleanField(default=False)
 
     ## Initialization  ##
+    def _get_percent_complete(self):
+        all_comps = Competition_Team.objects.filter(event=self)
+        total_count = all_comps.count()
+        if total_count == 0:
+            return 0
+        completed_count = all_comps.filter(is_complete=True).count()
+        return round((completed_count / total_count) * 100)
 
     def create_child_objects(self):
         self._create_competitions_and_ranking_objs_team()
@@ -277,6 +295,26 @@ class Event_Team(EventAbstactBase):
     ## End of Initialization ##
 
     ## Utility ##
+
+    def find_available_comps(self, user):
+        comps = Competition_Team.objects.filter(
+            Q(event=self),
+            Q(is_complete=False),
+            (
+                Q(team__is_available=True, team__player_1=user) |
+                Q(team__is_available=True, team__player_2=user)
+            )
+        )
+
+        return comps
+    
+    def find_active_comps(self):
+        comps = Competition_Team.objects.filter(
+            event=self,
+            is_active=True,
+        )
+        return comps
+    
     def full_update_event_rankings_team(self):
         team_rankings = list(self.event_team_event_rankings.all())
         self._wipe_rankings(self, team_rankings)
@@ -448,6 +486,33 @@ class Event_IND(EventAbstactBase):
     ## End of Initialization ##
 
     ## Event Utility ##
+    def find_available_comps(self, user):
+        comps = Competition_Ind.objects.filter(
+            Q(event=self),
+            Q(is_complete=False),
+            (
+                Q(team__is_available=True, team__player_1=user) |
+                Q(team__is_available=True, team__player_2=user)
+            )
+        )
+
+        return comps
+    
+    def find_active_comps(self):
+        comps = Competition_Ind.objects.filter(
+            event=self,
+            is_active=True,
+        )
+        return comps
+    
+    def _get_percent_complete(self):
+        all_comps = Competition_Ind.objects.filter(event=self)
+        total_count = all_comps.count()
+        if total_count == 0:
+            return 0
+        completed_count = all_comps.filter(is_complete=True).count()
+        return round((completed_count / total_count) * 100)
+
     def full_update_event_rankings_ind(self):
         team_rankings = list(self.event_ind_event_rankings.all())
         self._wipe_rankings(self, team_rankings)
@@ -687,6 +752,21 @@ class Event_H2H(EventAbstactBase):
     ## End of Initialization ##
 
     ## Utility ## 
+
+
+    
+    def _get_percent_complete(self):
+        all_h2h_comps = Competition_H2H.objects.filter(event=self)
+        all_bracket_comps = BracketMatchup.objects.filter(event=self)
+        total_count = all_h2h_comps.count() + all_bracket_comps.count()
+        
+        if total_count == 0:
+            return 0
+        
+        completed_count = all_h2h_comps.filter(is_complete=True).count() + all_bracket_comps.filter(is_complete=True).count()
+
+        return round((completed_count / total_count) * 100)
+
     def full_update_event_rankings_h2h(self):
         team_rankings = list(self.event_h2h_event_rankings.all())
 
@@ -742,12 +822,7 @@ class Event_H2H(EventAbstactBase):
 
     ## End of Utility ## 
 
-    ## Event Life Cycle ##
-    def find_available_comps(self):
-        if not self.is_round_robin_complete:
-            return self._find_available_standard_comps()
-        return self._find_available_bracket_comps()
-    
+    ## Event Life Cycle ##    
     def _find_available_standard_comps(self):
         return Competition_H2H.objects.filter(
             event=self,
@@ -764,7 +839,41 @@ class Event_H2H(EventAbstactBase):
             is_complete=False
         )
     
-        #Comp start and end here #
+    def find_available_comps(self, user):
+        comps = Competition_H2H.objects.filter(
+            Q(event=self) & Q(is_complete=False) &
+            (
+                Q(team_1__is_available=True, team_1__player_1=user) |
+                Q(team_1__is_available=True, team_1__player_2=user) |
+                Q(team_2__is_available=True, team_2__player_1=user) |
+                Q(team_2__is_available=True, team_2__player_2=user)
+            )
+        )
+
+        bracket = BracketMatchup.objects.filter(
+            Q(event=self) & Q(is_complete=False) &
+            (
+                Q(team_1__is_available=True, team_1__player_1=user) |
+                Q(team_1__is_available=True, team_1__player_2=user) |
+                Q(team_2__is_available=True, team_2__player_1=user) |
+                Q(team_2__is_available=True, team_2__player_2=user)
+            )
+        )
+
+        return {'std': comps, 'bracket': bracket}
+    
+    def find_active_comps(self):
+        comps = Competition_H2H.objects.filter(
+            event=self,
+            is_active=True,
+        )
+        bracket = BracketMatchup.objects.filter(
+            event=self,
+            is_active=True
+        )
+
+        return {'std': comps, 'bracket': bracket}
+    
     
     def update_event_rankings_h2h(self, team_rankings=None):
         if team_rankings == None:
@@ -1092,8 +1201,6 @@ class Team(models.Model):
 
     is_available = models.BooleanField(default=True)
 
-    score = models.FloatField(default=0)
-
     wins = models.PositiveIntegerField(default=0)
     losses = models.PositiveIntegerField(default=0)
     ties = models.PositiveIntegerField(default=0)
@@ -1139,7 +1246,7 @@ class Competition_Team(models.Model):
     event = models.ForeignKey(
         Event_Team,
         on_delete=models.CASCADE,
-        related_name='team_comp',
+        related_name='comp',
     )
 
     team = models.ForeignKey(
@@ -1193,7 +1300,7 @@ class Competition_Ind(models.Model):
     event = models.ForeignKey(
         Event_IND,
         on_delete=models.CASCADE,
-        related_name='ind_comp',
+        related_name='comp',
     )
 
     team = models.ForeignKey(

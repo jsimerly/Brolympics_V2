@@ -61,7 +61,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ['name', 'player_1', 'player_2', 'is_available', 'score', 'wins', 'losses', 'ties', 'uuid', 'img', 'brolympics_uuid']
+        fields = ['name', 'player_1', 'player_2', 'is_available', 'wins', 'losses', 'ties', 'uuid', 'img', 'brolympics_uuid']
 
     def create(self, validated_data):
     
@@ -227,37 +227,120 @@ class LeagueInfoSerializer(serializers.ModelSerializer):
         return BrolympicsSerializer(upcoming, many=True, context=self.context).data
 
 
+class BrolympicsCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brolympics
+        fields = ['league', 'name', 'projected_start_date', 'img']
+
+class EventTeamCreateAllSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event_Team
+        fields = ['name', 'brolympics']
+
+class EventIndCreateAllSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event_IND
+        fields = ['name', 'brolympics']
+
+class EventH2HCreateAllSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event_H2H
+        fields = ['name', 'brolympics']
+     
+
+
+
+class TeamRankingsSerializer_H2h(serializers.ModelSerializer):
+    team = TeamSerializer()
+    event = serializers.SerializerMethodField()
+    class Meta:
+        model = EventRanking_H2H
+        fields = ['event', 'team', 'rank', 'points', 'wins', 'losses', 'win_rate', 'score_for', 'score_against', 'sos_wins', 'sos_losses', 'sos_ties', 'is_final', 'uuid',]
+
+    def get_event(self, obj):
+        return obj.event.name
+
+class TeamRankingsSerializer_Ind(serializers.ModelSerializer):
+    team = TeamSerializer()
+    event = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EventRanking_Ind
+        fields = ['event', 'team', 'team_total_score', 'team_avg_score', 'rank', 'points', 'is_final', 'uuid']
+
+    def get_event(self, obj):
+        return obj.event.name
+
+class TeamRankingsSerializer_Team(serializers.ModelSerializer):
+    team = TeamSerializer()
+    event = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EventRanking_Team
+        fields = ['event', 'team', 'team_total_score', 'team_avg_score', 'rank', 'points', 'is_final', 'uuid']
+
+    def get_event(self, obj):
+        return obj.event.name
+
+
+
 h2h_comp_fields = [
     'event', 'team_1', 'team_2', 'team_1_score', 'team_2_score',
-    'winner', 'loser', 'start_time', 'end_time', 'is_complete', 'uuid', 'is_active', 
-]
-class CompetitionSerializer_H2h(serializers.ModelSerializer):
+    'winner', 'loser', 'start_time', 'end_time', 'is_complete', 'uuid', 'is_active', 'is_bracket'
+]         
+
+class BaseCompetitionSerializer(serializers.ModelSerializer):
+    team_1 = TeamSerializer()
+    team_2 = TeamSerializer()
+    winner = TeamSerializer()
+    loser = TeamSerializer()
+    event = serializers.SerializerMethodField()
+    is_bracket = serializers.SerializerMethodField()
     class Meta:
         model = Competition_H2H
         fields = [] + h2h_comp_fields
 
+    def get_event(self, obj):
+        return obj.event.name
+    
+    def get_is_bracket(self, obj):
+        if isinstance(obj, BracketMatchup):
+            return True
+        return False
 
-class BracketCompetitionSerializer_H2h(serializers.ModelSerializer):
-    class Meta:
+class CompetitionSerializer_H2h(BaseCompetitionSerializer):
+    class Meta(BaseCompetitionSerializer.Meta):
+        fields = BaseCompetitionSerializer.Meta.fields
+
+
+class BracketCompetitionSerializer_H2h(BaseCompetitionSerializer):
+    team_1_seed = serializers.IntegerField()
+    team_2_seed = serializers.IntegerField()
+
+    class Meta(BaseCompetitionSerializer.Meta):
         model = BracketMatchup
-        fields = ['team_1_seed', 'team_2_seed'] + h2h_comp_fields
+        fields = ['team_1_seed', 'team_2_seed'] + BaseCompetitionSerializer.Meta.fields
+
 
 
 class CompetitionSerializer_Ind(serializers.ModelSerializer):
+    team = TeamSerializer()
+    event = serializers.SerializerMethodField()
     class Meta:
         model = Competition_Ind
         fields = ['event', 'team', 'player_1_score', 'player_2_score', 'display_avg_score', 'team_score', 'avg_score', 'start_time', 'end_time', 'is_active', 'is_complete',  'uuid']
 
-
-
+    def get_event(self, obj):
+        return obj.event.name
+    
+    
 class CompetitionSerializer_Team(serializers.ModelSerializer):
-    user_won = serializers.SerializerMethodField()
+    team = TeamSerializer()
+    event = serializers.SerializerMethodField()
     class Meta:
         model = Competition_Team
-        fields = ['event', 'team', 'display_avg_score', 'team_score', 'avg_score', 'start_time', 'end_time', 'is_active', 'is_complete', 'uuid']
+        fields = ['event', 'team', 'display_avg_score', 'team_score', 'avg_score', 'start_time', 'end_time', 'is_active', 'is_complete', 'user_won', 'uuid']
 
-
-
-
-
-
+    def get_event(self, obj):
+        return obj.event.name
+    

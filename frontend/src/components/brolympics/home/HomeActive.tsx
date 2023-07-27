@@ -1,13 +1,17 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
+import { useNavigate, useLocation, useParams } from 'react-router-dom'
+
 import AvailableCompetition_h2h from './h2h/AvailableCompetition_h2h';
 import ActiveCompetition_h2h from './h2h/ActiveCompetition_h2h';
 import AvailableCompetition_ind from './ind/AvailableCompetition_ind';
 import ActiveCompetition_ind from './ind/ActiveCompetition_ind';
 import AvailableCompetition_team from './team/AvailableCompetition_team';
 import ActiveCompetition_team from './team/ActiveCompetition_team';
-import  HomeAdminActive  from './HomeAdminActive';
+import HomeAdminActive  from './HomeAdminActive';
 
-const CurrentEventCard = ({name, complete_perc}) => (
+import { fetchHome } from '../../../api/activeBro/fetchHome.js'
+
+const CurrentEventCard = ({name, percent_complete}) => (
     <div className='pb-1 rounded-md '>
         <h3 className='pb-2'>
             {name}
@@ -15,7 +19,7 @@ const CurrentEventCard = ({name, complete_perc}) => (
         <div className='relative h-[2px] w-full bg-gray-200 rounded-full '>
             <div 
                 className='absolute top-0 left-0 w-full h-full duration-200 ease-in-out rounded-full transition-width bg-primary'
-                style={{width: `${complete_perc}%`}}
+                style={{width: `${percent_complete}%`}}
             />
         </div>
     </div>
@@ -109,13 +113,29 @@ const AdminSwitch = ({adminView, setAdminView}) => {
 
 const HomeActive = ({is_owner}) => {
     const [adminView, setAdminView] = useState(false)
+    const [homeData, setHomeData] = useState(
+        {
+            'active_events' : [],
+            'available_competitions' : [],
+            'active_competitions' : [],
+        }
+    )
     
-    const active_events = [
-        {'name' : 'Cornhole', 'complete_perc' : 20},
-        {'name' : 'Beer Pong', 'complete_perc' : 90},
-        {'name' : 'Home Run Derby' , 'complete_perc' : 40}
-    ]
+    const navigate = useNavigate();
+    const {uuid} = useParams()   
 
+    useEffect(() => {
+        const getHomeInfo = async () => {
+            const response = await fetchHome(uuid)
+            if (response.ok){
+                const data = await response.json()
+                setHomeData(data)
+                console.log(data)
+            }
+        }
+        getHomeInfo()
+    },[])
+    
     const available_competitions = [
         {
             'name' : 'Cornhole',
@@ -169,12 +189,16 @@ const HomeActive = ({is_owner}) => {
             <HomeAdminActive/>
         :
         <div className='flex flex-col gap-3'>
-            <EventBlock 
-                title="Active Event"
-                items={active_events} 
-                component={CurrentEventCard} 
-                component_func={null}
-            />
+            {
+                <EventBlock 
+                    title="Active Event"
+                    items={homeData.active_events} 
+                    component={CurrentEventCard} 
+                    component_func={null}
+                />
+
+            }
+
             <EventBlock 
                 title="Available Competition" 
                 items={available_competitions} 

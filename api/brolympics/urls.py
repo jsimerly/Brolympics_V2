@@ -33,4 +33,5 @@ urlpatterns = [
     path('start-brolympics/', StartBrolympics.as_view(), name='start_brolympics'),
     path('events-unstarted/<uuid:uuid>', UnstartedEvents.as_view(), name='unstarted-events'),
     path('start-event/', StartEvents.as_view(), name='start_event'),
+    path('get-active-home/<uuid:uuid>', GetActiveHome.as_view(), name='get_active_home')
 ]

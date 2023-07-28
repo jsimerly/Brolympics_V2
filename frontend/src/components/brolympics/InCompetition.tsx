@@ -20,9 +20,6 @@ const InCompetition = ({activeComp}) => {
     }
   }
 
-  // Going to have to redo the views and parse what kind of comp it is from here then feed it to the proper component
-
-    console.log('in comp')
   return (
       getCompComponent(activeComp.type, activeComp.comp_uuid)
   )

@@ -13,6 +13,7 @@ from rest_framework.exceptions import PermissionDenied
 from django.db.models import Q
 
 
+## Home Page Start
 class StartBrolympics(APIView):
     def get_object(self, uuid):
         brolympics = get_object_or_404(Brolympics, uuid=uuid)
@@ -321,9 +322,7 @@ class GetCompH2h(APIView):
             return Response(comp_serializer.data, status=status.HTTP_200_OK)
         
         return ResourceWarning(status=status.HTTP_404_NOT_FOUND)
-    
-
- 
+     
 class GetCompInd(APIView):
     def get(self, request, uuid):
         comp = get_object_or_404(Competition_Ind, uuid=uuid)
@@ -340,8 +339,6 @@ class GetCompTeam(APIView):
 class EndCompH2h(APIView):
     def put(self, request):
         comp_uuid = request.data.get('uuid')
-        team_1_score = request.data.get('team_1_score')
-        team_2_score = request.data.get('team_2_score')
 
         try:
             team_1_score = float(request.data.get('team_1_score'))
@@ -365,4 +362,102 @@ class EndCompH2h(APIView):
             return Response(status=status.HTTP_200_OK)
 
         
-        return ResourceWarning(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+class EndCompInd(APIView):
+    def put(self, request):
+        comp_uuid = request.data.get('uuid')
+
+        try:
+            player_1_score = float(request.data.get('player_1_score'))
+            player_2_score = float(request.data.get('player_2_score'))
+        except ValueError:
+            return Response({'error': 'Invalid Score'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        comp = get_object_or_404(Competition_Ind, uuid=comp_uuid)
+        comp.end(player_1_score, player_2_score)
+
+        return Response(status=status.HTTP_200_OK) 
+    
+
+class EndCompTeam(APIView):
+    def put(self, request):
+        comp_uuid = request.data.get('uuid')
+
+        try:
+            team_score = float(request.data.get('team_score'))
+        except ValueError:
+            return Response({'error': 'Invalid Score'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        comp = get_object_or_404(Competition_Team, uuid=comp_uuid)
+        comp.end(team_score)
+
+        return Response(status=status.HTTP_200_OK) 
+    
+
+
+class CancelCompH2h(APIView):
+    def put(self, request):
+        comp_uuid = request.data.get('uuid')
+
+        h2h_comp_qset = Competition_H2H.objects.filter(uuid=comp_uuid)        
+        if h2h_comp_qset.exists():
+            comp = h2h_comp_qset.first()
+            comp.cancel()
+
+            return Response(status=status.HTTP_200_OK)
+
+        bracket_comp_qset = BracketMatchup.objects.filter(uuid=comp_uuid)
+        if bracket_comp_qset.exists():
+            comp = bracket_comp_qset.first()
+            comp.cancel()
+
+            return Response(status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+class CancelCompInd(APIView):
+    def put(self, request):
+        comp_uuid = request.data.get('uuid')        
+        comp = get_object_or_404(Competition_Ind, uuid=comp_uuid)
+        comp.cancel()
+
+        return Response(status=status.HTTP_200_OK) 
+
+class CancelCompTeam(APIView):
+    def put(self, request):
+        comp_uuid = request.data.get('uuid')        
+        comp = get_object_or_404(Competition_Team, uuid=comp_uuid)
+        comp.cancel()
+
+        return Response(status=status.HTTP_200_OK) 
+    
+
+## Home Page End ##
+
+## Team Page
+
+class GetTeamInfo(APIView):
+    def get(self, request, uuid):
+        team = get_object_or_404(Team, uuid=uuid)
+        team_data = TeamPageSerailizer(team).data
+
+        h2h_rankings = EventRanking_H2H.objects.filter(team=team)
+        h2h_ranking_data = EventRankingSerializer_H2h(h2h_rankings, many=True).data
+
+        ind_rankings = EventRanking_Ind.objects.filter(team=team)
+        ind_ranking_data = EventRankingSerializer_Ind(ind_rankings, many=True).data
+
+        team_rankings = EventRanking_Team.objects.filter(team=team)
+        team_ranking_data = EventRankingSerializer_Team(team_rankings, many=True).data
+
+        all_event_data = h2h_ranking_data + ind_ranking_data + team_ranking_data
+
+        data = {
+            'team' : team_data,
+            'events': all_event_data 
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+

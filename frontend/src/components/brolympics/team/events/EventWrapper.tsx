@@ -26,11 +26,11 @@ return (
           </div>
           {(is_active || is_final) &&
               <div className='flex items-center w-2/5'>
-                  <div className='w-1/2'>
+                  <div className='flex items-center w-1/2 gap-2'>
                     <NumbersOutlinedIcon/> {rank}
                   </div>
-                  <div className='w-1/2'>
-                    <DiamondOutlinedIcon/> {points}
+                  <div className='flex items-center w-1/2 gap-2'>
+                    <DiamondOutlinedIcon/> {Number.isInteger(points) ? points : points.toFixed(1)}
                   </div>
               </div>
           }

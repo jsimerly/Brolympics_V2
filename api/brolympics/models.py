@@ -186,6 +186,9 @@ class OverallBrolympicsRanking(models.Model):
     losses = models.PositiveIntegerField(default=0)
     ties = models.PositiveIntegerField(default=0)
 
+    event_wins = models.PositiveIntegerField(default=0)
+    event_podiums = models.PositiveIntegerField(default=0)
+    
     def __str__(self):
         return self.team.name + ' - ' + self.brolympics.name
 
@@ -345,7 +348,7 @@ class Event_Team(EventAbstactBase):
         return self.is_available
     
     def _get_n_active_comps(self):
-        active_comps = self.team_comp.filter(is_active=True)
+        active_comps = self.comp.filter(is_active=True)
         return active_comps.count()
     
     def get_team_next_comp_team(self, team):
@@ -368,7 +371,7 @@ class Event_Team(EventAbstactBase):
         self._set_rankings_and_points(ordered_grouped_teams)   
 
     def _update_average_score(self, team_rankings):
-        competitions = self.team_comp.filter(is_complete=True)
+        competitions = self.comp.filter(is_complete=True)
 
         averages = competitions.values('team').annotate(
             team_avg_score=Avg('team_score')
@@ -425,7 +428,7 @@ class Event_Team(EventAbstactBase):
         if self.start_time == None or self.is_complete:
             return None
         
-        uncompleted = self.team_comp.filter(is_complete=False)
+        uncompleted = self.comp.filter(is_complete=False)
         if len(uncompleted) == 0:
             self.is_complete = True
             self.is_available = False
@@ -548,7 +551,7 @@ class Event_IND(EventAbstactBase):
         return self.is_available
 
     def _get_n_active_comps(self):
-        active_comps = self.ind_comp.filter(is_active=True)
+        active_comps = self.comp.filter(is_active=True)
         return active_comps.count()
     
     def get_team_next_comp_ind(self, team):
@@ -572,7 +575,7 @@ class Event_IND(EventAbstactBase):
         return ordered_grouped_teams
         
     def _update_average_score(self, team_rankings):
-        competitions = self.ind_comp.filter(is_complete=True)
+        competitions = self.comp.filter(is_complete=True)
 
         averages = competitions.values('team').annotate(
             player_1_avg_score=Avg('player_1_score'),
@@ -634,7 +637,7 @@ class Event_IND(EventAbstactBase):
         if self.start_time == None or self.is_complete:
             return None
         
-        uncompleted = self.ind_comp.filter(is_complete=False)
+        uncompleted = self.comp.filter(is_complete=False)
         if len(uncompleted) == 0:
             self.is_complete = True
             self.is_available = False
@@ -1294,6 +1297,14 @@ class Competition_Team(models.Model):
         self.team.start_comp()
         self.save()
 
+    def cancel(self):
+        if self.is_complete:
+            raise ValueError('This event has already been completed.')
+        
+        self.team.end_comp()
+        self.is_active = False
+        self.save()
+
     def end(self, team_score):
         self.end_time = timezone.now()
 
@@ -1302,6 +1313,7 @@ class Competition_Team(models.Model):
         self.is_active = False
         self.is_complete = True
 
+        self.team.end_comp()
         self.save()
 
         team_ranking = EventRanking_Team.objects.get(event=self.event, team=self.team)
@@ -1352,6 +1364,14 @@ class Competition_Ind(models.Model):
         self.team.start_comp()
         self.save()
 
+    def cancel(self):
+        if self.is_complete:
+            raise ValueError('This event has already been completed.')
+        
+        self.team.end_comp()
+        self.is_active = False
+        self.save()
+
     def end(self, player_1_score, player_2_score):
         self.end_time = timezone.now()
 
@@ -1364,9 +1384,7 @@ class Competition_Ind(models.Model):
         self.is_active = False
         self.is_complete = True
 
-        self.team.is_available=True
-        self.team.save()
-
+        self.team.end_comp()
         self.save()
 
         team_ranking = EventRanking_Ind.objects.get(event=self.event, team=self.team)
@@ -1453,10 +1471,16 @@ class Competition_H2H_Base(models.Model):
 
         self.save()
 
-    def end(self, team_1_score, team_2_score):
+    def cancel(self):
+        if self.is_complete:
+            raise ValueError('This event has already been completed.')
         
+        self.team_1.end_comp()
+        self.team_2.end_comp()
+        self.is_active=False
+        self.save()
 
-
+    def end(self, team_1_score, team_2_score):
         self.team_1_score = team_1_score
         self.team_2_score = team_2_score
 

@@ -32,6 +32,7 @@ const Brolympics = () => {
       if (response.ok){
         const data = await response.json()
         setBroInfo(data)
+        console.log(data)
       } else {
         
       }
@@ -59,6 +60,7 @@ const Brolympics = () => {
           if (!data.is_available){
             if (activeComp.is_available){
               setActiveComp(data)
+              console.log(data)
             }
 
             if (!location.pathname.includes(
@@ -101,20 +103,17 @@ const Brolympics = () => {
         <Routes>
             <Route path="home" element={<Home brolympics={broInfo} status={status} setStatus={setStatus}/>} />
             <Route path="standings" element={<Standings />} />
-            <Route path="team" element={<Team />} />
-            <Route path="team/:teamUuid" element={<Team />} />
+            
+            <Route path="team/:teamUuid" element={<Team teams={broInfo?.teams}/>} />
             <Route path="event" element={<Events />} />
             <Route path="event/:eventUuid" element={<Events />} />
             <Route path='competition/:compUuid' element={<InCompetition activeComp={activeComp}/>}/>
             <Route path='manage/*' element={<ManageRouter brolympics={broInfo}/>}/>
-            <Route 
-                path="*" 
-                element={<Navigate to="home" replace/>} 
-            />
         </Routes>
         {activeComp.is_available && 
           <Toolbar
             is_owner={broInfo?.is_owner}
+            default_team_uuid = {broInfo?.team_uuid || ''}
           />
         }
     </div>

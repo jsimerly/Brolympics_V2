@@ -30,6 +30,7 @@ urlpatterns = [
     path('join-team/<uuid:uuid>', JoinTeam.as_view(), name='join_team'),
 
     #Active Brolympics
+        # Home Page
     path('start-brolympics/', StartBrolympics.as_view(), name='start_brolympics'),
     path('events-unstarted/<uuid:uuid>', UnstartedEvents.as_view(), name='unstarted-events'),
     path('start-event/', StartEvents.as_view(), name='start_event'),
@@ -40,6 +41,12 @@ urlpatterns = [
     path('get-comp-ind/<uuid:uuid>', GetCompInd.as_view(), name='get_comp_ind'),
     path('get-comp-team/<uuid:uuid>', GetCompTeam.as_view(), name='get_comp_team'),
     path('end-competition-h2h/', EndCompH2h.as_view(), name='end_comp_h2h'),
-    path('end-competition-ind/', EndCompH2h.as_view(), name='end_comp_ind'),
-    path('end-competition-team/', EndCompH2h.as_view(), name='end_comp_team'),
+    path('end-competition-ind/', EndCompInd.as_view(), name='end_comp_ind'),
+    path('end-competition-team/', EndCompTeam.as_view(), name='end_comp_team'),
+    path('cancel-competition-h2h/', CancelCompH2h.as_view(), name='end_comp_h2h'),
+    path('cancel-competition-ind/', CancelCompInd.as_view(), name='end_comp_ind'),
+    path('cancel-competition-team/', CancelCompTeam.as_view(), name='end_comp_team'),
+
+        # Teams
+    path('get-team-info/<uuid:uuid>', GetTeamInfo.as_view(), name='get_team_info' ),
 ]

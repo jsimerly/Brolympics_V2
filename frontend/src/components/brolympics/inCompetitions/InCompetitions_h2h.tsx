@@ -9,8 +9,6 @@ const InCompetitions_h2h = ({}) => {
     const handleTeam2ScoreChange = (e) => setTeam2Score(e.target.value);
   
     const {compUuid} = useParams()
-    console.log(compUuid)
-    console.log('rending')
 
     const [compData, setCompData] = useState()
     useEffect(()=>{

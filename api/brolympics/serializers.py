@@ -175,10 +175,11 @@ class BrolympicsSerializer(serializers.ModelSerializer):
     projected_start_date = serializers.SerializerMethodField()
     projected_end_date = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
+    team_uuid = serializers.SerializerMethodField()
 
     class Meta:
         model = Brolympics
-        fields = ['name', 'is_registration_open', 'projected_start_date', 'projected_end_date', 'start_time', 'end_time', 'is_complete', 'winner', 'uuid', 'img', 'teams', 'events', 'is_owner', 'is_active']
+        fields = ['name', 'is_registration_open', 'projected_start_date', 'projected_end_date', 'start_time', 'end_time', 'is_complete', 'winner', 'uuid', 'img', 'teams', 'events', 'is_owner', 'is_active', 'team_uuid']
 
     def get_teams(self, obj):
         return TeamSerializer(obj.teams.all(), many=True, context=self.context).data
@@ -205,6 +206,14 @@ class BrolympicsSerializer(serializers.ModelSerializer):
         if request and hasattr(request, 'user'):
             return obj.league.league_owner == request.user
         return False
+    
+    def get_team_uuid(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        team = Team.objects.filter(Q(player_1=user) | Q(player_2=user))
+        if team.exists():
+            return team.first().uuid
+        return None
 
 class LeagueInfoSerializer(serializers.ModelSerializer):
     founded = serializers.SerializerMethodField()
@@ -359,7 +368,7 @@ class CompetitionSerializer_Team(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
     class Meta:
         model = Competition_Team
-        fields = ['event', 'team', 'display_avg_score', 'team_score', 'avg_score', 'start_time', 'end_time', 'is_active', 'is_complete', 'user_won', 'uuid', 'type']
+        fields = ['event', 'team', 'display_avg_score', 'team_score', 'start_time', 'end_time', 'is_active', 'is_complete', 'uuid', 'type']
 
     def get_event(self, obj):
         return obj.event.name

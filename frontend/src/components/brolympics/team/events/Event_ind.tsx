@@ -1,6 +1,6 @@
 import EventWrapper from "./EventWrapper"
 
-const Competition = ({player_1_name, player_1_score, player_2_name, player_2_score, team_score, is_active, rank}) => {
+const Competition = ({player_1_name, player_1_score, player_2_name, player_2_score, team_score, is_active, rank, team}) => {
 
 
   return(
@@ -10,8 +10,8 @@ const Competition = ({player_1_name, player_1_score, player_2_name, player_2_sco
       `}
     >
         <div className="grid grid-cols-2 ">
-          <div className="text-end">{player_1_name}:</div><div className="pl-3">{player_1_score}</div> 
-          <div className="text-end">{player_2_name}:</div><div className="pl-3">{player_2_score}</div>
+          <div className="text-end">{team.player_1.short_name}:</div><div className="pl-3">{player_1_score}</div> 
+          <div className="text-end">{team.player_2.short_name}:</div><div className="pl-3">{player_2_score}</div>
           <div className="font-bold text-end">Team:</div><div className="pl-3 font-bold">{team_score}</div>
         </div>
     </div>
@@ -30,9 +30,10 @@ const EventDropdown_Ind = ({comps, decimcal_places, is_active, rank}) => (
     </div>
 )
 
-const Event_ind = ({name, rank, points, is_active, is_final, score, decimal_places, comps}) => {
+const Event_ind = ({name, rank, points, is_active, is_final, score, decimal_places, comps, team}) => {
 
   const display_score = (score !== null && score !== 0) ? score.toFixed(decimal_places) : '';
+  
   return (
     <EventWrapper
       name={name}
@@ -47,6 +48,7 @@ const Event_ind = ({name, rank, points, is_active, is_final, score, decimal_plac
         decimcal_places={decimal_places}
         is_active={is_active}
         rank={rank}
+        team={team}
       />
     </EventWrapper>
   )

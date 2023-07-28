@@ -1,16 +1,17 @@
 import{useState} from 'react'
-import { Routes, Route, useNavigate, } from "react-router-dom"
+import { Routes, Route, useNavigate, useParams} from "react-router-dom"
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import {useDropdown} from '../../../hooks'
 
-const TeamsDropdown = ({teams}) => {
-    const [selectedTeam, setSelectedTeam] = useState(teams[0])
+const TeamsDropdown = ({teams, selectedTeam, setSelectedTeam}) => {
     const navigate = useNavigate()
+
+    const {uuid} = useParams()
   
     const handleSelect = (team) => {
       setSelectedTeam(team)
       setIsOpen(false)
-      navigate(`/brolympics/team/${team}`);
+      navigate(`/b/${uuid}/team/${team.uuid}`);
     }
   
     const [isOpen, setIsOpen, handleDropdownClicked, dropdownNode] = useDropdown()
@@ -19,11 +20,11 @@ const TeamsDropdown = ({teams}) => {
     <div className='relative flex flex-col items-center justify-center w-full py-3 '>
         <div>
           <div 
-            className=' flex justify-between items-center w-[200px] text-[20px] font-bold  border-neutralLight'
+            className=' flex justify-between items-center w-[200px] text-[20px] font-semibold  border-neutralLight'
             onClick={handleDropdownClicked}
           >
             <h2 className='flex items-center justify-center w-full text-center'>
-              {selectedTeam ? selectedTeam : 'Select a Team'}
+              {selectedTeam ? selectedTeam.name : 'Select a Team'}
             </h2> 
               <ExpandMoreOutlinedIcon/>
           </div>
@@ -33,7 +34,6 @@ const TeamsDropdown = ({teams}) => {
               ref={dropdownNode}
             >
               {teams
-                .filter((team) => team !== selectedTeam)
                 .map((team, index) => (
                   <div key={index+"_dropdown"}>                
                     <li 
@@ -41,7 +41,7 @@ const TeamsDropdown = ({teams}) => {
                       className='text-[16px] py-2'
                       onClick={() => handleSelect(team)}
                     >
-                      {team}
+                      {team.name}
                     </li>
                     {index+2 !== teams.length && 
                     <div key={index+'_divider'} className='w-full bg-gray-200 h-[1px]'/>}

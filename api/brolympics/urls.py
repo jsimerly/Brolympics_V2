@@ -38,5 +38,8 @@ urlpatterns = [
     path('is-in-competition/', IsInCompetition.as_view(), name='is_in_competition'),
     path('get-comp-h2h/<uuid:uuid>', GetCompH2h.as_view(), name='get_comp_h2h'),
     path('get-comp-ind/<uuid:uuid>', GetCompInd.as_view(), name='get_comp_ind'),
-    path('get-comp-team/<uuid:uuid>', GetCompTeam.as_view(), name='get_comp_team')
+    path('get-comp-team/<uuid:uuid>', GetCompTeam.as_view(), name='get_comp_team'),
+    path('end-competition-h2h/', EndCompH2h.as_view(), name='end_comp_h2h'),
+    path('end-competition-ind/', EndCompH2h.as_view(), name='end_comp_ind'),
+    path('end-competition-team/', EndCompH2h.as_view(), name='end_comp_team'),
 ]

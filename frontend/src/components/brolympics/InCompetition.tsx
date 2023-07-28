@@ -1,4 +1,5 @@
 import {useState} from 'react'
+import { useParams } from 'react-router-dom'
 import InCompetitions_h2h from './inCompetitions/InCompetitions_h2h'
 import InCompetition_ind from './inCompetitions/InCompetition_ind'
 import InCompetition_team from './inCompetitions/InCompetition_team'
@@ -19,12 +20,11 @@ const InCompetition = ({activeComp}) => {
     }
   }
 
+  // Going to have to redo the views and parse what kind of comp it is from here then feed it to the proper component
+
+    console.log('in comp')
   return (
-    <div className=''>
-      {!activeComp.is_available &&
-        getCompComponent(activeComp.type, activeComp.comp_uuid)
-      }
-    </div>
+      getCompComponent(activeComp.type, activeComp.comp_uuid)
   )
 }
 

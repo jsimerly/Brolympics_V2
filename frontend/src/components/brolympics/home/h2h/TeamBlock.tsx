@@ -1,8 +1,8 @@
 import React from 'react'
 
-const TeamsBlock = ({name, team_1_name, team_1_record, team_1_img, team_2_name, team_2_record, team_2_img}) => {
-    
-    const TeamBlock = ({name, record, img, reverse=false}) => {
+const TeamsBlock = ({name, team_1_name, team_1_record, team_1_img, team_2_name, team_2_record, team_2_img, team_1_seed, team_2_seed, is_bracket}) => {
+
+    const TeamBlock = ({name, record, img, seed ,reverse=false}) => {
         let fontSize;
         if (name) {
           if (name.length <= 10) {
@@ -19,8 +19,7 @@ const TeamsBlock = ({name, team_1_name, team_1_record, team_1_img, team_2_name, 
         return (
           <div className=''>
             <div className={`flex ${reverse ? 'flex-row-reverse justify-start' : 'flex-row justify-start'} gap-2`}>
-              <img src={img} className='h-[60px] w-[60px] min-w-[60px] rounded-md'/>
-                
+              <img src={img} className='h-[60px] w-[60px] min-w-[60px] rounded-md'/>              
               <div className={`flex flex-col justify-center items-${reverse ? 'end' : 'start'}`}>
                 <div 
                   className={`flex font-bold items-center ${reverse ? 'justify-end text-end' : 'justify-start text-start'}`}
@@ -28,7 +27,12 @@ const TeamsBlock = ({name, team_1_name, team_1_record, team_1_img, team_2_name, 
                 >
                     {name}
                 </div>
-                <div className='text-[12px]'>{record}</div>
+                  {seed ? 
+                    <div>#{seed}</div>
+                    :  
+                    <div className='text-[12px]'>{record}</div>
+                  }
+          
               </div>
             </div>
         </div>
@@ -40,13 +44,27 @@ const TeamsBlock = ({name, team_1_name, team_1_record, team_1_img, team_2_name, 
         <h2 className='pb-2 font-bold'>{name}</h2>
         <div className='flex'>
             <div className='w-1/2'>
-            <TeamBlock name={team_1_name} record={team_1_record} img={team_1_img}/>
+            <TeamBlock name={team_1_name} record={team_1_record} img={team_1_img} seed={team_1_seed}/>
             </div>
+            {is_bracket ?
+              <div className='flex items-end'>
+                <div className='flex flex-col h-[20px] justify-between'>
+                  <div className='h-[2px] w-[20px] bg-primary'/>
+                  <div className='h-[2px] w-[20px] bg-primary'/>
+                </div>
+                <div className='h-[20px] w-[2px] bg-primary'/>
+                <div className='h-[20px] flex items-center'>
+                  <div className='h-[2px] w-[20px] bg-primary'/>
+                </div>
+              </div>
+            :
             <div className='flex items-center px-3'>
-                <div className='text-center rounded-full w-[28px] flex items-center justify-center'>vs</div>
+              <div className='text-center rounded-full w-[28px] flex items-center justify-center'>vs</div>
             </div>
+            }
+
             <div className='w-1/2'>
-            <TeamBlock name={team_2_name} record={team_2_record} img={team_2_img} reverse={true}/>
+            <TeamBlock name={team_2_name} record={team_2_record} img={team_2_img} seed={team_2_seed} reverse={true}/>
             </div>
         </div>
     </>

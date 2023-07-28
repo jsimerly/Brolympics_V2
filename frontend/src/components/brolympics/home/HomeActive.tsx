@@ -26,6 +26,7 @@ const CurrentEventCard = ({name, percent_complete}) => (
 )
 
 const getAvailableComponent = (type, props) => {
+
     switch (type) {
         case 'h2h':
           return <AvailableCompetition_h2h {...props} />;
@@ -33,7 +34,10 @@ const getAvailableComponent = (type, props) => {
           return <AvailableCompetition_ind {...props} />;
         case 'team':
           return <AvailableCompetition_team {...props} />;
+        case 'bracket':
+            return <AvailableCompetition_h2h {...props} />;
         default:
+            console.log('123')
           return null;
       }
 }
@@ -49,6 +53,7 @@ const getActiveComponent = (type, props) => {
         case 'team':
           return <ActiveCompetition_team {...props} />;
         default:
+            console.log('here')
           return null;
       }
 }
@@ -119,9 +124,7 @@ const HomeActive = ({is_owner}) => {
         {
             'active_events' : [],
             'available_competitions' : [],
-            'available_bracket_comps':[],
             'active_competitions' : [],
-            'active_bracket_comps' : [],
         }
     )
     
@@ -134,6 +137,7 @@ const HomeActive = ({is_owner}) => {
             if (response.ok){
                 const data = await response.json()
                 setHomeData(data)
+                console.log(data)
             }
         }
         getHomeInfo()
@@ -148,16 +152,13 @@ const HomeActive = ({is_owner}) => {
             <HomeAdminActive/>
         :
         <div className='flex flex-col gap-3'>
-            {
-                <EventBlock 
-                    title="Active Event"
-                    items={homeData.active_events} 
-                    component={CurrentEventCard} 
-                    component_func={null}
-                />
-
-            }
-
+            
+            <EventBlock 
+                title="Active Event"
+                items={homeData.active_events} 
+                component={CurrentEventCard} 
+                component_func={null}
+            />
             <EventBlock 
                 title="Available Competition" 
                 items={homeData.available_competitions} 

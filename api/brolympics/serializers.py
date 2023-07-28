@@ -341,6 +341,7 @@ class CompetitionSerializer_Ind(serializers.ModelSerializer):
     team = TeamSerializer()
     event = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
+
     class Meta:
         model = Competition_Ind
         fields = ['event', 'team', 'player_1_score', 'player_2_score', 'display_avg_score', 'team_score', 'avg_score', 'start_time', 'end_time', 'is_active', 'is_complete',  'uuid', 'type']

@@ -838,7 +838,7 @@ class Event_H2H(EventAbstactBase):
     
     def find_available_comps(self, user):
         comps = Competition_H2H.objects.filter(
-            Q(event=self) & Q(is_complete=False) &
+            Q(event=self) & Q(is_complete=False) & Q(team_1__isnull=False) & Q(team_2__isnull=False) &
             (
                 Q(team_1__is_available=True, team_1__player_1=user) |
                 Q(team_1__is_available=True, team_1__player_2=user) |
@@ -848,7 +848,7 @@ class Event_H2H(EventAbstactBase):
         )
 
         bracket = BracketMatchup.objects.filter(
-            Q(event=self) & Q(is_complete=False) &
+            Q(event=self) & Q(is_complete=False) & Q(team_1__isnull=False) & Q(team_2__isnull=False) &
             (
                 Q(team_1__is_available=True, team_1__player_1=user) |
                 Q(team_1__is_available=True, team_1__player_2=user) |
@@ -858,6 +858,7 @@ class Event_H2H(EventAbstactBase):
         )
 
         return {'std': comps, 'bracket': bracket}
+
     
     def find_active_comps(self):
         comps = Competition_H2H.objects.filter(
@@ -1245,11 +1246,12 @@ class Team(models.Model):
 
     def end_comp(self):
         self.is_available = True
-        self.player_1.is_available = True
-        self.player_2.is_available = True
-
-        self.player_1.save()
-        self.player_2.save()
+        if self.player_1:
+            self.player_1.is_available = True
+            self.player_1.save()
+        if self.player_2:
+            self.player_2.is_available = True
+            self.player_2.save()
         self.save()      
 
     
@@ -1453,7 +1455,7 @@ class Competition_H2H_Base(models.Model):
 
     def end(self, team_1_score, team_2_score):
         
-        self.team_1.is_available, self.team_2.is_available = True, True
+
 
         self.team_1_score = team_1_score
         self.team_2_score = team_2_score
@@ -1486,12 +1488,11 @@ class Competition_H2H_Base(models.Model):
 
         team_1_ranking.save()
         team_2_ranking.save()
-        self.team_1.save()
-        self.team_2.save()
+        self.team_1.end_comp()
+        self.team_2.end_comp()
 
         self.is_complete=True
         self.is_active=False
-
         self.save()
 
     def determine_winner(self, team_1_score, team_2_score):

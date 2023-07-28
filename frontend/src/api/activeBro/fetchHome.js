@@ -44,7 +44,27 @@ export async function fetchActiveComp_h2h(uuid){
 }
 
 export async function fetchSubmitComp_h2h(uuid, team_1_score, team_2_score){
+    const data = {
+        uuid: uuid, 
+        team_1_score: team_1_score,
+        team_2_score: team_2_score,
+    }
+    try{
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/end-competition-h2h/`,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+            body: JSON.stringify(data),
+        })
 
+        return response
+
+    } catch (error) {
+        throw (error)
+    }
 }
 
 export async function fetchActiveComp_ind(uuid){

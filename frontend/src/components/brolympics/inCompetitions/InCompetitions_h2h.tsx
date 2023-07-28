@@ -9,6 +9,8 @@ const InCompetitions_h2h = ({}) => {
     const handleTeam2ScoreChange = (e) => setTeam2Score(e.target.value);
   
     const {compUuid} = useParams()
+    console.log(compUuid)
+    console.log('rending')
 
     const [compData, setCompData] = useState()
     useEffect(()=>{
@@ -47,16 +49,18 @@ const InCompetitions_h2h = ({}) => {
     return score >= minScore && score <= maxScore;
   }
 
-  const handleSumbitClicked = () => {
+  const handleSumbitClicked = async () => {
     if (isValidScore(team1Score) && isValidScore(team2Score)){
-      console.log(team1Score)
-      console.log(team2Score)
+      const response = await fetchSubmitComp_h2h(compUuid, team1Score, team2Score)
+      if (response.ok){
+        location.reload()
+      }
     }
   }
 
   return (
     compData &&
-    <div className='min-h-[calc(100vh-160px)] p-6 flex-col flex justify-between'>
+    <div className='min-h-[calc(100vh-240px)] p-6 flex-col flex justify-between'>
           <div>
           <h2 className=' w-full text-center text-[20px] mb-3 font-semibold'>
             {compData.event}

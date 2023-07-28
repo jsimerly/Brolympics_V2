@@ -132,7 +132,8 @@ class GetActiveHome(APIView):
         for event in h2h:
             comps = event.find_available_comps(request.user)
             h2h_available['std'].extend(comps['std'])
-            h2h_available['bracket'].extend(comps['bracket'])
+            if event.is_round_robin_complete:
+                h2h_available['bracket'].extend(comps['bracket'])
         
         ind_available = self.get_available(ind)
         team_available = self.get_available(team)
@@ -150,15 +151,18 @@ class GetActiveHome(APIView):
             ).data 
 
         ind_comp_serialized = [
-            CompetitionSerializer_Ind(comp, many=True, context={'request': request}).data 
-            for comp in ind_available
+            comp 
+            for qset in ind_available
+            for comp in CompetitionSerializer_Ind(qset, many=True, context={'request': request}).data 
+
         ]
         team_comp_serializerd = [
-            CompetitionSerializer_Team(comp, many=True, context={'request': request}).data 
-            for comp in team_available
+            comp
+            for qset in team_available
+            for comp in CompetitionSerializer_Team(qset, many=True, context={'request': request}).data 
         ]
         available_comps = h2h_comp_serialized + ind_comp_serialized + team_comp_serializerd
-
+        
         #Active
         h2h_active = {'std': [], 'bracket':[]}
         for event in h2h:
@@ -179,25 +183,33 @@ class GetActiveHome(APIView):
             many=True,
             context={'request': request}
             ).data
-        ind_active_serialized = CompetitionSerializer_H2h(
-            ind_active, 
-            many=True,
-            context={'request': request}
-            ).data
-        team_active_serialized = CompetitionSerializer_Team(
-            team_active, 
-            many=True,
-            context={'request': request}
-            ).data 
 
-        all_active_data = h2h_active_serialized + ind_active_serialized + team_active_serialized
+        ind_active_serialized = [
+            comp
+            for qset in ind_active
+            for comp in CompetitionSerializer_Ind(
+                    qset, 
+                    many=True,
+                    context={'request': request}
+                ).data
+        ]
+
+        team_active_serialized = [
+            comp
+            for qset in ind_active
+            for comp in CompetitionSerializer_Team(
+                    qset, 
+                    many=True,
+                    context={'request': request}
+                ).data 
+        ] 
+
+        all_active_data = h2h_active_serialized + ind_active_serialized + team_active_serialized + bracket_active_serialized
        
         data = {
             'active_events' : all_serialized,
-            'available_competitions' : available_comps,
-            'available_bracket_comps' : h2h_bracket_serialized,
-            'active_bracket_comps' : bracket_active_serialized,
-            'active_competitions' : all_active_data,
+            'available_competitions' : available_comps + h2h_bracket_serialized,
+            'active_competitions' : all_active_data
         }
 
         return Response(data ,status=status.HTTP_200_OK)
@@ -227,7 +239,6 @@ class StartCompetition(APIView):
             raise ValueError('This comp is already active.')
         
     def put(self, request):
-        print(request.data)
         comp_uuid = request.data.get('uuid')
         comp_type = request.data.get('type')
 
@@ -235,6 +246,7 @@ class StartCompetition(APIView):
         print(comp_type)
 
         comp = self.get_object(comp_uuid, comp_type)
+        print(comp)
         comp.start()
 
         return Response({'comp_uuid': comp_uuid}, status=status.HTTP_200_OK)
@@ -311,7 +323,7 @@ class GetCompH2h(APIView):
         return ResourceWarning(status=status.HTTP_404_NOT_FOUND)
     
 
-
+ 
 class GetCompInd(APIView):
     def get(self, request, uuid):
         comp = get_object_or_404(Competition_Ind, uuid=uuid)
@@ -323,3 +335,34 @@ class GetCompTeam(APIView):
         comp = get_object_or_404(Competition_Team, uuid=uuid)
         serializer = CompetitionMScoresSerializer_Team(comp, context={'request':request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class EndCompH2h(APIView):
+    def put(self, request):
+        comp_uuid = request.data.get('uuid')
+        team_1_score = request.data.get('team_1_score')
+        team_2_score = request.data.get('team_2_score')
+
+        try:
+            team_1_score = float(request.data.get('team_1_score'))
+            team_2_score = float(request.data.get('team_2_score'))
+        except ValueError:
+            return Response({'error': 'Invalid Score'}, status=status.HTTP_400_BAD_REQUEST)
+
+        h2h_comp_qset = Competition_H2H.objects.filter(uuid=comp_uuid)
+
+        if h2h_comp_qset.exists():
+            comp = h2h_comp_qset.first()
+            comp.end(team_1_score, team_2_score)
+
+            return Response(status=status.HTTP_200_OK)
+
+        bracket_comp_qset = BracketMatchup.objects.filter(uuid=comp_uuid)
+        if bracket_comp_qset.exists():
+            comp = bracket_comp_qset.first()
+            comp.end(team_1_score, team_2_score)
+
+            return Response(status=status.HTTP_200_OK)
+
+        
+        return ResourceWarning(status=status.HTTP_404_NOT_FOUND)

@@ -56,7 +56,6 @@ const Brolympics = () => {
 
         if (response.ok){
           const data = await response.json()
-
           if (!data.is_available){
             if (activeComp.is_available){
               setActiveComp(data)
@@ -113,7 +112,7 @@ const Brolympics = () => {
                 element={<Navigate to="home" replace/>} 
             />
         </Routes>
-        {!activeComp && 
+        {activeComp.is_available && 
           <Toolbar
             is_owner={broInfo?.is_owner}
           />

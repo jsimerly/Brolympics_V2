@@ -22,7 +22,9 @@
     "strictNullChecks": false,
     "strictFunctionTypes": false,
     "strictPropertyInitialization": false,
-    "strictBindCallApply": false
+    "strictBindCallApply": false,
+    "noImplicitThis": false,
+    "noStrictGenericChecks": false
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

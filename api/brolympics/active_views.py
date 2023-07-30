@@ -15,6 +15,8 @@ from django.db.models import Q
 
 ## Home Page Start
 class StartBrolympics(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, uuid):
         brolympics = get_object_or_404(Brolympics, uuid=uuid)
 
@@ -32,6 +34,8 @@ class StartBrolympics(APIView):
         return Response(status=status.HTTP_200_OK)
     
 class StartEvents(APIView):
+    permission_classes = [IsAuthenticated]
+
     def confirm(self, event):
         if self.request.user != event.brolympics.league.league_owner:
             raise PermissionDenied('You do not have permission to start this event.')
@@ -67,6 +71,8 @@ class StartEvents(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class UnstartedEvents(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, uuid):
         brolympics = get_object_or_404(Brolympics, uuid=uuid)
         all_events = brolympics.get_all_events()
@@ -85,6 +91,8 @@ class UnstartedEvents(APIView):
     
 
 class GetActiveHome(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, uuid):
         brolympics = get_object_or_404(Brolympics, uuid=uuid)
         return brolympics
@@ -216,6 +224,8 @@ class GetActiveHome(APIView):
         return Response(data ,status=status.HTTP_200_OK)
     
 class StartCompetition(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, comp_uuid, comp_type):
         if comp_type == 'h2h':
             comp = get_object_or_404(Competition_H2H, uuid=comp_uuid)
@@ -249,6 +259,8 @@ class StartCompetition(APIView):
         return Response({'comp_uuid': comp_uuid}, status=status.HTTP_200_OK)
     
 class IsInCompetition(APIView):
+    permission_classes = [IsAuthenticated]
+
     def find_comp(self, user):
         h2h = Competition_H2H.objects.filter(
             Q(team_1__player_1=user) | Q(team_1__player_2=user) | 
@@ -303,6 +315,8 @@ class IsInCompetition(APIView):
         return Response(data, status=status.HTTP_200_OK)
     
 class GetCompH2h(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, uuid):
         h2h_comp_qset = Competition_H2H.objects.filter(uuid=uuid)
 
@@ -320,12 +334,16 @@ class GetCompH2h(APIView):
         return ResourceWarning(status=status.HTTP_404_NOT_FOUND)
      
 class GetCompInd(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, uuid):
         comp = get_object_or_404(Competition_Ind, uuid=uuid)
         serializer = CompetitionMScoresSerializer_Ind(comp, context={'request':request})
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class GetCompTeam(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, uuid):
         comp = get_object_or_404(Competition_Team, uuid=uuid)
         serializer = CompetitionMScoresSerializer_Team(comp, context={'request':request})
@@ -333,6 +351,8 @@ class GetCompTeam(APIView):
     
 
 class EndCompH2h(APIView):
+    permission_classes = [IsAuthenticated]
+
     def put(self, request):
         comp_uuid = request.data.get('uuid')
 
@@ -361,6 +381,8 @@ class EndCompH2h(APIView):
         return Response(status=status.HTTP_404_NOT_FOUND)
     
 class EndCompInd(APIView):
+    permission_classes = [IsAuthenticated]
+
     def put(self, request):
         comp_uuid = request.data.get('uuid')
 
@@ -377,6 +399,8 @@ class EndCompInd(APIView):
     
 
 class EndCompTeam(APIView):
+    permission_classes = [IsAuthenticated]
+
     def put(self, request):
         comp_uuid = request.data.get('uuid')
 
@@ -393,6 +417,8 @@ class EndCompTeam(APIView):
 
 
 class CancelCompH2h(APIView):
+    permission_classes = [IsAuthenticated]
+
     def put(self, request):
         comp_uuid = request.data.get('uuid')
 
@@ -413,6 +439,8 @@ class CancelCompH2h(APIView):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 class CancelCompInd(APIView):
+    permission_classes = [IsAuthenticated]
+
     def put(self, request):
         comp_uuid = request.data.get('uuid')        
         comp = get_object_or_404(Competition_Ind, uuid=comp_uuid)
@@ -421,6 +449,8 @@ class CancelCompInd(APIView):
         return Response(status=status.HTTP_200_OK) 
 
 class CancelCompTeam(APIView):
+    permission_classes = [IsAuthenticated]
+
     def put(self, request):
         comp_uuid = request.data.get('uuid')        
         comp = get_object_or_404(Competition_Team, uuid=comp_uuid)
@@ -434,6 +464,8 @@ class CancelCompTeam(APIView):
 ## Team Page
 
 class GetTeamInfo(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request, uuid):
         team = get_object_or_404(Team, uuid=uuid)
         team_data = TeamPageSerailizer(team).data
@@ -459,6 +491,8 @@ class GetTeamInfo(APIView):
 
 # Event Page 
 class GetEventInfo(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, uuid, type):
         if type == 'h2h':
             event = get_object_or_404(Event_H2H, uuid=uuid)
@@ -519,6 +553,8 @@ class GetEventInfo(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
 class GetStandingsInfo(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def get_podiums(self, events, ranking_model):
         event_data = []
         for event in events:

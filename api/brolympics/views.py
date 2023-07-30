@@ -24,6 +24,8 @@ def convert_to_img_file(base_64_img):
 
 
 class CreateAllLeagueView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         league_data = request.data.get('league')
         league_img_b64 = league_data.get('img')
@@ -81,6 +83,8 @@ class CreateAllLeagueView(APIView):
     
 class CreateSingleTeam(APIView):
     serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -95,6 +99,8 @@ class CreateSingleTeam(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class CreateSingleEvent(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         name = request.data.get('event_name')
         type = request.data.get('type')
@@ -208,12 +214,15 @@ class GetUpcoming(APIView):
     
 class GetLeagueTeams(APIView):
     serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, uuid):
         pass
 
 
 ## Updates ##
 class UpdateEvent(APIView):
+    permission_classes = [IsAuthenticated]
     
     def put(self, request):
         event_uuid = request.data.get('uuid')
@@ -248,6 +257,8 @@ class UpdateEvent(APIView):
 ## Delete ##
 
 class DeleteTeam(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, uuid):
         team = get_object_or_404(Team, uuid=uuid)
 
@@ -264,6 +275,8 @@ class DeleteTeam(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 class RemovePlayerFromTeam(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, player_uuid, team_uuid):
         player = get_object_or_404(User, uuid=player_uuid)
         team = get_object_or_404(Team, uuid=team_uuid)
@@ -300,6 +313,8 @@ class GetLeagueInvite(APIView):
 
     
 class JoinLeague(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, uuid):
         league = get_object_or_404(League, uuid=uuid)
         user = request.user
@@ -318,6 +333,8 @@ class GetBrolympicsInvite(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
             
 class JoinBrolympics(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request, uuid):
         brolympics = get_object_or_404(Brolympics, uuid=uuid)
         league = brolympics.league
@@ -340,6 +357,8 @@ class GetTeamInvite(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)   
              
 class JoinTeam(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, uuid):
         team = get_object_or_404(Team, uuid=uuid)
         user = request.user

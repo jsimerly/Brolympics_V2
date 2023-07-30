@@ -66,17 +66,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-
 ]
 
-CORS_ALLOW_ALL_ORIGINS = False  # Change this line
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5173",  # Add your specific client-side origin here
-]
+CORS_ALLOWED_ORIGINS = os.environ['CORS_ALLOWED'].split(',')
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
-
+CSRF_TRUSTED_ORIGINS = os.environ['CSRF_TRUSTED_ORIGINS'].split(',')
+CSRF_COOKIE_DOMAIN = os.environ['CSRF_COOKIE_DOMAIN']
 
 ROOT_URLCONF = 'api.urls'
 

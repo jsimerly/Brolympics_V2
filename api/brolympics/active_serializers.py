@@ -244,18 +244,22 @@ class EventRankingPageSerailzier_AbstractBase(serializers.ModelSerializer):
     is_complete = serializers.SerializerMethodField()
     team = SmallTeamSerializer()
     class Meta:
-        fields = ['rank', 'points', 'uuid', 'team']
+        fields = ['rank', 'points', 'uuid', 'team',]
 
     def get_event(self, obj):
         return obj.event.name
 
     def get_is_active(self, obj):
         return obj.event.is_complete
+    
 
 class EventPageSerializer_h2h(EventRankingPageSerailzier_AbstractBase):
+
     class Meta:
         model = EventRanking_H2H
         fields = [] + EventRankingPageSerailzier_AbstractBase.Meta.fields
+
+
     
 class EventPageSerializer_ind(EventRankingPageSerailzier_AbstractBase):
     class Meta:
@@ -302,3 +306,15 @@ class BracketSerializer(serializers.ModelSerializer):
     def get_match_2(self, obj):
         match_serailizer = BracketMatchupSerializer(obj.championship.right, context=self.context)
         return match_serailizer.data
+    
+class OverallRankingSerializer(serializers.ModelSerializer):
+    team = serializers.SerializerMethodField()
+    class Meta:
+        model = OverallBrolympicsRanking
+        fields = ['team', 'rank', 'total_points', 'wins', 'losses', 'ties']
+
+    def get_team(self, obj):
+        return SmallTeamSerializer(obj.team, context=self.context).data
+
+
+

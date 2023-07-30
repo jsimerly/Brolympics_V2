@@ -59,7 +59,6 @@ export async function fetchLoginUser(phoneNumber, password){
 export function handleLogout(){
     deleteCookie('access_token');
     deleteCookie('refresh_token')
-    console.log('delete cookie')
     window.location.reload()
 }
 

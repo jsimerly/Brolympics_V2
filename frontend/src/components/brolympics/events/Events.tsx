@@ -8,12 +8,28 @@ import Comp_h2h from './Competitions/Comp_h2h';
 import { fetchEventInfo } from '../../../api/activeBro/fetchEvents.js'
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import Comp_ind from './Competitions/Comp_ind.js';
+import Comp_team from './Competitions/Comp_team.js';
 
 const Events = ({events, default_uuid, default_type}) => {
 
   let {eventUuid, eventType} = useParams()
   let navigate = useNavigate
   const [eventInfo, setEventInfo] = useState()
+
+  const getFontSize = (name) => {
+    if (name){
+      if (name.length <= 12){
+        return '20px'
+      } else if (name.length <= 16){
+        return '18px'
+      } else if (name.length <= 20){
+        return '16px'
+      } else {
+        return '14px'
+      }
+    }
+  }
   
   useEffect(()=>{
     if (!eventUuid && default_uuid && default_type){
@@ -26,61 +42,19 @@ const Events = ({events, default_uuid, default_type}) => {
       const response = await fetchEventInfo(eventUuid,eventType)
       if (response.ok) {
         const data = await response.json()
-        console.log(data)
         setEventInfo(data)
       }
     }
     getEventInfo()
-  },[])
+  },[eventUuid])
 
-  const competitions = [
-    {
-      'winner' : 'Third Dynasty of Ur',
-      'team_1_name' : 'Third Dynasty of Ur',
-      'team_1_score' : 21,
-      'team_2_name' : 'Poland',
-      'team_2_score' : 8,
-      'is_active': false,
-      'is_complete' : true,
-    },
-    {
-      'winner' : 'France',
-      'team_1_name' : 'Third Dynasty of Ur',
-      'team_1_score' : 21,
-      'team_2_name' : 'France',
-      'team_2_score' : 3,
-      'is_active' : false,
-      'is_complete' : true,
-    },
-    {
-      'winner' : 'Third Dynasty of Ur',
-      'team_1_name' : 'Greece',
-      'team_1_score' : 5,
-      'team_2_name' : 'Third Dynasty of Ur',
-      'team_2_score' : 21,
-      'is_active' : false,
-      'is_complete' : true,
-    },
-    {
-      'winner' : 'Third Dynasty of Ur',
-      'team_1_name' : 'Third Dynasty of Ur',
-      'team_1_score' : 21,
-      'team_2_name' : 'Germany',
-      'team_2_score' : 6,
-      'is_active' : false,
-      'is_complete' : true,
-    },
-    {
-      'winner' : null,
-      'team_1_name' : 'Third Dynasty of Ur',
-      'team_1_score' : 0,
-      'team_2_name' : 'Germany',
-      'team_2_score' : 0,
-      'is_active' : true,
-      'is_complete' : false,
-    },
-  ]
-  
+  const componentMap = {
+    'h2h' : Comp_h2h,
+    'ind' : Comp_ind,
+    'team' : Comp_team,
+  }
+
+  const CompComp = componentMap[eventInfo?.type] || Comp_ind  
 
   return (
     <div className=''>
@@ -109,11 +83,18 @@ const Events = ({events, default_uuid, default_type}) => {
                 .sort((a, b) => a.rank - b.rank) 
                 .map((ranking, i) => (
               <tr key={i+'_row'}>
-                <td className='p-2 font-bold text-center text-[18px] border-r border-neutralLight'>{ranking.rank}</td>
-                <td className='pl-6 text-start text-[20px] border-r border-neutralLight'>
-                  {ranking.team.name}
+                <td className='p-3 font-semibold text-center text-[18px] border-r border-neutralLight'>{ranking.rank}</td>
+                <td className='pl-3 text-start text-[20px] border-r border-neutralLight'>
+                  <div className='flex items-center gap-2'>
+                    <img src={ranking.team.img} className='w-[30px] h-[30px] rounded-md'/>
+                    <span className={`text-[${getFontSize(ranking.team.name)}]`}>
+                      {ranking.team.name}
+                    </span>
+
+                  </div>
                 </td>
-                <td className='p-2 text-center border-r text-[18px] border-neutralLight'>{ranking.points}</td>
+                <td className='p-2 text-center border-r text-[18px] border-neutralLight'>
+                {Number.isInteger(ranking?.points) ? ranking.points : ranking.points.toFixed(1)}</td>
               </tr>
             ))}
             </tbody>
@@ -121,7 +102,7 @@ const Events = ({events, default_uuid, default_type}) => {
         </div>
       </div>
       <div className='py-3'>
-        {eventInfo &&
+        {eventInfo && eventInfo?.type === 'h2h' &&
           <Bracket
             {...eventInfo.bracket}     
           />
@@ -134,12 +115,12 @@ const Events = ({events, default_uuid, default_type}) => {
           <div>
             {eventInfo.competitions.map((comp, i) => (
               <div key={i+"_events"}>
-                <Comp_h2h {...comp} key={i}/>
-                {i !== competitions.length - 1  && 
+                  {i !== 0  && 
                   <div className="w-full px-6">
                     <div className="w-full h-[1px] bg-neutralLight" />
                   </div>
                   }
+                <CompComp {...comp} key={i}/>
               </div>
             ))}
           </div>

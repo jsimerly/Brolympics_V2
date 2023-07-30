@@ -32,7 +32,7 @@ const InviteWrapper = ({fetchInfo, fetchJoin, joinText, children,}) => {
     }
 
   return (
-    <div className="flex flex-col items-center justify-start w-full h-[calc(100vh-80px)] p-6">
+    <div className="flex flex-col items-center justify-between w-full h-[calc(100vh-80px)] p-6">
         {info &&
           React.cloneElement(children, { info })
         }

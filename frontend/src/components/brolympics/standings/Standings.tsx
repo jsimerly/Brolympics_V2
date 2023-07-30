@@ -4,73 +4,42 @@ import Gold from '../../../assets/svgs/gold.svg'
 import Silver from '../../../assets/svgs/silver.svg'
 import Bronze from '../../../assets/svgs/bronze.svg'
 
+import {useState, useEffect} from 'react'
+import { useParams } from 'react-router-dom';
+import { fetchStandings } from '../../../api/activeBro/fetchStandings.js'
+
 const Standings = () => {
-  const standings = [
-      {
-        'name' : 'Poland',
-        'rank' : 2,
-        'points' : 15,
-      },
-      {
-        'name' : 'Third Dynasty of Ur',
-        'rank' : 1,
-        'points' : 23,
-      },
-      {
-        'name' : 'Greece',
-        'rank' : 2,
-        'points' : 15,
-      },
-      {
-        'name' : 'Germany',
-        'rank' : 4,
-        'points' : 11,
-      },    {
-        'name' : 'El Salvador',
-        'rank' : 5,
-        'points' : 8,
-      },
-      {
-        'name' : 'Norway',
-        'rank' : 6,
-        'points' : 6,
-      },
-      {
-        'name' : 'North Korea',
-        'rank' : 7,
-        'points' : 4,
-      },
-      {
-        'name' : 'Netherlands',
-        'rank' : 7,
-        'points' : 4,
-      },
-    ]
+  const {uuid} = useParams()
+  const [standingData, setStandingData] = useState()
 
-    const sortedStandings = [...standings].sort((a, b) => a.rank - b.rank);
-
-    const podiumList = [
-      {
-        'name' : 'Cornhole',
-        'winner' : 'Third Dynasty of Ur',
-        'second' : 'Greece',
-        'third' : 'Norway',
-      },
-      {
-        'name' : 'Bowling',
-        'winner' : 'El Salvador',
-        'second' : 'Germany',
-        'third' : 'Third Dynasty of Ur',
-      },
-      {
-        'name' : 'Go Karting',
-        'winner' : 'France',
-        'second' : 'Norway',
-        'third' : 'Greece',
-      },
-    ]
-
+  useEffect(()=>{
+    const getStandingsInfo = async () => {
+      const response = await fetchStandings(uuid)
+      if (response.ok){
+        const data = await response.json()
+        setStandingData(data)
+        console.log(data)
+      }
+    }
+    getStandingsInfo()
+  },[])
   
+
+  const getFontSize = (name) => {
+    if (name){
+      if (name.length <= 12){
+        return '20px'
+      } else if (name.length <= 16){
+        return '18px'
+      } else if (name.length <= 20){
+        return '16px'
+      } else {
+        return '14px'
+      }
+    }
+  }
+  
+    
   return (
     <div className='px-6 py-3'>
       <div>
@@ -85,35 +54,49 @@ const Standings = () => {
             </tr>
           </thead>
           <tbody>
-            {sortedStandings.map((team, i) => (
-              <tr key={i+'_row'}>
-                <td className='p-2 font-bold text-center text-[18px] border-r border-neutralLight'>{team.rank}</td>
-                <td className='pl-6 text-start text-[20px] border-r border-neutralLight'>{team.name}</td>
-                <td className='p-2 text-center border-r text-[18px] border-neutralLight'>{team.points}</td>
+            {standingData &&
+              standingData.standings
+              .sort((a, b) => a.rank - b.rank)
+              .map((ranking, i) => (
+                <tr key={i+'_row'}>
+                <td className='p-3 font-semibold text-center text-[18px] border-r border-neutralLight'>{ranking.rank}</td>
+                <td className='pl-3 text-start text-[20px] border-r border-neutralLight'>
+                  <div className='flex items-center gap-2'>
+                    <img src={ranking.team.img} className='w-[30px] h-[30px] rounded-md'/>
+                    <span className={`text-[${getFontSize(ranking.team.name)}]`}>
+                      {ranking.team.name}
+                    </span>
+
+                  </div>
+                </td>
+                <td className='p-2 text-center border-r text-[18px] border-neutralLight'>
+                {Number.isInteger(ranking?.total_points) ? ranking.total_points : ranking.total_points.toFixed(1)}</td>
               </tr>
-            ))}
+            ))
+            
+            }
           </tbody>
         </table>
       </div>
       <div className='py-6'>
         <h2 className='text-[20px] font-bold pb-2'>Event Podiums</h2>
-        {podiumList.length === 0 && 'No events have been completed yet.'}
+        {standingData?.podiums.length === 0 && 'No events have been completed yet.'}
         <ul className='flex flex-col gap-6'>
-        {podiumList.map((event, i) => (
+        {standingData?.podiums.map((event, i) => (
           <div key={i+"_podium"}>
             <h3 className='font-bold'>{event.name}</h3>
             <div className='flex flex-col justify-center gap-2 px-2 pt-2'>
                 <div className='flex gap-2'>
                     <img src={Gold} className='h-[20px]'/>
-                    {event.winner}
+                    {event.first.name}
                 </div>
                 <div className='flex gap-2'>
                     <img src={Silver} className='h-[20px]'/>
-                    {event.second}
+                    {event.second.name}
                 </div>
                 <div className='flex gap-2'>
                     <img src={Bronze} className='h-[20px]'/>
-                    {event.third}
+                    {event.third.name}
                 </div>
               </div>
           </div>

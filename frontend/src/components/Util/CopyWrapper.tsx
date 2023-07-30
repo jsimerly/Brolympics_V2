@@ -29,12 +29,10 @@ const copyToClipboard = async () => {
       {copySuccess ?
         <AssignmentTurnedInOutlinedIcon 
           sx={{fontSize:size}}
-          className='text-primary'
         /> 
         :
         <ContentCopyIcon 
           sx={{fontSize:size}}
-          className='text-primary'
         />
       }
     </div>

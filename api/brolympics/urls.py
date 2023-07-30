@@ -6,6 +6,7 @@ urlpatterns = [
     #Create
     path('create-all-league/', CreateAllLeagueView.as_view(), name='create_all_league'),
     path('create-single-team/', CreateSingleTeam.as_view(), name='create_single_team'),
+    path('create-event/', CreateSingleEvent.as_view(), name='create_single_event'),
 
     #Get
     path('all-leagues/', GetAllLeagues.as_view(), name='get_all_leagues'),
@@ -51,6 +52,8 @@ urlpatterns = [
     path('get-team-info/<uuid:uuid>', GetTeamInfo.as_view(), name='get_team_info' ),
 
         #Events
-    path('get-event-info/<uuid:uuid>/<str:type>', GetEventInfo.as_view(), name='get_event_info')
+    path('get-event-info/<uuid:uuid>/<str:type>', GetEventInfo.as_view(), name='get_event_info'),
 
+        #Standings
+    path('get-standings-info/<uuid:uuid>', GetStandingsInfo.as_view(), name='get_standings_info'),
 ]

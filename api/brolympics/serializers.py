@@ -69,7 +69,6 @@ class TeamSerializer(serializers.ModelSerializer):
         player_2_uuid = validated_data.pop('player_2', None)
         img_data = validated_data.pop('img', None)
         brolympics_uuid = validated_data.pop('brolympics_uuid', None)
-        print(brolympics_uuid)
 
         brolympics = get_object_or_404(Brolympics, uuid=brolympics_uuid)
 
@@ -210,7 +209,7 @@ class BrolympicsSerializer(serializers.ModelSerializer):
     def get_team_uuid(self, obj):
         request = self.context.get('request')
         user = request.user
-        team = Team.objects.filter(Q(player_1=user) | Q(player_2=user))
+        team = Team.objects.filter(Q(player_1=user) | Q(player_2=user), brolympics=obj)
         if team.exists():
             return team.first().uuid
         return None

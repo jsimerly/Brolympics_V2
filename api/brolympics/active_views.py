@@ -243,11 +243,7 @@ class StartCompetition(APIView):
         comp_uuid = request.data.get('uuid')
         comp_type = request.data.get('type')
 
-        print(comp_uuid)
-        print(comp_type)
-
         comp = self.get_object(comp_uuid, comp_type)
-        print(comp)
         comp.start()
 
         return Response({'comp_uuid': comp_uuid}, status=status.HTTP_200_OK)
@@ -476,6 +472,7 @@ class GetEventInfo(APIView):
             bracket = BracketSerializer(event.bracket_4, context={'request': request})
 
             data = {
+                'type' : 'h2h',
                 'standings' : ranking_data.data,
                 'competitions' : comp_data.data,
                 'bracket' : bracket.data
@@ -490,10 +487,11 @@ class GetEventInfo(APIView):
             event_rankings = EventRanking_Ind.objects.filter(event=event)
             ranking_data = EventPageSerializer_ind(event_rankings, many=True, context={'request': request})
 
-            comps = Competition_H2H.objects.filter(event=event)
+            comps = Competition_Ind.objects.filter(event=event)
             comp_data = CompetitionSerializer_Ind(comps, many=True, context={'request': request})
 
             data = {
+                'type' : 'ind',
                 'standings' : ranking_data.data,
                 'competitions' : comp_data.data,
             }
@@ -510,6 +508,7 @@ class GetEventInfo(APIView):
             comp_data = CompetitionSerializer_Team(comps, many=True, context={'request': request})
 
             data = {
+                'type' : 'team',
                 'standings' : ranking_data.data,
                 'competitions' : comp_data.data,
             }
@@ -518,5 +517,60 @@ class GetEventInfo(APIView):
 
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+class GetStandingsInfo(APIView):
+    def get_podiums(self, events, ranking_model):
+        event_data = []
+        for event in events:
+            podium_data = { 'event' : event.name}
+
+            first = ranking_model.objects.filter(event=event, rank=1)
+            second = ranking_model.objects.filter(event=event, rank=2)
+            third = ranking_model.objects.filter(event=event, rank=3)
+            
+            if first.exists():
+                ranking  = first.first()
+                team = ranking.team
+                podium_data['first'] = SmallTeamSerializer(team, context={'request':self.request}).data
+                      
+
+            if second.exists():
+                ranking  = second.first()
+                team = ranking.team
+                podium_data['second'] = SmallTeamSerializer(team, context={'request':self.request}).data
+        
+
+            if third.exists():
+                ranking  = third.first()
+                team = ranking.team
+                podium_data['third'] = SmallTeamSerializer(team, context={'request':self.request}).data
+   
+            
+            event_data.append(podium_data)
+
+        return event_data
+    
+    def get(self, request, uuid):
+        brolympics = get_object_or_404(Brolympics, uuid=uuid)
+        all_rankings = brolympics.overall_ranking.all()
+
+        overall_rank_serializer = OverallRankingSerializer(all_rankings, many=True, context={'request':request})
+
+        completed_events_h2h = Event_H2H.objects.filter(is_complete=True, brolympics=brolympics)
+        completed_events_ind = Event_IND.objects.filter(is_complete=True, brolympics=brolympics)
+        completed_events_team = Event_Team.objects.filter(is_complete=True, brolympics=brolympics)
+
+        h2h_podiums = self.get_podiums(completed_events_h2h, EventRanking_H2H)
+        ind_podiums = self.get_podiums(completed_events_ind, EventRanking_Ind)
+        team_podiums = self.get_podiums(completed_events_team, EventRanking_Team)
+
+        podiums = h2h_podiums + ind_podiums + team_podiums
+            
+        data = {
+            'standings': overall_rank_serializer.data,
+            'podiums' : podiums
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
 
 

@@ -26,7 +26,7 @@ export function setCookie(name, value, minutes) {
 }
 
 export function deleteCookie(name){
-    document.cookie = `${name}= ; expires = Thu, 01 Jan 1970 00:00:00 GMT`;
+  document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/"
 }
 
 async function refreshAccessToken(refreshToken) {

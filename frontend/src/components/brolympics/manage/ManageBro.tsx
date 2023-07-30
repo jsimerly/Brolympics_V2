@@ -23,7 +23,7 @@ const ManageBro = () => {
     }
   return (
     <div>
-        <h2 className='font-semibold text-[20px]'>
+        <h2 className='font-bold text-[16px]'>
           Manage Brolympics          
         </h2>
         <div>        

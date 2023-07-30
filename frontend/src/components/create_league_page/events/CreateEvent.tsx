@@ -1,4 +1,6 @@
 import {useState, useEffect} from 'react'
+
+
 import GroupIcon from '@mui/icons-material/Group';
 import PersonIcon from '@mui/icons-material/Person';
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
@@ -8,7 +10,8 @@ const CreateEvent = ({handleEventAdded}) => {
     const [selectedType, setSelectedType] = useState('ind');
     const [eventName, setEventName] = useState("")
     
-    const addClicked = () => {
+    const addClicked = async () => {
+
         handleEventAdded(eventName, selectedType)
     }
 

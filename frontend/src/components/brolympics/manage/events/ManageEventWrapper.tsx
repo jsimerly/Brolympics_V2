@@ -15,7 +15,7 @@ const ManageEventWrapper = ({name, children}) => {
             className='flex justify-between w-full'
             onClick={onClick}
         >
-            <h4 className='font-semibold text-[20px]'>
+            <h4 className='text-[20px]'>
                 {name}
             </h4>
             {open ? <ExpandLessIcon/> : <ExpandMoreIcon/>}

@@ -1,5 +1,16 @@
 const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
+const FRONTEND_ADDRESS = import.meta.env.VITE_FRONTEND_ADDRESS;
 import { deleteCookie, fetchWrapper, getCookie, setCookie } from "./cookies";
+
+export const getInviteLinkLeague = (uuid) => {
+    return `${FRONTEND_ADDRESS}/invite/league/${uuid}`
+}
+export const getInviteLinkBrolympics = (uuid) => {
+    return `${FRONTEND_ADDRESS}/invite/brolympics/${uuid}`
+}
+export const getInviteLinkTeam = (uuid) => {
+    return `${FRONTEND_ADDRESS}/invite/team/${uuid}`
+}
 
 export async function fetchLeagueInviteInfo(uuid){
     try {
@@ -75,7 +86,7 @@ export async function fetchTeamInvite(uuid){
 export async function fetchJoinTeam(uuid){
 
     try{
-        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/team-brolympics/${uuid}`,
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/join-team/${uuid}`,
         {
             method: 'POST',
             headers: {

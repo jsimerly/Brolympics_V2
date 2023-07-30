@@ -6,7 +6,7 @@ import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 import ScoreboardOutlinedIcon from '@mui/icons-material/ScoreboardOutlined';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 
-const Toolbar = ({is_owner, default_team_uuid, default_event_uuid, default_event_type}) => {
+const Toolbar = ({status, is_owner, default_team_uuid, default_event_uuid, default_event_type}) => {
     const navigate = useNavigate();
     const {pathname} = useLocation()
     const pathAfterBrolympics = pathname.split("/")[3];
@@ -29,6 +29,7 @@ const Toolbar = ({is_owner, default_team_uuid, default_event_uuid, default_event
     )
 
   return (
+    status !== 'pre' &&
     <>
         <div className='h-[60px] -z-10'/>
         <div className='fixed bottom-0 left-0 h-[60px] bg-neutral w-full border-t border-neutralLight flex justify-around items-center px-3'>

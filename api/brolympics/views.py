@@ -82,12 +82,35 @@ class CreateAllLeagueView(APIView):
 class CreateSingleTeam(APIView):
     serializer_class = TeamSerializer
     def post(self, request):
-        print(request.data)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            join_team = request.data.get('user_join')
             team = serializer.save()
+            print(join_team)
+            if join_team:
+                print('adding?')
+                team.add_player(request.user)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class CreateSingleEvent(APIView):
+    def post(self, request):
+        name = request.data.get('event_name')
+        type = request.data.get('type')
+        bro_uuid = request.data.get('uuid')
+        brolympics = Brolympics.objects.get(uuid=bro_uuid)
+
+        if type == 'h2h':
+            Event_H2H.objects.create(brolympics=brolympics, name=name)
+
+        if type == 'ind':
+            Event_IND.objects.create(brolympics=brolympics, name=name)
+
+        if type == 'team':
+            Event_Team.objects.create(brolympics=brolympics, name=name)
+
+        return Response(status=status.HTTP_200_OK)
 
 
 # Get Info
@@ -245,8 +268,7 @@ class RemovePlayerFromTeam(APIView):
         player = get_object_or_404(User, uuid=player_uuid)
         team = get_object_or_404(Team, uuid=team_uuid)
 
-        if self.request.user != player and \
-            self.request.user !=  team.brolympics.league.league_owner:
+        if self.request.user != team.player_1 and self.request.user != team.player_2 and self.request.user !=  team.brolympics.league.league_owner:
             raise PermissionDenied("You do not have permission to remove this player from this team.")
         return player, team     
 
@@ -286,13 +308,12 @@ class JoinLeague(APIView):
         return Response(status=status.HTTP_200_OK)
         
 class GetBrolympicsInvite(APIView):
-    serializer_class = AllLeaguesSerializer
+    serializer_class = BrolympicsSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request, uuid):
         broylmpics = get_object_or_404(Brolympics, uuid=uuid)
         serializer = self.serializer_class(broylmpics)
-
 
         return Response(serializer.data, status=status.HTTP_200_OK)
             
@@ -309,19 +330,21 @@ class JoinBrolympics(APIView):
         
 
 class GetTeamInvite(APIView):
-    serializer_class = AllLeaguesSerializer
+    serializer_class = TeamSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request, uuid):
         team = get_object_or_404(Team, uuid=uuid)
-        serializer = self.serializer_class(team)
-
+        serializer = self.serializer_class(team, context={'request':request})
+        
         return Response(serializer.data, status=status.HTTP_200_OK)   
              
 class JoinTeam(APIView):
     def post(self, request, uuid):
         team = get_object_or_404(Team, uuid=uuid)
         user = request.user
+        team.brolympics.players.add(user)
+        team.brolympics.league.players.add(user)
         team.add_player(user)
 
         return Response(status=status.HTTP_200_OK)

@@ -1210,6 +1210,9 @@ class Team(models.Model):
     img = models.ImageField(upload_to='teams/', null=True, blank=True)
 
     def add_player(self, player):
+        if player == self.player_1 or player == self.player_2:
+            raise ValueError("This player is already on this team.")
+        
         if self.player_1 is None:
             self.player_1 = player
             self.save()
@@ -1481,6 +1484,8 @@ class Competition_H2H_Base(models.Model):
         self.save()
 
     def end(self, team_1_score, team_2_score):
+        print("ENDING")
+        print(team_1_score, team_2_score)
         self.team_1_score = team_1_score
         self.team_2_score = team_2_score
 
@@ -1769,7 +1774,6 @@ class BracketMatchup(Competition_H2H_Base):
 
         super().end(team_1_score, team_2_score)
 
-        ## Update this so you can test if your right or left, thats how you will determine if you should place them as team_1 or team_2
         if self.winner_node is None:
             if self._check_for_completion_during_end():
                 self.bracket.finalize()

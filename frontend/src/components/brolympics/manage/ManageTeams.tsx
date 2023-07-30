@@ -1,9 +1,9 @@
-import CloseIcon from '@mui/icons-material/Close';
+
 import EditIcon from '@mui/icons-material/Edit';
 import RemoveIcon from '@mui/icons-material/Remove';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-
+import CloseIcon from '@mui/icons-material/Close';
 import {useState} from 'react'
 import CopyWrapper from '../../Util/CopyWrapper';
 import PopupContinue from '../../Util/PopupContinue';
@@ -11,7 +11,7 @@ import PopupContinue from '../../Util/PopupContinue';
 import {fetchCreateSingleTeam, fetchDeleteTeam, fetchRemovePlayer} from '../../../api/fetchTeam.js'
 
 
-const TeamCard = ({name, player_1, player_2, img, uuid}) => {
+export const TeamCard = ({name, player_1, player_2, img, uuid}) => {
     const [editing, setEditing] = useState(false)
     const toggleEditing = () => {
         setEditing(editing => !editing)
@@ -42,6 +42,8 @@ const TeamCard = ({name, player_1, player_2, img, uuid}) => {
     const [popupTeamOpen, setPopupTeamOpen] = useState(false)
     const [popupPlayerOpen, setPopupPlayerOpen] = useState(false)
     const [removePlayer, setRemovePlayer] = useState()
+    
+    
 
     return(
         <div className='relative flex items-center gap-3 p-2 border rounded-md border-primary'>
@@ -164,7 +166,7 @@ const ManageTeams = ({teams, broUUID}) => {
     
   return (
     <div className=''>
-        <h2 className='font-semibold text-[20px]'>Manage Teams</h2>
+        <h2 className='font-bold text-[16px]'>Manage Teams</h2>
         {teams ?
             <div className='my-2 space-y-3'>
                 {teams.map((team, i) => (

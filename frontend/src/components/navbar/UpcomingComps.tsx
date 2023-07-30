@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom'
 const Card = (info, index, setOpen) => {
     const navigate = useNavigate()
     const onClick = () => {
-      navigate(`/b/${info.uuid}`)
+      navigate(`/b/${info.uuid}/home`)
       setOpen(false)
     }
     

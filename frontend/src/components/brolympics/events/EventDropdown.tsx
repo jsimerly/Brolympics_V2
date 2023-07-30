@@ -1,4 +1,4 @@
-import{useState} from 'react'
+import{useState, useEffect} from 'react'
 import { Routes, Route, useNavigate, useParams} from "react-router-dom"
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import {useDropdown} from '../../../hooks'
@@ -7,11 +7,17 @@ const EventDropdown = ({events}) => {
     const [selectedEvent, setSelectedEvent] = useState()
     const navigate = useNavigate()
     const {uuid} = useParams()
+
+    useEffect(()=>{
+      if(events){
+        setSelectedEvent(events[0])
+      }
+    },[events])
   
     const handleSelect = (event) => {
       setSelectedEvent(event)
       setIsOpen(false)
-      navigate(`/b/${uuid}/event/${event.uuid}`);
+      navigate(`/b/${uuid}/event/${event.type}/${event.uuid}`);
     }
   
     const [isOpen, setIsOpen, handleDropdownClicked, dropdownNode] = useDropdown()
@@ -24,7 +30,7 @@ const EventDropdown = ({events}) => {
             onClick={handleDropdownClicked}
           >
             <h2 className='flex items-center justify-center w-full text-center'>
-              {selectedEvent ? selectedEvent : 'Select a Event'}
+              {selectedEvent ? selectedEvent.name : 'Select a Event'}
             </h2> 
               <ExpandMoreOutlinedIcon/>
           </div>

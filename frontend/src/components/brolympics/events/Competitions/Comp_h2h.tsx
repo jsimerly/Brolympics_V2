@@ -19,7 +19,7 @@ const Comp_h2h = ({team_1, team_1_score, team_2, team_2_score, winner, is_active
     
   return (
     <div 
-        className={`flex items-center justify-center p-3 px-6
+        className={`flex items-center justify-center py-3 px-6
         bg-neutral  ${is_active && 'bg-neutralLight'}`}
     >
         <div className='flex items-center justify-center w-full'>

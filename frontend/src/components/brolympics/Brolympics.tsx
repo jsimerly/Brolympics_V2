@@ -14,6 +14,7 @@ const Brolympics = () => {
   const [broInfo, setBroInfo] = useState()
   const {uuid} = useParams()
 
+
   const [status, setStatus] = useState('active')
 
   useEffect(() => {
@@ -57,6 +58,7 @@ const Brolympics = () => {
 
         if (response.ok){
           const data = await response.json()
+          console.log(data)
           if (!data.is_available){
             if (activeComp.is_available){
               setActiveComp(data)
@@ -113,8 +115,8 @@ const Brolympics = () => {
             <Route path="event/:eventType/:eventUuid" element={
               <Events 
                 events={broInfo?.events} 
-                default_uuid={broInfo?.events[0].uuid}
-                default_type={broInfo?.events[0].type}
+                default_uuid={broInfo?.events?.[0]?.uuid}
+                default_type={broInfo?.events?.[0]?.type}
               />} 
             />
             <Route path='competition/:compUuid' element={<InCompetition activeComp={activeComp}/>}/>
@@ -122,10 +124,11 @@ const Brolympics = () => {
         </Routes>
         {activeComp.is_available && 
           <Toolbar
+            status={status}
             is_owner={broInfo?.is_owner}
             default_team_uuid = {broInfo?.team_uuid || ''}
-            default_event_type = {broInfo?.events[0].type}
-            default_event_uuid = {broInfo?.events[0].uuid}
+            default_event_type = {broInfo?.events?.[0]?.type || ''}
+            default_event_uuid = {broInfo?.events?.[0]?.uuid || ''}
           />
         }
     </div>

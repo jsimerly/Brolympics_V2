@@ -11,10 +11,11 @@ export async function fetchLeagueTeams(uuid) {
     }
 }
 
-export async function fetchCreateSingleTeam(name, brolympicsUUID){
+export async function fetchCreateSingleTeam(name, brolympicsUUID, userJoin=false){
     const data = {
         name: name,
-        brolympics_uuid: brolympicsUUID
+        brolympics_uuid: brolympicsUUID,
+        user_join: userJoin,
     }
     try{
         const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/create-single-team/`,

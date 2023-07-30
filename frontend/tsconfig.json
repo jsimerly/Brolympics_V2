@@ -18,7 +18,11 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": false,
-    "noImplicitReturns": false
+    "noImplicitReturns": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "strictPropertyInitialization": false,
+    "strictBindCallApply": false
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

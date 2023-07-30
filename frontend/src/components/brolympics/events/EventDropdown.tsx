@@ -1,16 +1,17 @@
 import{useState} from 'react'
-import { Routes, Route, useNavigate, } from "react-router-dom"
+import { Routes, Route, useNavigate, useParams} from "react-router-dom"
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import {useDropdown} from '../../../hooks'
 
 const EventDropdown = ({events}) => {
-    const [selectedEvent, setSelectedEvent] = useState(events[0])
+    const [selectedEvent, setSelectedEvent] = useState()
     const navigate = useNavigate()
+    const {uuid} = useParams()
   
     const handleSelect = (event) => {
       setSelectedEvent(event)
       setIsOpen(false)
-      navigate(`/brolympics/event/${event}`);
+      navigate(`/b/${uuid}/event/${event.uuid}`);
     }
   
     const [isOpen, setIsOpen, handleDropdownClicked, dropdownNode] = useDropdown()
@@ -35,16 +36,17 @@ const EventDropdown = ({events}) => {
               {events
                 .filter((event) => event !== selectedEvent)
                 .map((event, index) => (
-                  <div key={index+"_dropdown"}>                
+                  <div key={index+"_dropdown"}>
+                    {index !== 0 && 
+                    <div key={index+'_divider'} className='w-full bg-gray-200 h-[1px]'/>}                
                     <li 
                       key={index+'_event'} 
                       className='text-[16px] py-2'
                       onClick={() => handleSelect(event)}
                     >
-                      {event}
+                      {event.name}
                     </li>
-                    {index+2 !== events.length && 
-                    <div key={index+'_divider'} className='w-full bg-gray-200 h-[1px]'/>}
+                    
                   </div>
                 ))}
             </ul>

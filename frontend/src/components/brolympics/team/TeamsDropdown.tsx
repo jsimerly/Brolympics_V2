@@ -35,7 +35,9 @@ const TeamsDropdown = ({teams, selectedTeam, setSelectedTeam}) => {
             >
               {teams
                 .map((team, index) => (
-                  <div key={index+"_dropdown"}>                
+                  <div key={index+"_dropdown"}>
+                    {index !== 0 && 
+                    <div key={index+'_divider'} className='w-full bg-gray-200 h-[1px]'/>}           
                     <li 
                       key={index+'_team'} 
                       className='text-[16px] py-2'
@@ -43,8 +45,7 @@ const TeamsDropdown = ({teams, selectedTeam, setSelectedTeam}) => {
                     >
                       {team.name}
                     </li>
-                    {index+2 !== teams.length && 
-                    <div key={index+'_divider'} className='w-full bg-gray-200 h-[1px]'/>}
+
                   </div>
                 ))}
             </ul>

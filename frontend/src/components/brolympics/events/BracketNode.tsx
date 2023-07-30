@@ -19,9 +19,15 @@ export const TeamNode = ({name, seed, score, img}) => {
             className={`p-1 border rounded-md border-primary h-[40px] flex gap-1 items-center justify-between w-[200px] min-w-[200px]`}
             style={{fontSize}}
         >
+          
             <div className='flex items-center justify-start gap-1'>
-                <div className='h-[30px] w-[30px] bg-white rounded-md'>l</div>
-                <div>{seed}</div>
+              {img ?
+                <img src={img} className='h-[30px] w-[30px] rounded-md'/>
+                :
+                <div className='w-[30px] h-[30px]'/>
+              }
+                
+                <div className='text-[12px]'>{seed}</div>
                 <div>{name}</div>
             </div>
             <div className='text-[16px] px-1'>{score}</div>
@@ -30,19 +36,22 @@ export const TeamNode = ({name, seed, score, img}) => {
 }
 
 
-const BracketNode = ({team_1_name, team_1_seed, team_1_score, team_1_img, team_2_name, team_2_seed, team_2_score, team_2_img}) => {
+const BracketNode = ({match}) => {
   return (
+    match &&
     <div className='flex gap-1'>
         <div className='flex flex-col gap-1'>
             <TeamNode
-                name={'Third Dynasty of Ur'}
-                seed={1}
-                score={21}
+                name={match.team_1.name}
+                img={match.team_1.img}
+                score={match.team_1_score}
+                seed={match.team_1_seed}
             />
             <TeamNode
-                name={'Greece'}
-                seed={4}
-                score={14}
+                name={match.team_2.name}
+                img={match.team_2.img}
+                score={match.team_2_score}
+                seed={match.team_2_seed}
             /> 
         </div>
         <div className='flex items-center pl-3'>

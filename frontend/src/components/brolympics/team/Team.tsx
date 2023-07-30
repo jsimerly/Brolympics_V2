@@ -12,7 +12,7 @@ import {fetchTeamInfo} from '../../../api/activeBro/fetchTeams'
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-const Team = ({teams}) => {
+const Team = ({teams, default_uuid}) => {
   let { teamUuid } = useParams()
   let navigate = useNavigate()
   const [selectedTeam, setSelectedTeam] = useState()
@@ -30,7 +30,6 @@ const Team = ({teams}) => {
       if (response.ok){
         const data = await response.json()
         setTeamInfo(data)
-        console.log(data)
       }
     }
     getTeamInfo()
@@ -38,141 +37,7 @@ const Team = ({teams}) => {
   }, [teamUuid])
   
   
-  const eventRanking = [
-    {
-      'name' : 'Cornhole',
-      'type' : 'h2h',
-      'decimal_places' : 0,
-      'wins' : 4,
-      'losses' : 0,
-      'ties' : 0,
-      'score_for' : 84,
-      'score_against' : 22,
-      'sos_wins' : 4,
-      'sos_losses' : 7,
-      'sos_ties' : 0,
-      'rank' : 1,
-      'points' : 12,
-      'is_final' : true,
-      'is_active' : false,
-      'comps' : [
-        {
-          'winner' : 'Third Dynasty of Ur',
-          'team_1_name' : 'Third Dynasty of Ur',
-          'team_1_score' : 21,
-          'team_2_name' : 'Poland',
-          'team_2_score' : 8,
-          'is_active': false,
-        },
-        {
-          'winner' : 'Third Dynasty of Ur',
-          'team_1_name' : 'Third Dynasty of Ur',
-          'team_1_score' : 21,
-          'team_2_name' : 'France',
-          'team_2_score' : 3,
-          'is_active' : false,
-        },
-        {
-          'winner' : 'Third Dynasty of Ur',
-          'team_1_name' : 'Greece',
-          'team_1_score' : 5,
-          'team_2_name' : 'Third Dynasty of Ur',
-          'team_2_score' : 21,
-          'is_active' : false,
-        },
-        {
-          'winner' : 'Germany',
-          'team_1_name' : 'Third Dynasty of Ur',
-          'team_1_score' : 21,
-          'team_2_name' : 'Germany',
-          'team_2_score' : 6,
-          'is_active' : false,
-        },
-      ]
-    },
-    {
-      'name' : 'Go Karting',
-      'type' : 'ind',
-      'decimal_places' : 3,
-      'score' : 24.623,
-      'rank' : 3,
-      'points' : 9,
-      'is_final' : true,
-      'is_active' : false,
-      'comps' : [
-        {
-        'player_1_name' : 'J. Simerly',
-        'player_1_score' : 24.324,
-        'player_2_name' : 'F. Sergi',
-        'player_2_score' : 24.873,
-        'team_score' : 24.623,
-        'is_active' : false,
-        },
-      ]
-    },
-    {
-      'name' : 'Beer Pong',
-      'type' : 'h2h',
-      'decimal_places' : 0,
-      'wins' : 1,
-      'losses' : 1,
-      'ties' : 0,
-      'score_for' : 23,
-      'score_against' : 20,
-      'sos_wins' : 7,
-      'sos_losses' : 2,
-      'sos_ties' : 0,
-      'rank' : 6,
-      'points' : 3.5,
-      'is_active' : true,
-      'is_final' : false,
-      'comps' : [
-        {
-          'winner' : 'Third Dynasty of Ur',
-          'team_1_name' : 'Third Dynasty of Ur',
-          'team_1_score' : 21,
-          'team_2_name' : 'Poland',
-          'team_2_score' : 8,
-          'is_active': false,
-        },
-        {
-          'winner' : 'France',
-          'team_1_name' : 'Third Dynasty of Ur',
-          'team_1_score' : 21,
-          'team_2_name' : 'France',
-          'team_2_score' : 3,
-          'is_active' : false,
-        },
-        {
-          'winner' : null,
-          'team_1_name' : 'Greece',
-          'team_1_score' : 0,
-          'team_2_name' : 'Third Dynasty of Ur',
-          'team_2_score' : 0,
-          'is_active' : true,
-        },        
-        {
-          'winner' : null,
-          'team_1_name' : 'Germany',
-          'team_1_score' : 0,
-          'team_2_name' : 'Third Dynasty of Ur',
-          'team_2_score' : 0,
-          'is_active' : false,
-        },
-      ]
-    },    
-    {
-      'name' : 'Bowling',
-      'type' : 'ind',
-      'decimal_places' : 0,
-      'score' : 0,
-      'rank' : 1,
-      'points' : 6,
-      'is_active' : false,
-      'is_final' : false,
-      'comps' : []
-    },
-  ]
+ 
 
   const TeamInfo = ({team, player_1, player_2}) => (
     <div className="flex items-center justify-center w-full gap-3 px-6">
@@ -243,12 +108,13 @@ const Team = ({teams}) => {
           teamInfo && 
           teamInfo.events.map((event, i) => 
             <div key={i+"_teams"}>
-              {getEventComponent(event.type, event)}
-              {i !== eventRanking.length - 1  && 
-              <div className="w-full px-6">
-                <div className="w-full h-[1px] bg-neutralLight" />
-              </div>
+              {i !== 0 && 
+                <div className="w-full px-6">
+                  <div className="w-full h-[1px] bg-neutralLight" />
+                </div>
               }
+              {getEventComponent(event.type, event)}
+
             </div>
           )
         }

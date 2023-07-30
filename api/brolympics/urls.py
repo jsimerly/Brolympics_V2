@@ -49,4 +49,8 @@ urlpatterns = [
 
         # Teams
     path('get-team-info/<uuid:uuid>', GetTeamInfo.as_view(), name='get_team_info' ),
+
+        #Events
+    path('get-event-info/<uuid:uuid>/<str:type>', GetEventInfo.as_view(), name='get_event_info')
+
 ]

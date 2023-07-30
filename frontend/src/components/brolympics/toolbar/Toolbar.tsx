@@ -6,7 +6,7 @@ import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 import ScoreboardOutlinedIcon from '@mui/icons-material/ScoreboardOutlined';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 
-const Toolbar = ({is_owner, default_team_uuid}) => {
+const Toolbar = ({is_owner, default_team_uuid, default_event_uuid, default_event_type}) => {
     const navigate = useNavigate();
     const {pathname} = useLocation()
     const pathAfterBrolympics = pathname.split("/")[3];
@@ -43,7 +43,9 @@ const Toolbar = ({is_owner, default_team_uuid}) => {
                 icon={<PeopleAltOutlinedIcon sx={{fontSize:30}}/>}
             />
             <PageButton 
-                route='event' text='Events'  path='event'
+                route={`event/${default_event_type}/${default_event_uuid || ''}`} 
+                text='Events'  
+                path='event'
                 icon={<ScoreboardOutlinedIcon sx={{fontSize:30}}/>}
             />
             <PageButton 

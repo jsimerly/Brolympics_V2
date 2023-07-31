@@ -31,9 +31,9 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ['DEBUG'] == 'True'
 ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split(',')
 
-ALLOWED_HOSTS = []
-
 AUTH_USER_MODEL = 'account.User'
+STATIC_URL = '/static/'
+STATIC_ROOT = '/api/static'
 
 
 # Application definition

@@ -1,6 +1,7 @@
 import { useContext, useState } from "react"
 import { AuthContext } from '../../context/AuthContext'
 import { useNavigate } from "react-router-dom";
+import createImg from '../../assets/imgs/create_account_img_2.webp'
 
 import { PhoneNumberInput, PasswordInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
@@ -43,7 +44,7 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
 
         if (response.ok){
             navigate('verify', { state: { 
-                phoneNumber: cleanedPhoneNumber, 
+                phoneNumber: cleanedPhoneNumber,  
                 firstName: firstName,
                 lastName: lastName,
                 password: password, 
@@ -57,8 +58,8 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
     
   return (
         <div className="flex flex-col items-center justify-end min-h-[calc(100vh-160px)] px-6 w-screen absolute">
-            <div className="flex flex-1 w-full border">
-                Image Here
+            <div className="flex flex-1 w-full">
+                <img src={createImg} className="object-fill w-full h-full"/>
             </div>
             <h2 className="text-[20px] font-bold">Create Your Account</h2>
             <div className="flex flex-col items-center justify-center gap-4 py-4">

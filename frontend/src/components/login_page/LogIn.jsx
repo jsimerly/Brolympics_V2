@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { PasswordInput, PhoneNumberInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
 import ErrorMessages from "./ErrorMessages.jsx";
+import loginImg from '../../assets/imgs/login_image.webp'
 
 
 const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) => {
@@ -50,8 +51,8 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) =>
     
   return (
         <div className="flex flex-col items-center justify-end h-[calc(100vh-160px)] px-6 absolute translate-x-[100%] w-full">
-            <div className="flex flex-1 w-full border">
-                Image Here
+            <div className="flex items-center flex-1 w-full">
+                <img src={loginImg} className='w-full h-full'/>
             </div>
             <h2 className="text-[20px] font-bold">Sign-In</h2>
             <div className="flex flex-col w-full gap-4 py-4">

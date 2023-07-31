@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {fetchTeamInvite, fetchJoinTeam } from '../../api/fetchInvites.js'
-import InviteWrapper from "./InviteWrapper.js";
+import InviteWrapper from "./InviteWrapper.jsx";
 
 
 const TeamInvite = () => {

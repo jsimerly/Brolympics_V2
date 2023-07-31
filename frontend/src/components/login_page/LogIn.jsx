@@ -4,7 +4,7 @@ import { useState, useContext } from "react"
 import { useNavigate } from 'react-router-dom';
 import { PasswordInput, PhoneNumberInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
-import ErrorMessages from "./ErrorMessages.js";
+import ErrorMessages from "./ErrorMessages.jsx";
 
 
 const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) => {

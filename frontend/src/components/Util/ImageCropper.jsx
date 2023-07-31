@@ -56,7 +56,7 @@ export const readImageFile = (file) => {
   })
 }
 
-export const getCroppedImg = (imageSrc: string, cropArea: Area): Promise<string> => {
+export const getCroppedImg = (imageSrc, cropArea) => {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.src = imageSrc;
@@ -70,18 +70,18 @@ export const getCroppedImg = (imageSrc: string, cropArea: Area): Promise<string>
       canvas.width = safeArea;
       canvas.height = safeArea;
 
-      ctx!.drawImage(
+      ctx.drawImage(
         image,
         safeArea / 2 - image.width * 0.5,
         safeArea / 2 - image.height * 0.5
       );
 
-      const data = ctx!.getImageData(0, 0, safeArea, safeArea);
+      const data = ctx.getImageData(0, 0, safeArea, safeArea);
 
       canvas.width = cropArea.width;
       canvas.height = cropArea.height;
 
-      ctx!.putImageData(
+      ctx.putImageData(
         data,
         0 - safeArea / 2 + image.width * 0.5 - cropArea.x,
         0 - safeArea / 2 + image.height * 0.5 - cropArea.y

@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 
-import AvailableCompetition_h2h from './h2h/AvailableCompetition_h2h';
-import ActiveCompetition_h2h from './h2h/ActiveCompetition_h2h';
-import AvailableCompetition_ind from './ind/AvailableCompetition_ind';
-import ActiveCompetition_ind from './ind/ActiveCompetition_ind';
-import AvailableCompetition_team from './team/AvailableCompetition_team';
-import ActiveCompetition_team from './team/ActiveCompetition_team';
-import HomeAdminActive  from './HomeAdminActive';
+import AvailableCompetition_h2h from './h2h/AvailableCompetition_h2h.jsx';
+import ActiveCompetition_h2h from './h2h/ActiveCompetition_h2h.jsx';
+import AvailableCompetition_ind from './ind/AvailableCompetition_ind.jsx';
+import ActiveCompetition_ind from './ind/ActiveCompetition_ind.jsx';
+import AvailableCompetition_team from './team/AvailableCompetition_team.jsx';
+import ActiveCompetition_team from './team/ActiveCompetition_team.jsx';
+import HomeAdminActive  from './HomeAdminActive.jsx';
 
 import { fetchHome } from '../../../api/activeBro/fetchHome.js'
 

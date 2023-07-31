@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation, useParams} from "react-router-dom"
-import Toolbar from "./toolbar/Toolbar"
-import Events from "./events/Events"
-import Standings from "./standings/Standings"
-import Home from "./home/Home"
-import Team from "./team/Team"
-import InCompetition from './InCompetition';
-import ManageRouter from './manage/ManageRouter.js';
+import Toolbar from "./toolbar/Toolbar.jsx"
+import Events from "./events/Events.jsx"
+import Standings from "./standings/Standings.jsx"
+import Home from "./home/Home.jsx"
+import Team from "./team/Team.jsx"
+import InCompetition from './InCompetition.jsx';
+import ManageRouter from './manage/ManageRouter.jsx';
 import {fetchBrolympicsHome, fetchInCompetition} from '../../api/fetchBrolympics.js'
 
 const Brolympics = () => {

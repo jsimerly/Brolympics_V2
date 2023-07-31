@@ -2,12 +2,12 @@ import React, {useState} from 'react'
 import { useParams } from 'react-router-dom';
 import {fetchCreateEvent} from '../../../api/fetchEvents.js'
 
-import ManageEvent_h2h from './events/ManageEvent_h2h'
-import ManageEvent_ind from './events/ManageEvent_ind'
-import ManageEvent_team from './events/ManageEvent_team'
+import ManageEvent_h2h from './events/ManageEvent_h2h.jsx'
+import ManageEvent_ind from './events/ManageEvent_ind.jsx'
+import ManageEvent_team from './events/ManageEvent_team.jsx'
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import CreateEvent from '../../create_league_page/events/CreateEvent';
+import CreateEvent from '../../create_league_page/events/CreateEvent.jsx';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 

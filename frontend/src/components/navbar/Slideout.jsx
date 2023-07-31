@@ -3,12 +3,12 @@
 import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext'
 
-import CurrentBrolympics from "./CurrentBrolympics"
-import LeaguesButtons from "./LeaguesButtons"
-import Options from "./Options"
+import CurrentBrolympics from "./CurrentBrolympics.jsx"
+import LeaguesButtons from "./LeaguesButtons.jsx"
+import Options from "./Options.jsx"
 import UpcomingBrolympics from "./UpcomingBrolympics"
 import UpcomingCompetitions from "./UpcomingComps"
-import Account from './Account';
+import Account from './Account.jsx';
 import {fetchUpcoming} from '../../api/fetchLeague.js'
 
 const Slideout = ({open, leagues, setOpen}) => {

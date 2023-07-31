@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import ImageCropper, {readImageFile} from '../..//Util/ImageCropper';
+import ImageCropper, {readImageFile} from '../../Util/ImageCropper';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import CopyWrapper from '../../Util/CopyWrapper';
 

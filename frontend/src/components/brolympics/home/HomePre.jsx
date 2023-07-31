@@ -4,12 +4,12 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import CloseIcon from '@mui/icons-material/Close';
 import {fetchCreateSingleTeam, fetchDeleteTeam, fetchRemovePlayer} from '../../../api/fetchTeam.js'
 import {getInviteLinkTeam} from '../../../api/fetchInvites.js'
-import PopupContinue from '../../Util/PopupContinue';
+import PopupContinue from '../../Util/PopupContinue.jsx';
 import SaveIcon from '@mui/icons-material/Save';
-import CopyWrapper from '../../Util/CopyWrapper';
+import CopyWrapper from '../../Util/CopyWrapper.jsx';
 import { useParams } from 'react-router-dom';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import ImageCropper, {readImageFile} from '../../Util/ImageCropper';
+import ImageCropper, {readImageFile} from '../../Util/ImageCropper.jsx';
 
 const EventCard = ({name, projected_end_date, projected_start_date, n_matches, n_bracket_teams, n_competitions}) => {
 

@@ -1,22 +1,22 @@
 import  {useEffect, useState} from 'react'
 import { Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext.jsx';
 
-import SignUp from './components/login_page/SignUp';
-import Navbar from './components/navbar/Navbar';
-import StartLeague from './components/create_league_page/StartLeague';
-import Brolympics from './components/brolympics/Brolympics';
-import League from './components/brolympics/League';
-import Leagues from './components/brolympics/Leagues';
-import VerifyPhone from './components/login_page/VerifyPhone';
-import Invites from './components/invites/Invites';
-import Team from './components/brolympics/team/Team.js';
-import Events from './components/brolympics/events/Events.js';
-import Home from './components/brolympics/home/Home.js';
+import SignUp from './components/login_page/SignUp.jsx';
+import Navbar from './components/navbar/Navbar.jsx';
+import StartLeague from './components/create_league_page/StartLeague.jsx';
+import Brolympics from './components/brolympics/Brolympics.jsx';
+import League from './components/brolympics/League.jsx';
+import Leagues from './components/brolympics/Leagues.jsx';
+import VerifyPhone from './components/login_page/VerifyPhone.jsx';
+import Invites from './components/invites/Invites.jsx';
+import Team from './components/brolympics/team/Team.jsx';
+import Events from './components/brolympics/events/Events.jsx';
+import Home from './components/brolympics/home/Home.jsx';
 
 import {fetchLeagues} from './api/fetchLeague.js'
-import BrolympicsSettings from './components/league_settings/BrolympicsSettings.js';
-import LeagueSettings from './components/league_settings/LeagueSettings.js';
+import BrolympicsSettings from './components/league_settings/BrolympicsSettings.jsx';
+import LeagueSettings from './components/league_settings/LeagueSettings.jsx';
 
 function App() {
     const [leagues, setLeagues] = useState([])

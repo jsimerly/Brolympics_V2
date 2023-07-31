@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { PhoneNumberInput, PasswordInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
-import ErrorMessages from "./ErrorMessages.js";
+import ErrorMessages from "./ErrorMessages.jsx";
 
 const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password, setPassword, phoneNumber, setPhoneNumber, endPath}) => {
     const {createUser} = useContext(AuthContext)

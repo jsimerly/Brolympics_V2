@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import {fetchLoginUser, handleLogout, fetchUserInformation, fetchCreateUser } from '../api/fetchUser.js'
-import {getCookie} from '../api/cookies'
+import {getCookie} from '../api/cookies.js'
 
 
 export const AuthContext = createContext();

@@ -8,8 +8,8 @@ import Comp_h2h from './Competitions/Comp_h2h';
 import { fetchEventInfo } from '../../../api/activeBro/fetchEvents.js'
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import Comp_ind from './Competitions/Comp_ind.js';
-import Comp_team from './Competitions/Comp_team.js';
+import Comp_ind from './Competitions/Comp_ind.jsx';
+import Comp_team from './Competitions/Comp_team.jsx';
 
 const Events = ({events, default_uuid, default_type}) => {
 

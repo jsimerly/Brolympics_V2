@@ -1,8 +1,8 @@
 import { useState } from "react"
-import CreateLeaguePage from "./CreateLeaguePage"
-import CreateBrolympics from "./CreateBrolympics"
-import AddEvent from "./AddEvent"
-import AddPlayers from "./AddPlayers"
+import CreateLeaguePage from "./CreateLeaguePage.jsx"
+import CreateBrolympics from "./CreateBrolympics.jsx"
+import AddEvent from "./AddEvent.jsx"
+import AddPlayers from "./AddPlayers.jsx"
 import { createAllLeague} from '../../api/fetchLeague.js'
 
 const StepManager = ({step, nextStep, prevStep,}) => {

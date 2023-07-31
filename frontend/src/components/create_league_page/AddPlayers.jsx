@@ -4,7 +4,7 @@ import { PhoneNumberInput, PasswordInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import CopyWrapper from '../Util/CopyWrapper.js';
+import CopyWrapper from '../Util/CopyWrapper.jsx';
 
 const PhoneList = ({ label, values, setValues }) => (
   <div>

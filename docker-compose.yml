@@ -21,21 +21,20 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   frontend:
-      build:
+    build:
       context: ./frontend
-      image: my-frontend
-      depends_on:
+    image: my-frontend
+    depends_on:
       - backend
 
-
   nginx:
-      image: my-frontend
-      volumes:
+    image: my-frontend
+    volumes:
       - static_volume:/usr/share/nginx/html/static
       - media_volume:/usr/share/nginx/html/media
-      ports:
+    ports:
       - 80:80
-      depends_on:
+    depends_on:
       - backend
       - frontend
 
@@ -43,3 +42,4 @@ volumes:
   postgres_data:
   static_volume:
   media_volume:
+

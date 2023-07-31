@@ -31,6 +31,14 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ['DEBUG'] == 'True'
 ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split(',')
 
+
+CORS_ALLOWED_ORIGINS = os.environ['CORS_ALLOWED'].split(',')
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = os.environ['CSRF_TRUSTED_ORIGINS'].split(',')
+CSRF_COOKIE_DOMAIN = os.environ['CSRF_COOKIE_DOMAIN']
+
+
 AUTH_USER_MODEL = 'account.User'
 STATIC_URL = '/static/'
 STATIC_ROOT = '/api/static'
@@ -68,11 +76,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = os.environ['CORS_ALLOWED'].split(',')
-CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
-CSRF_TRUSTED_ORIGINS = os.environ['CSRF_TRUSTED_ORIGINS'].split(',')
-CSRF_COOKIE_DOMAIN = os.environ['CSRF_COOKIE_DOMAIN']
 
 ROOT_URLCONF = 'api.urls'
 

@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {fetchLoginUser, handleLogout, fetchUserInformation, fetchCreateUser } from '../api/fetchUser.js'
 import {getCookie} from '../api/cookies.js'
 
@@ -7,6 +8,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const getUser = async () => {
@@ -17,10 +19,11 @@ export const AuthProvider = ({ children }) => {
           setCurrentUser(data);
         } else {
           setCurrentUser(null);
+          navigate('/sign-up')
         }
       } catch (error) {
         setCurrentUser(null);
-        console.error(error);
+        navigate('/sign-up')
       }
     };
     getUser();

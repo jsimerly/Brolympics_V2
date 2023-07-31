@@ -49,10 +49,17 @@ const Slideout = ({open, leagues, setOpen}) => {
                     <Account setView={setView}/>
                 :
                     <div className='flex flex-col h-[calc(100vh-80px)] bg-neutral text-white opacity-[99%] px-6 py-3 gap-3'>
-                        <LeaguesButtons leagues={leagues} setOpen={setOpen}/>
-                        <CurrentBrolympics current_brolympics={currentBro} setOpen={setOpen}/>
-                        <UpcomingBrolympics upcoming_brolympics={upcomingBro} setOpen={setOpen}/>
-                        <UpcomingCompetitions upcoming_competitions={upcomingComps} setOpen={setOpen}/>                        
+                        {currentUser ? 
+                            <>  
+                                <LeaguesButtons leagues={leagues} setOpen={setOpen}/>
+                                <CurrentBrolympics current_brolympics={currentBro} setOpen={setOpen}/>
+                                <UpcomingBrolympics upcoming_brolympics={upcomingBro} setOpen={setOpen}/>
+                                <UpcomingCompetitions upcoming_competitions={upcomingComps} setOpen={setOpen}/>    
+                            </>  
+                            :
+                            <div>You're not currently logged in. To create an account or login <a className='underline ' href='/sign-up'> please click here.</a></div>
+                        }
+                  
                     </div>
                 }
 

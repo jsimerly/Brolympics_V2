@@ -40,7 +40,7 @@ services:
       - frontend
 
   certbot:
-    image : certbot
+    image : certbot/certbot
     volumes:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt

@@ -15,6 +15,9 @@ from django.db.models import Q
 User = get_user_model()
 
 def convert_to_img_file(base_64_img):
+    if base_64_img is None:
+        return None
+    
     format, imgstr = base_64_img.split(';base64,')
     ext = format.split('/')[-1]
     data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)

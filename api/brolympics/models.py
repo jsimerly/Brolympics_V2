@@ -4,6 +4,8 @@ import random
 from django.utils import timezone
 from django.db.models import Q, Avg, Sum
 from uuid import uuid4
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 User = get_user_model()
 
@@ -30,6 +32,11 @@ class League(models.Model):
             self.img.name = default_img_path
 
         super().save(*args, **kwargs)
+
+
+@receiver(pre_delete, sender=League)
+def delete_players(sender, instance, **kwargs):
+    instance.players.clear()
 
 
 BROLYMPIC_IMAGES = [
@@ -66,7 +73,7 @@ class Brolympics(models.Model):
     uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
     img = models.ImageField(upload_to='brolympics/', null=True, blank=True)
 
-    players = models.ManyToManyField(User, related_name='brolympics', blank=True)
+    players = models.ManyToManyField(User, related_name='brolympics', blank=True,)
 
     def save(self, *args, **kwargs):
         if not self.img:

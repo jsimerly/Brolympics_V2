@@ -16,6 +16,7 @@ const Navbar = ({leagues}) => {
 
     const logoClick = () => {
         navigate('/')
+        setSlideOpen(false)
     }
 
   return (

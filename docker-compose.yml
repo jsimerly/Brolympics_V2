@@ -33,9 +33,9 @@ services:
       - static_volume:/usr/share/nginx/html/static
       - media_volume:/usr/share/nginx/html/media
 
-      # - certbot-data:/var/www/certbot
-      # - certbot-etc:/etc/letsencrypt
-      # - certbot-var:/var/lib/letsencrypt 
+      - certbot-data:/var/www/certbot
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt 
     ports:
       - 80:80
       - 443:443
@@ -55,7 +55,7 @@ volumes:
   postgres_data:
   static_volume:
   media_volume:
-  # certbot-etc:
-  # certbot-var:
-  # certbot-data:
+  certbot-etc:
+  certbot-var:
+  certbot-data:
 

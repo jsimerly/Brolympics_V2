@@ -33,7 +33,7 @@ function App() {
     },[])
 
   return (
-    <div className='min-h-screen bg-offWhite text-neutralDark'>
+    <div className='min-h-screen text-white bg-neutral'>
       <AuthProvider>
         <Navbar leagues={leagues}/>
         <Routes>

@@ -46,9 +46,19 @@ const BrolympicsCard_Upcoming = ({img, name, events, teams, projected_start_date
                 </div>
             </div>
             { teams.length > 0 &&
-                <div className="flex pt-3 text-[14px]">
+                <div className="flex pt-6 text-[14px]">
                     <div className="pr-2 text-[16px]">
                         Teams:
+                    </div>
+                    <div className='flex flex-wrap gap-2'>
+                        {teams.map((team, i) => (
+                            <div 
+                                className='p-1 border rounded-md border-primaryLight'
+                                key={i+'bro_card_team'}
+                            >
+                                {team.name}
+                            </div>
+                        ))}
                     </div>
                 </div>
             }
@@ -103,7 +113,7 @@ const League = () => {
         }
        } 
        getLeagueInfo()
-    },[])
+    },[uuid])
 
 
   return (

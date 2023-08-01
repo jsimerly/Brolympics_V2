@@ -54,7 +54,7 @@ const Slideout = ({open, leagues, setOpen}) => {
                                 <LeaguesButtons leagues={leagues} setOpen={setOpen}/>
                                 <CurrentBrolympics current_brolympics={currentBro} setOpen={setOpen}/>
                                 <UpcomingBrolympics upcoming_brolympics={upcomingBro} setOpen={setOpen}/>
-                                <UpcomingCompetitions upcoming_competitions={upcomingComps} setOpen={setOpen}/>    
+                                {/* <UpcomingCompetitions upcoming_competitions={upcomingComps} setOpen={setOpen}/>     */}
                             </>  
                             :
                             <div>You're not currently logged in. To create an account or login <a className='underline ' href='/sign-up'> please click here.</a></div>

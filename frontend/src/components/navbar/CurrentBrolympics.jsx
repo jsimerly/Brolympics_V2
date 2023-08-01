@@ -7,6 +7,7 @@ const Card = (info, index, setOpen) => {
       navigate(`/b/${info.uuid}/home`)
       setOpen(false)
     }
+    console.log(info)
     
     return(
         <div 
@@ -14,12 +15,10 @@ const Card = (info, index, setOpen) => {
             key={index}
             onClick={onClick}
         > 
-            <div className='bg-white h-[40px] w-[40px] rounded-lg text-black'>
-                logo
-            </div>
+            <img src={info.img} className='bg-white h-[40px] w-[40px] rounded-lg text-black'/>
             <div className="flex flex-col">
                 <h3 className="text-[18px]">{info.name}</h3>
-                <div className='text-[14px] ml-1 opacity-60'>
+                <div className='text-[14px] opacity-60'>
                     Rank: 1st Points: 36.5
                 </div>
             </div>

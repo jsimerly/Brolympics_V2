@@ -36,7 +36,7 @@ const StartLeague = () => {
   return (
     <div 
         ref={containerRef}
-        className='flex flex-col items-center justify-start w-full h-[calc(100vh-80px)] overflow-x-hidden'
+        className='flex flex-col items-center justify-start w-full h-[calc(100vh-60px)] overflow-x-hidden bg-offWhite text-neutralDark'
     >
         <div className='fixed z-20 w-full'>
             <div className='flex items-center justify-center w-full px-6 py-3 bg-offWhite'>

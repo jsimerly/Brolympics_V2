@@ -44,11 +44,11 @@ const Slideout = ({open, leagues, setOpen}) => {
   return (
     <>
         {open &&
-            <div className="fixed top-[80px] left-0 w-full z-30">
+            <div className="fixed top-[59px] left-0 w-full z-30">
                 {view === 'account' ?
                     <Account setView={setView}/>
                 :
-                    <div className='flex flex-col h-[calc(100vh-80px)] bg-neutral text-white opacity-[99%] px-6 py-3 gap-3'>
+                    <div className='flex flex-col h-[calc(100vh-60px)] bg-neutral text-white opacity-[99%] px-6 py-3 gap-3'>
                         {currentUser ? 
                             <>  
                                 <LeaguesButtons leagues={leagues} setOpen={setOpen}/>

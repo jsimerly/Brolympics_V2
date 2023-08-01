@@ -50,7 +50,7 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) =>
     }
     
   return (
-        <div className="flex flex-col items-center justify-end h-[calc(100vh-160px)] px-6 absolute translate-x-[100%] w-full">
+        <div className="flex flex-col items-center justify-end h-[calc(100vh-140px)] px-6 absolute translate-x-[100%] w-full">
             <div className="flex items-center flex-1 w-full">
                 <img src={loginImg} className='w-full h-full'/>
             </div>

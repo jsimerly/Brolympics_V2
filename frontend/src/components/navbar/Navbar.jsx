@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Slideout from './Slideout';
+import brologo from '../../assets/imgs/brologo.webp'
 
 const Navbar = ({leagues}) => {
     const [slideOpen, setSlideOpen]= useState(false)
@@ -19,7 +20,7 @@ const Navbar = ({leagues}) => {
 
   return (
     <>
-        <div className='fixed h-[80px] z-20 bg-neutralDark text-offWhite w-full flex justify-between items-center px-3'>
+        <div className='fixed h-[60px] z-20 bg-neutralDark text-white w-full flex justify-between items-center px-3'>
             <div 
                 className=''
                 onClick={menuClick}
@@ -27,13 +28,13 @@ const Navbar = ({leagues}) => {
                 {slideOpen ?<CloseIcon sx={{fontSize: 35}}/> : <MenuIcon sx={{fontSize: 35}}/>}   
              
             </div>
-            <div
+            <button
                 onClick={logoClick}
             >
-                Logo
-            </div>
+                <img src={brologo} className='w-[50px h-[50px]'/>
+            </button>
         </div>
-        <div className='h-[80px]'/>
+        <div className='h-[60px]'/>
         <Slideout 
             leagues={leagues}
             setOpen={setSlideOpen}

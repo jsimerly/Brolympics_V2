@@ -174,11 +174,11 @@ class BrolympicsSerializer(serializers.ModelSerializer):
     projected_start_date = serializers.SerializerMethodField()
     projected_end_date = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
-    team_uuid = serializers.SerializerMethodField()
+    user_team = serializers.SerializerMethodField()
 
     class Meta:
         model = Brolympics
-        fields = ['name', 'is_registration_open', 'projected_start_date', 'projected_end_date', 'start_time', 'end_time', 'is_complete', 'winner', 'uuid', 'img', 'teams', 'events', 'is_owner', 'is_active', 'team_uuid']
+        fields = ['name', 'is_registration_open', 'projected_start_date', 'projected_end_date', 'start_time', 'end_time', 'is_complete', 'winner', 'uuid', 'img', 'teams', 'events', 'is_owner', 'is_active', 'user_team']
 
     def get_teams(self, obj):
         return TeamSerializer(obj.teams.all(), many=True, context=self.context).data
@@ -192,12 +192,14 @@ class BrolympicsSerializer(serializers.ModelSerializer):
     
     def get_projected_start_date(self, obj):
         if obj.projected_start_date is not None:
-            return obj.projected_start_date.strftime('%b %d, %Y')
+            day = obj.projected_start_date.day
+            return obj.projected_start_date.strftime('%b ') + str(day)
         return None
 
     def get_projected_end_date(self, obj):
         if obj.projected_end_date is not None:
-            return obj.projected_end_date.strftime('%b %d, %Y')
+            day = obj.projected_end_date.day
+            return obj.projected_end_date.strftime('%b ') + str(day)
         return None
     
     def get_is_owner(self, obj):
@@ -206,12 +208,12 @@ class BrolympicsSerializer(serializers.ModelSerializer):
             return obj.league.league_owner == request.user
         return False
     
-    def get_team_uuid(self, obj):
+    def get_user_team(self, obj):
         request = self.context.get('request')
         user = request.user
         team = Team.objects.filter(Q(player_1=user) | Q(player_2=user), brolympics=obj)
         if team.exists():
-            return team.first().uuid
+            return TeamSerializer(team.first(), context=self.context).data
         return None
 
 class LeagueInfoSerializer(serializers.ModelSerializer):

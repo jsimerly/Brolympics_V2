@@ -11,15 +11,17 @@ const Card = (info, index, setOpen) => {
 
     return(
         <div 
-            className='flex items-center w-full gap-3 p-3 rounded-md fex-items-center' 
+            className='flex items-start w-full gap-3 p-3 rounded-md' 
             key={index+'_upcoming_bro'}
             onClick={onClick}
         > 
             <img src={info.img} className='bg-white h-[40px] w-[40px] rounded-lg text-black'/>
-            <div className="flex flex-col">
+            <div className="flex flex-col ">
                 <h3 className="text-[18px]">{info.name}</h3>
                 <div className='text-[14px] ml-1 opacity-60'>
-                {info.projected_start_date} - {info.projected_end_date}
+                    {info.projected_start_date && info.projected_start_date}
+                    {info.projected_start_date && info.projected_end_date && ' - '}
+                    {info.projected_end_date && info.projected_end_date}
                 </div>
             </div>
         </div>

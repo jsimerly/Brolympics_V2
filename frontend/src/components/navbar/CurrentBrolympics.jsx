@@ -11,7 +11,7 @@ const Card = (info, index, setOpen) => {
     
     return(
         <div 
-            className='flex items-center w-full gap-3 p-3 rounded-md fex-items-center' 
+            className='flex items-center w-full gap-3 p-3 rounded-md' 
             key={index}
             onClick={onClick}
         > 
@@ -19,7 +19,9 @@ const Card = (info, index, setOpen) => {
             <div className="flex flex-col">
                 <h3 className="text-[18px]">{info.name}</h3>
                 <div className='text-[14px] opacity-60'>
-                    Rank: 1st Points: 36.5
+                    {info.projected_start_date && info.projected_start_date}
+                    {info.projected_start_date && info.projected_end_date && ' - '}
+                    {info.projected_end_date && info.projected_end_date}
                 </div>
             </div>
         </div>

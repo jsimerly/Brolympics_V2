@@ -12,7 +12,7 @@ const Invites = () => {
     const returnPath = location.pathname
 
   return (
-    <div>
+    <div className="bg-offWhite text-neutralDark">
       {currentUser ? 
           <Routes>
             <Route path='league/:uuid' element={<LeagueInvite/>}/>

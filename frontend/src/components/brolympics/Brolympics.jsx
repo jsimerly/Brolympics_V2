@@ -109,7 +109,7 @@ const Brolympics = () => {
             <Route path="team/:teamUuid" element={
               <Team 
                 teams={broInfo?.teams} 
-                default_uuid={broInfo?.team_uuid}
+                default_uuid={broInfo?.user_team.uuid}
               />} 
             />
             <Route path="event/:eventType/:eventUuid" element={
@@ -126,7 +126,7 @@ const Brolympics = () => {
           <Toolbar
             status={status}
             is_owner={broInfo?.is_owner}
-            default_team_uuid = {broInfo?.team_uuid || ''}
+            default_team_uuid = {broInfo?.user_team.uuid || ''}
             default_event_type = {broInfo?.events?.[0]?.type || ''}
             default_event_uuid = {broInfo?.events?.[0]?.uuid || ''}
           />

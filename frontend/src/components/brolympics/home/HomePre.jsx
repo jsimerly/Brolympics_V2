@@ -31,6 +31,19 @@ const OwnTeamCard = ({name, img, player_1, player_2, uuid}) => {
   const [teamName, setTeamName] = useState(name)
   const handleTeamNameChange = (e) => setTeamName(e.target.value)
 
+  const get_name_size = (name) => {
+    if (name) {
+      if (name.length <= 14){
+        return '30px'
+      } else if (name.length <= 16){
+        return '26px'
+      } else if (name.length <= 24){
+        return '22px'
+      } else {
+        return '18px'
+      }
+    }
+  }
   
   const onEditClick = () => {
     setEditOpen(editOpen => !editOpen)
@@ -94,7 +107,7 @@ const OwnTeamCard = ({name, img, player_1, player_2, uuid}) => {
         </div>
         :
         <div className='flex flex-col'>
-          <h2 className='text-[30px] font-semibold'>{name}</h2>
+          <h2 className={`text-[${get_name_size(name)}] font-semibold`}>{name}</h2>
           <span>{player_1 && player_1.full_name}</span>
           <span>{player_2 && player_2.full_name}</span>
         </div>
@@ -168,9 +181,8 @@ const TeamCard = ({name, img, player_1, player_2}) => {
   )
 }
 
-const HomePre = ({events, img, is_owner, projected_start_date, projected_end_date, teams, team_uuid}) => {
+const HomePre = ({events, img, is_owner, projected_start_date, projected_end_date, teams, user_team}) => {
 
-  const userTeam = teams.find(team => team.uuid === team_uuid);
   const [newTeamName, setNewTeamName] = useState('')
   const [newTeamImg, setNewTeamImg] = useState()
   const [cropping, setCropping] = useState(false)
@@ -194,8 +206,8 @@ const HomePre = ({events, img, is_owner, projected_start_date, projected_end_dat
     <div className='p-6 space-y-3'>
       <div>
         
-        {userTeam ? 
-            <OwnTeamCard {...userTeam}/>
+        {user_team ? 
+            <OwnTeamCard {...user_team}/>
             :
             <div className='space-y-2'>
             <h3>Name</h3>
@@ -261,8 +273,8 @@ const HomePre = ({events, img, is_owner, projected_start_date, projected_end_dat
         <h2 className='text-[16px] font-bold'>Other Teams</h2>
           { teams && teams.length > 0 ?
             teams.map((team, i) => (
-              team.uuid !== team_uuid &&
-              <TeamCard {...team} team_uuid={team_uuid} key={i+'_teamCard'}/>
+              team.uuid !== user_team.uuid &&
+              <TeamCard {...team} key={i+'_teamCard'}/>
             ))
             :
             'No teams have been registered yet.'

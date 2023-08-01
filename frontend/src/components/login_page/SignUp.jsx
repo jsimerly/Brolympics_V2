@@ -33,7 +33,7 @@ const SignUp = ({endPath='/'}) => {
       });
 
   return (
-    <div className='flex flex-col h-[calc(100vh-60px)] py-3 overflow-hidden' {...swipeHandlers}>
+    <div className='flex flex-col h-[calc(100vh-60px)] py-3 overflow-hidden bg-offWhite text-neutralDark' {...swipeHandlers}>
       <div className='flex items-center justify-center w-full gap-6 p-3'>
         <button
           className={`w-1/2 text-end ${currentPage === 'createAccount' ? 'font-bold' : ''}`}

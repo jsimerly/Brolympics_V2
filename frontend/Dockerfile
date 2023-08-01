@@ -1,18 +1,14 @@
-# 1st Stage - Build the React Application
-FROM node:latest as build
+FROM node:16.13 AS build
 
-WORKDIR /app
+WORKDIR /frontend
 
 COPY package*.json ./
-
-RUN npm install
+RUN npm ci
 
 COPY . .
-
 RUN npm run build
 
-# 2nd Stage - Setup Nginx
-FROM nginx:stable-alpine
+FROM nginx:latest
 
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /frontend/dist /var/www/frontend
 COPY nginx.conf /etc/nginx/conf.d/default.conf

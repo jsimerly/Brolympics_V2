@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation, useParams} from "react-router-dom"
 import Toolbar from "./toolbar/Toolbar.jsx"
 import Events from "./events/Events.jsx"
@@ -8,12 +8,13 @@ import Team from "./team/Team.jsx"
 import InCompetition from './InCompetition.jsx';
 import ManageRouter from './manage/ManageRouter.jsx';
 import {fetchBrolympicsHome, fetchInCompetition} from '../../api/fetchBrolympics.js'
+import { AuthContext } from '../../context/AuthContext.jsx';
 
 const Brolympics = () => {
 
   const [broInfo, setBroInfo] = useState()
   const {uuid} = useParams()
-
+  const {currentUser} = useContext(AuthContext)
 
   const [status, setStatus] = useState('active')
 
@@ -85,10 +86,11 @@ const Brolympics = () => {
           }
         }
       }
-      getIsAvailable()
-
+      if (currentUser){
+        getIsAvailable()
+      }
     }
-  }, [location, broInfo]);
+  }, [location, broInfo, currentUser]);
 
   return (
     <div className='bg-neutral min-h-[calc(100vh-80px)] text-white'>

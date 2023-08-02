@@ -6,6 +6,9 @@ import createImg from '../../assets/imgs/create_account_img_2.webp'
 import { PhoneNumberInput, PasswordInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
 import ErrorMessages from "./ErrorMessages.jsx";
+import { useNotification } from "../Util/Notification";
+
+
 
 const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password, setPassword, phoneNumber, setPhoneNumber, endPath}) => {
     const {createUser} = useContext(AuthContext)
@@ -24,6 +27,30 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
     const navigate = useNavigate()
     const validator = new AccountValidator() 
     
+    const { showNotification } = useNotification()
+    const messages = []
+    
+    const handleError = (error) => {
+        for (let key in error){
+            if (error.hasOwnProperty(key)){
+                error[key].forEach((message) => {
+                    messages.push(message)
+                })
+            }
+        }
+    
+        const formattedMessage = (
+            <ul className="">
+                {messages.map((message, i) => (
+                    <li key={i+'_format_message'}>- {message}</li>
+                ))}
+            </ul>
+        )
+    
+        showNotification(formattedMessage)
+    }
+
+    
     const handleCreateAccount = async () => {
         validator.resetErrors()
 
@@ -38,7 +65,6 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
             return
         }
         
-        //navigate('verify')
         const cleanedPhoneNumber = validator.cleanPhoneNumber(phoneNumber)
         const response = await createUser(cleanedPhoneNumber, firstName, lastName, password)
 
@@ -52,7 +78,7 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
             }});
         } else{
             const data = await response.json()
-            console.log(data)
+            handleError(data)
         }
     }
     

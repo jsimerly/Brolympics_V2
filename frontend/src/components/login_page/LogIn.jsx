@@ -6,10 +6,13 @@ import { PasswordInput, PhoneNumberInput } from "../Util/Inputs"
 import AccountValidator from '../Util/input_validation.js';
 import ErrorMessages from "./ErrorMessages.jsx";
 import loginImg from '../../assets/imgs/login_image.webp'
+import { useNotification } from '../Util/Notification';
+import { setCookie } from '../../api/cookies.js'
 
 
-const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath='/'}) => {
+const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) => {
     const {login, setCurrentUser} = useContext(AuthContext)
+    const { showNotification } = useNotification()
 
     const [passwordError, setPasswordError] = useState(false);
     const [phoneNumberError, setPhoneNumberError] = useState(false);
@@ -40,10 +43,18 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath='/'}
         if (response.ok){
             const data = await response.json()
             setCurrentUser(data)
-            navigate(endPath)
-        } else {    
-            const data = await response.json()
-            console.log(response)
+            setCookie('access_token', data.access, 60);
+            setCookie('refresh_token', data.refresh, 60 * 24 * 30);
+            if (endPath){
+                navigate(endPath)
+            } else {
+                navigate('/')
+            }
+
+        } else if (response.status === 401) {    
+            showNotification("The phone number or password entered is incorrect.")
+        } else {
+            showNotification("We ran into an issue while trying to authenticate.")
         }
     }
     

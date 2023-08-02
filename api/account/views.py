@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from account.serializers import CreateUserSerializer, UserSerializer
 from account.twillio import send_verification_code, check_verification_code
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 User = get_user_model()
 
@@ -55,9 +56,6 @@ class CurrentUserView(APIView):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
     
-
-class CustomerTokenObtainPairView():
-    pass
 
     
 

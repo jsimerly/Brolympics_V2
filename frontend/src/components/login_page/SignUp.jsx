@@ -1,11 +1,24 @@
-import {useState} from 'react'
+import {useEffect, useState, useContext} from 'react'
 import { useSwipeable } from 'react-swipeable';
 import CreateAccount from './CreateAccount';
 import LogIn from './LogIn';
+import { AuthContext } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
+
+
 
 const SignUp = ({endPath='/'}) => {
     const [currentPage, setCurrentPage] = useState('createAccount')
-    
+    const { currentUser } = useContext(AuthContext)
+    const navigate = useNavigate()
+
+    useEffect(()=>{
+      if (currentUser){
+        navigate('/')
+      }
+    },[currentUser])
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');

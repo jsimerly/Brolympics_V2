@@ -54,20 +54,23 @@ class User(AbstractBaseUser):
     uuid = models.UUIDField(default=uuid4, editable=False)
     
     phone = models.CharField(
-        verbose_name='Phone Number',
+        verbose_name='phone number',
         max_length=20,
         unique=True,
+        error_messages={
+            'unique': 'User with this Phone Number already exists.',
+        }
     )
 
     email = models.EmailField(
-        verbose_name='Email',
+        verbose_name='email',
         null=True,
         blank=True
     )
 
     password=models.CharField(
         max_length=124, 
-        verbose_name='Password'
+        verbose_name='password'
     )
 
     first_name = models.CharField(max_length=50)

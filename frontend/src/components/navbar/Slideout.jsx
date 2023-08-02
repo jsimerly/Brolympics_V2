@@ -32,8 +32,10 @@ const Slideout = ({open, leagues, setOpen}) => {
                 console.log('error')
             }
         }
-        getInfo()
-    },[])
+        if (currentUser){
+            getInfo()
+        }
+    },[currentUser])
     
 
     useEffect(() => {

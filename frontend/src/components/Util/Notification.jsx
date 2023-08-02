@@ -8,6 +8,9 @@ export const NotificationProvider = ({ children }) => {
 
   const showNotification = (message, className) => {
     setNotification({ message, className, show: true });
+    if (!message) {
+      setNotification({...notification, show: false})
+    }
     setTimeout(() => {
       setNotification({ ...notification, show: false });
     }, 3000);
@@ -28,8 +31,8 @@ import React from 'react'
 
 const Notification = ({ message, className, onClose }) => {
   return (
-    <div className={`${className} p-2 fixed top-[70px] left-0 right-0 z-50 mx-6 rounded-md bg-errorRedLight border-errorRed border text-white`}>
-      <div className='flex justify-between'>      
+    <div className={`${className} p-2 fixed top-[70px] left-0 right-0 z-50 mx-6 rounded-md border-errorRed bg-white border text-neutralDark`}>
+      <div className='flex items-start justify-between'>      
         <p>{message}</p>
         <button onClick={onClose}><CloseIcon/></button>
       </div>

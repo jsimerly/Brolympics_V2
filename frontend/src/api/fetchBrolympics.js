@@ -22,3 +22,20 @@ export async function fetchInCompetition(){
         throw error
     }
 }
+
+export async function fetchDeleteBrolympics(uuid){
+    try{
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/delete-brolympics/${uuid}`,
+        {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+        })
+        
+        return response
+    } catch (error) {
+        throw error
+    }
+}

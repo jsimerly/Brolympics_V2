@@ -39,7 +39,7 @@ const InviteWrapper = ({fetchInfo, fetchJoin, joinText, children}) => {
         if ('bro_uuid' in data){
           navigate(`/b/${data.bro_uuid}/home`)
         }
-        showNotification(data.welcome_message)
+        showNotification(data.welcome_message, '!border-primary')
       } else if (response.status == 409){
         const data = await response.json()
         showNotification(data.detail)

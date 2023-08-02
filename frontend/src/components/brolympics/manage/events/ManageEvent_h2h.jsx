@@ -2,10 +2,15 @@ import ManageEventWrapper from "./ManageEventWrapper"
 import {useState, useEffect} from 'react'
 import ScoringSettings from "./ScoringSettings"
 import {fetchUpdateEvent} from '../../../../api/fetchEvents.js'
+import PopupContinue from "../../../Util/PopupContinue"
+import { fetchDeleteH2h } from "../../../../api/fetchEvents.js"
+import { useNotification } from "../../../Util/Notification"
+
 
 
 const ManageEvent_h2h = ({event}) => {
     const [formValues, setFormValues] = useState({});
+    const { showNotification } = useNotification()
 
     useEffect(() => {
         if (event) {
@@ -24,9 +29,33 @@ const ManageEvent_h2h = ({event}) => {
     const handleUpdateClicked = () => {
         fetchUpdateEvent(formValues)
     }
+
+    const [deleteOpen, setDeleteOpen] = useState(false)
+    
+    const handleDeleteClicked = () => {
+        setDeleteOpen(true)
+    }
+
+    const deleteEventFunc = async () => {
+        const response = await fetchDeleteH2h(event.uuid)
+        if (response.ok){
+            showNotification(`Successfully deleted ${event.name}`, '!border-primary')
+            location.reload()
+        } else {
+            showNotification('There was an error when attemping to delete this event.')
+        }
+    }
  
   return (
     <ManageEventWrapper name={event.name}>
+        <PopupContinue
+            open={deleteOpen}
+            setOpen={setDeleteOpen}
+            header={`Do you want to delete ${event.name}?`}
+            desc={'Delete this event will remove it from your brolympics. You will be able to recreate the event, but will lose all of your current settings.'}
+            continueText={'Delete'}
+            continueFunc={deleteEventFunc}
+        />
         <div className="flex flex-col">
             <h2 className="py-2">Match Settings</h2>
             <div className="flex items-center justify-between min-h-[50px]">
@@ -76,6 +105,12 @@ const ManageEvent_h2h = ({event}) => {
                 onClick={handleUpdateClicked}
             >
                 Update {event.name}
+            </button>
+            <button 
+                className="w-full p-2 mt-3 font-semibold text-white rounded-md bg-errorRed"
+                onClick={handleDeleteClicked}
+            >
+                Delete
             </button>
         </div>
     </ManageEventWrapper>

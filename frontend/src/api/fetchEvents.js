@@ -39,3 +39,55 @@ export async function fetchCreateEvent(event, type, uuid){
         throw (error)
     }
 }
+
+
+export async function fetchDeleteInd(uuid){
+    try{
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/delete-event-ind/${uuid}`,
+        {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+        })
+        
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function fetchDeleteH2h(uuid){
+    try{
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/delete-event-ind/${uuid}`,
+        {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+        })
+        
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function fetchDeleteTeam(uuid){
+    try{
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/delete-event-ind/${uuid}`,
+        {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+        })
+        
+        return response
+    } catch (error) {
+        throw error
+    }
+}

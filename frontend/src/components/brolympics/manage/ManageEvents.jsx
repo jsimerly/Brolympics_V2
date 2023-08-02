@@ -11,7 +11,7 @@ import CreateEvent from '../../create_league_page/events/CreateEvent.jsx';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 
-const ManageEvents = ({events}) => {
+const ManageEvents = ({events, setEvents}) => {
     const [addingEvent, setAddingEvent] = useState(false)
     const [compEvents, setCompEvents] = useState(events)
     const {uuid} = useParams()
@@ -28,6 +28,7 @@ const ManageEvents = ({events}) => {
                 {'name': eventName, 'type':type}
             ])
             setAddingEvent(false)
+            location.reload()
         }
     }
 
@@ -43,11 +44,11 @@ const ManageEvents = ({events}) => {
         <div>
             {compEvents &&
                 compEvents.map((event, i) => (
-                    <>
+                    <div key={i+'_comp_events'}>
                         {i !== 0 && <div className='w-full h-[1px] bg-neutralLight'/>}
                         {React.cloneElement(CompToType[event.type], {key: i+"_eventCard", event: event})}
                         
-                    </>
+                    </div>
                 ))
             }
         </div>

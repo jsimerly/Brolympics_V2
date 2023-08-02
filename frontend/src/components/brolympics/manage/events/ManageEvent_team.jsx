@@ -3,10 +3,14 @@ import {useState, useEffect} from 'react'
 import ScoringSettings from "./ScoringSettings"
 import {fetchUpdateEvent} from '../../../../api/fetchEvents.js'
 import ToggleButton from "../../../Util/ToggleButton"
+import PopupContinue from "../../../Util/PopupContinue"
+import { fetchDeleteH2h } from "../../../../api/fetchEvents.js"
+import { useNotification } from "../../../Util/Notification"
 
 const ManageEvent_team = ({event}) => {
     const [formValues, setFormValues] = useState({});
-
+    const { showNotification } = useNotification()
+    
     useEffect(() => {
         if (event) {
             setFormValues({...event});
@@ -39,9 +43,33 @@ const ManageEvent_team = ({event}) => {
             console.log(data)
         }
     }
+
+    const [deleteOpen, setDeleteOpen] = useState(false)
+    
+    const handleDeleteClicked = () => {
+        setDeleteOpen(true)
+    }
+
+    const deleteEventFunc = async () => {
+        const response = await fetchDeleteH2h(event.uuid)
+        if (response.ok){
+            showNotification(`Successfully deleted ${event.name}`, '!border-primary')
+            location.reload()
+        } else {
+            showNotification('There was an error when attemping to delete this event.')
+        }
+    }
     
   return (
     <ManageEventWrapper name={event.name}>
+        <PopupContinue
+            open={deleteOpen}
+            setOpen={setDeleteOpen}
+            header={`Do you want to delete ${event.name}?`}
+            desc={'Delete this event will remove it from your brolympics. You will be able to recreate the event, but will lose all of your current settings.'}
+            continueText={'Delete'}
+            continueFunc={deleteEventFunc}
+        />
         <h2 className="py-2">Competition Settings</h2>
         <div className="flex items-center justify-between min-h-[50px]">
             <div>

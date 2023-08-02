@@ -5,6 +5,7 @@ import AccountValidator from '../Util/input_validation.js';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import CopyWrapper from '../Util/CopyWrapper.jsx';
+import { useNavigate } from 'react-router-dom';
 
 const PhoneList = ({ label, values, setValues }) => (
   <div>
@@ -63,12 +64,14 @@ const InputList = ({ label, values, setValues }) => (
 const AddPlayers = ({ step, nextStep, link }) => {
   const [phoneNumbers, setPhoneNumbers] = useState([""]);
   const [emails, setEmails] = useState([""]);
+  const navigate = useNavigate()
 
   const handleCreateClicked = () => {
     console.log('CREATE Event');
     console.log('Phone Numbers:', phoneNumbers);
     console.log('Emails:', emails);
-    nextStep();
+    navigate(`/league/${link}`)
+    location.reload()
   }
 
 

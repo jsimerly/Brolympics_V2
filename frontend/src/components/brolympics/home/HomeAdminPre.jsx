@@ -4,13 +4,21 @@ import ManageBro from '../manage/ManageBro';
 import ManageEvents from '../manage/ManageEvents';
 import ManageTeams from '../manage/ManageTeams';
 import {fetchStartBrolympics} from '../../../api/activeBro/fetchAdmin'
+import { useNotification } from '../../Util/Notification';
 
 
 const HomeAdminPre = ({teams, events, uuid, setStatus}) => {
+  const { showNotification } = useNotification()
+
   const onStartClick = async () => {
     const response = await fetchStartBrolympics(uuid)
     if (response.ok){
       setStatus('active')
+    } else if (response.status === 412){
+      const data = await response.json()
+      showNotification(data.detail)
+    } else {
+      showNotification('There was an error when attempting to start your brolympics.')
     }
   }  
   

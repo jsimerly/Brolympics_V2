@@ -2,10 +2,17 @@ import {useState} from 'react'
 import ImageCropper, {readImageFile} from '../../Util/ImageCropper';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import CopyWrapper from '../../Util/CopyWrapper';
+import { fetchDeleteBrolympics } from '../../../api/fetchBrolympics';
+import PopupContinue from '../../Util/PopupContinue';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useNotification } from '../../Util/Notification';
 
 const ManageBro = () => {
     const [cropping, setCropping] = useState(false)
     const [broData, setBroData] = useState()
+    const navigate = useNavigate()
+    const { showNotification } = useNotification()
+    const {uuid} = useParams()
 
     const handleImageUpload = async (e) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -16,13 +23,38 @@ const ManageBro = () => {
         }
       };
 
-
-      const setCroppedImage = (croppedImage) => {
-        setBroData(prevData => ({...prevData, img: croppedImage}))
-        setCropping(false)
+    
+    const setCroppedImage = (croppedImage) => {
+      setBroData(prevData => ({...prevData, img: croppedImage}))
+      setCropping(false)
     }
+
+    const [popupDelete, setPopupDelete] = useState(false)
+
+    const onDeleteClicked = () => {
+      setPopupDelete(true)
+    }
+
+    const deleteTeamFunc = async () => {
+      const response = await fetchDeleteBrolympics(uuid)
+      if (response.ok){
+        showNotification('This brolympics has been deleted.', '!border-primary')
+        navigate('/')
+      } else {
+        showNotification('There was an error when attempting to delete this brolympics')
+      }
+    }
+    
   return (
     <div>
+      <PopupContinue
+        open={popupDelete}
+        setOpen={setPopupDelete}
+        header={"Delete this Brolympics?"}
+        desc={"Deleting this will perminately delete this Brolympics and remove all players and data from it. This will not be able to be recovered. Would you like to continue?"}
+        continueText={'Delete'}
+        continueFunc={deleteTeamFunc}
+      />
         <h2 className='font-bold text-[16px]'>
           Manage Brolympics          
         </h2>
@@ -99,7 +131,10 @@ const ManageBro = () => {
         <h4 className='pt-6 text-[16px] font-semibold'>
             Danger Zone
         </h4>
-        <button className='w-full p-2 mt-6 font-semibold text-white rounded-md bg-errorRed'>
+        <button 
+          className='w-full p-2 mt-6 font-semibold text-white rounded-md bg-errorRed'
+          onClick={onDeleteClicked}
+        >
             Delete Brolympics
         </button>
       </div>

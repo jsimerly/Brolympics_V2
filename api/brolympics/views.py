@@ -113,16 +113,23 @@ class CreateSingleEvent(APIView):
         bro_uuid = request.data.get('uuid')
         brolympics = Brolympics.objects.get(uuid=bro_uuid)
 
+        event_data = {}
+
         if type == 'h2h':
-            Event_H2H.objects.create(brolympics=brolympics, name=name)
+            event = Event_H2H.objects.create(brolympics=brolympics, name=name)
+            event_data = EventBasicSerializer_H2h(event).data
 
-        if type == 'ind':
-            Event_IND.objects.create(brolympics=brolympics, name=name)
+        elif type == 'ind':
+            event = Event_IND.objects.create(brolympics=brolympics, name=name)
+            event_data = EventBasicSerializer_Ind(event).data
 
-        if type == 'team':
-            Event_Team.objects.create(brolympics=brolympics, name=name)
+        elif type == 'team':
+            event = Event_Team.objects.create(brolympics=brolympics, name=name)
+            event_data = EventBasicSerializer_Team(brolympics).data
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(event_data, status=status.HTTP_200_OK)
 
 
 # Get Info
@@ -262,6 +269,25 @@ class UpdateEvent(APIView):
 
 ## Delete ##
 
+class DeleteBrolymics(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, uuid):
+        brolympics = get_object_or_404(Brolympics, uuid=uuid)
+
+        if self.request.user != brolympics.league.league_owner:
+            print("DENIED")
+            raise PermissionDenied("You do not have permission to delete this brolympics.")
+        
+        return brolympics
+
+    def delete(self, request, uuid):
+        print('here')
+        brolympics = self.get_object(uuid)
+        brolympics.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class DeleteTeam(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -294,6 +320,58 @@ class RemovePlayerFromTeam(APIView):
     def delete(self, request, player_uuid, team_uuid):
         player, team = self.get_object(player_uuid, team_uuid)
         team.remove_player(player)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class DeleteIndEvent(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, uuid):
+        event = get_object_or_404(Event_IND, uuid=uuid)
+
+        if self.request.user != event.brolympics.league.league_owner:
+            raise PermissionDenied("You do not have permission to delete events from this Brolympics.")
+        
+        return event
+    
+    def delete(self, request, uuid):
+        event = self.get_object(uuid)
+        event.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class DeleteH2hEvent(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, request, uuid):
+        event = get_object_or_404(Event_H2H, uuid=uuid)
+
+        if self.request.user != event.brolympics.league.league_owner:
+            raise PermissionDenied("You do not have permission to delete events from this Brolympics.")
+        
+        return event
+    
+    def delete(self, request, uuid):
+        event = self.get_object(uuid)
+        event.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class DeleteTeamEvent(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, uuid):
+        event = get_object_or_404(Event_Team, uuid=uuid)
+
+        if self.request.user != event.brolympics.league.league_owner:
+            raise PermissionDenied("You do not have permission to delete events from this Brolympics.")
+        
+        return event
+    
+    def delete(self, uuid):
+        event = self.get_object(uuid)
+        event.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

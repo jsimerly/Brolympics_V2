@@ -43,8 +43,6 @@ export const TeamCard = ({name, player_1, player_2, img, uuid}) => {
     const [popupPlayerOpen, setPopupPlayerOpen] = useState(false)
     const [removePlayer, setRemovePlayer] = useState()
     
-    
-
     return(
         <div className='relative flex items-center gap-3 p-2 border rounded-md border-primary'>
             <div className={`relative ${editing ? 'min-[80px] w-[80px] h-[80px]' : 'min-w-[60px] w-[60px] h-[60px]'} rounded-md`}>

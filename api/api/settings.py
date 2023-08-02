@@ -26,6 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['SECRET_KEY']
+SECURE_SSL_REDIRECT = os.environ['SECURE_SSL_REDIRECT'] == 'True'
+header_value = os.environ.get('SECURE_PROXY_SSL_HEADER')
+if header_value:
+    SECURE_PROXY_SSL_HEADER = tuple(header_value.split(','))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ['DEBUG'] == 'True'

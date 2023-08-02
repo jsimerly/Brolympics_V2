@@ -115,14 +115,15 @@ const League = () => {
        getLeagueInfo()
     },[uuid])
 
+    console.log(leagueInfo)
 
   return (
     <div className='min-h-[calc(100vh-80px)] px-6 py-3 text-white bg-neutral'>
         <div>
             <h1 className='text-[26px] font-bold leading-none pt-3'>
-                Stuck in Highschool
+                {leagueInfo?.name || 'No Name'}
             </h1>
-            <span className='text-[12px]'>Founded: 2014</span>
+            <span className='text-[12px]'>Founded: {leagueInfo?.founded || 'Unknown'}</span>
         </div>
         <div>
             <h2 className="py-3 ml-1 font-bold"> Upcoming Brolympics </h2>

@@ -303,7 +303,6 @@ class GetLeagueInvite(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, uuid):
-        print(uuid)
         league = get_object_or_404(League, uuid=uuid)
         
         return league
@@ -324,7 +323,12 @@ class JoinLeague(APIView):
         user = request.user
         league.players.add(user)
 
-        return Response(status=status.HTTP_200_OK)
+        data = {
+            'league_uuid':league.uuid, 
+            'welcome_message' : f'Your request to join was successful. Welcome to {league.name}'
+        }
+
+        return Response(data,status=status.HTTP_200_OK)
         
 class GetBrolympicsInvite(APIView):
     serializer_class = BrolympicsSerializer
@@ -347,7 +351,12 @@ class JoinBrolympics(APIView):
         brolympics.players.add(user)
         league.players.add(user)
 
-        return Response(status=status.HTTP_200_OK)
+        data = {
+            'bro_uuid':brolympics.uuid, 
+            'welcome_message' : f'Your request to join was successful. Welcome to {brolympics.name}'
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
         
 
 class GetTeamInvite(APIView):
@@ -368,7 +377,15 @@ class JoinTeam(APIView):
         user = request.user
         team.brolympics.players.add(user)
         team.brolympics.league.players.add(user)
-        team.add_player(user)
+        try:
+            team.add_player(user)
+        except ValueError as e:
+            Response({'detail':str(e)},status=status.HTTP_409_CONFLICT)
 
-        return Response(status=status.HTTP_200_OK)
+        data = {
+            'bro_uuid':team.brolympics.uuid, 
+            'welcome_message' : f'Your request to join was successful. Welcome to {team.name}'
+        }
+
+        return Response(data,status=status.HTTP_200_OK)
         

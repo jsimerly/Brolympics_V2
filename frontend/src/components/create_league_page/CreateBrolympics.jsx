@@ -4,15 +4,12 @@ import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import ImageCropper, {readImageFile} from '../Util/ImageCropper';
 import { DateInput } from '../Util/Inputs';
 
-const CreateBrolympics = ({step, nextStep, setBrolympics}) => {
+const CreateBrolympics = ({step, nextStep, setBrolympics, brolympicsState}) => {
     const [brolympics, setBrolympicsData] = useState({name: "", img: null, imgSrc: null, date:''})
     const [cropping, setCropping] = useState(false)
 
-        
-    
     const handleCreateClicked = () => {
         if (brolympics.name) {
-            console.log('CREATE Brolmpycs')
             nextStep()
             setBrolympics(brolympics)
         }
@@ -72,8 +69,8 @@ const CreateBrolympics = ({step, nextStep, setBrolympics}) => {
             <div>
                 <h3 className='ml-1'>Start Date <span className='text-[12px]'> (Optional)</span></h3>
                 <input 
-                    type='date' 
-                    value={brolympics.date}
+                    type='datetime-local' 
+                    value={brolympicsState.date}
                     onChange={handleDateChange}
                     className='w-full p-2 border border-gray-200 rounded-md'
                 />

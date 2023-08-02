@@ -1,8 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import InviteWrapper from "./InviteWrapper.jsx";
 import {fetchLeagueInviteInfo, fetchJoinLeague} from '../../api/fetchInvites.js'
-
 
 const LeagueInvite = () => {
 

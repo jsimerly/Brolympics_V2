@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { json, useNavigate, useParams } from "react-router-dom";
+import { useNotification } from "../Util/Notification";
 
-const InviteWrapper = ({fetchInfo, fetchJoin, joinText, children,}) => {
+const InviteWrapper = ({fetchInfo, fetchJoin, joinText, children}) => {
     const {uuid} = useParams()
     const [info, setInfo] = useState()
+    const { showNotification } = useNotification()
+    const navigate = useNavigate()
     
     useEffect(() => {
       const getinfo = async () => {
@@ -11,11 +14,15 @@ const InviteWrapper = ({fetchInfo, fetchJoin, joinText, children,}) => {
 
         if (response.ok) {
           const data = await response.json()
-          console.log(data)
           setInfo(data)
+        } else if (response.status == 404){
+          showNotification("We could not find this invite. We're rerouting you to the leagues page now.")
+          
+          setTimeout(() => {
+            navigate('/')
+          }, 3000)
         } else {
-          const data = await response.json()
-          console.log(data)
+          showNotification("There was an error attempting to retrieve this invite.")
         }
       }
       getinfo()
@@ -25,9 +32,19 @@ const InviteWrapper = ({fetchInfo, fetchJoin, joinText, children,}) => {
       const response = await fetchJoin(uuid)
 
       if (response.ok){
-        //navigate to the new league once we have those routes
+        const data = await response.json()
+        if ('league_uuid' in data){
+          navigate(`/league/${data.league_uuid}`)
+        }
+        if ('bro_uuid' in data){
+          navigate(`/b/${data.bro_uuid}/home`)
+        }
+        showNotification(data.welcome_message)
+      } else if (response.status == 409){
+        const data = await response.json()
+        showNotification(data.detail)
       } else {
-        //kick back an error
+        showNotification('There was an error while attempting to accept this invite.')
       }
     }
 

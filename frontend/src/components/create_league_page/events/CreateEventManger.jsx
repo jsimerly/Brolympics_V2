@@ -2,12 +2,10 @@ import {useState} from 'react'
 import {useHistory} from 'react'
 import CreateEvent from './CreateEvent';
 
-const CreateEventManger = ({addedEvents, setAddedEvents ,setH2hEvents, setIndEvents, setTeamEvents}) => {
+const CreateEventManger = ({setAddedEvents ,setH2hEvents, setIndEvents, setTeamEvents}) => {
 
 
     const handleEventAdded = (eventName, selectedType) => {
-        setAddedEvents(prevEvents => [...prevEvents, eventName]); 
-
         let newEvent = {'name': eventName};
         if (selectedType === 'ind'){
           setIndEvents(prevEvents => [...prevEvents, newEvent])
@@ -20,8 +18,6 @@ const CreateEventManger = ({addedEvents, setAddedEvents ,setH2hEvents, setIndEve
         }
         
     }
-
-
   return (
     <div className="w-full">
         <CreateEvent handleEventAdded={handleEventAdded}/>

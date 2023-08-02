@@ -46,10 +46,14 @@ const StepManager = ({step, nextStep, prevStep,}) => {
         <CreateBrolympics 
           step={2} 
           nextStep={nextStep} 
+          brolympicsState={brolympics}
           setBrolympics={setBrolympics}
         />
         <AddEvent 
           step={3} 
+          h2hEvents={h2hEvents}
+          indEvents={indEvents}
+          teamEvents={teamEvents}
           setH2hEvents={setH2hEvents} 
           setIndEvents={setIndEvents} 
           setTeamEvents={setTeamEvents} 

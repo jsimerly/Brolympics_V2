@@ -111,7 +111,7 @@ const Brolympics = () => {
             <Route path="team/:teamUuid" element={
               <Team 
                 teams={broInfo?.teams} 
-                default_uuid={broInfo?.user_team?.uuid}
+                default_uuid={broInfo?.user_team?.uuid || ''}
               />} 
             />
             <Route path="event/:eventType/:eventUuid" element={

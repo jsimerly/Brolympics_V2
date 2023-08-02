@@ -26,10 +26,11 @@ export async function createAllLeague(league, brolympics, h2h, ind, team){
     const data = {
         league: league,
         brolympics: brolympics,
-        h2h_event: h2h,
-        ind_event: ind,
-        team_event: team,
+        h2h_events: h2h,
+        ind_events: ind,
+        team_events: team,
     }
+    console.log(data)
     try{
         const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/create-all-league/`,
         {

@@ -6,8 +6,7 @@ const CreateEventManger = ({addedEvents, setAddedEvents ,setH2hEvents, setIndEve
 
 
     const handleEventAdded = (eventName, selectedType) => {
-        setAddedEvents(prevEvents => [...prevEvents, eventName]);
-        setEventName("");   
+        setAddedEvents(prevEvents => [...prevEvents, eventName]); 
 
         let newEvent = {'name': eventName};
         if (selectedType === 'ind'){
@@ -19,7 +18,7 @@ const CreateEventManger = ({addedEvents, setAddedEvents ,setH2hEvents, setIndEve
         if (selectedType == 'team'){
           setTeamEvents(prevEvents => [...prevEvents, newEvent])
         }
-        console.log(addedEvents)
+        
     }
 
 

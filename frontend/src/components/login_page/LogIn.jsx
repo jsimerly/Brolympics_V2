@@ -8,14 +8,13 @@ import ErrorMessages from "./ErrorMessages.jsx";
 import loginImg from '../../assets/imgs/login_image.webp'
 
 
-const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) => {
+const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath='/'}) => {
     const {login, setCurrentUser} = useContext(AuthContext)
 
     const [passwordError, setPasswordError] = useState(false);
     const [phoneNumberError, setPhoneNumberError] = useState(false);
 
     const [errorMessages, setErrorMessages] = useState([])
-
 
     const handlePhoneNumberChange = (e) => setPhoneNumber(e.target.value);
     const handlePasswordChange = (e) => setPassword(e.target.value);
@@ -39,13 +38,12 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) =>
         const response = await login(cleanedPhoneNumber, password)
 
         if (response.ok){
-            const data = await response.json
+            const data = await response.json()
             setCurrentUser(data)
             navigate(endPath)
         } else {    
-            
+            const data = await response.json()
             console.log(response)
-            console.log('bad')
         }
     }
     

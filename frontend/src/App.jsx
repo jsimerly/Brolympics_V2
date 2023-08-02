@@ -10,16 +10,14 @@ import League from './components/brolympics/League.jsx';
 import Leagues from './components/brolympics/Leagues.jsx';
 import VerifyPhone from './components/login_page/VerifyPhone.jsx';
 import Invites from './components/invites/Invites.jsx';
-import Team from './components/brolympics/team/Team.jsx';
-import Events from './components/brolympics/events/Events.jsx';
-import Home from './components/brolympics/home/Home.jsx';
 
 import {fetchLeagues} from './api/fetchLeague.js'
-import BrolympicsSettings from './components/league_settings/BrolympicsSettings.jsx';
-import LeagueSettings from './components/league_settings/LeagueSettings.jsx';
+import Notification, { useNotification } from './components/Util/Notification.jsx';
+
 
 function App() {
     const [leagues, setLeagues] = useState([])
+    const { notification, setNotification } = useNotification()
 
     useEffect(()=> {
         const getLeagues = async () => {
@@ -35,22 +33,27 @@ function App() {
 
   return (
     <div className='min-h-screen text-white bg-neutral'>
-      <AuthProvider>
-        <Navbar leagues={leagues}/>
-        <Routes>
-          <Route path='/sign-up/*' element={<SignUp/>}/>
-          <Route path='/sign-up/verify' element={<VerifyPhone/>}/>
-          <Route path='/start-league' element={<StartLeague/>}/>
-          <Route path='/' element={<Leagues leagues={leagues}/>}/>
-          <Route path='/league/:uuid' element={<League/>}/>
-          <Route path='/league/settings/:uuid'  element={<LeagueSettings/>}/>
-          <Route path='/b/:uuid/*' element={<Brolympics/>}></Route>
-          <Route path='/invite/*' element={<Invites/>}/>
-        </Routes>
-      </AuthProvider>
+        <AuthProvider>
+          <Navbar leagues={leagues}/>
+          {notification.show &&
+            <Notification
+              message={notification.message}
+              className={notification.className}
+              onClose={() => setNotification({ ...notification, show: false })}
+            />
+          }
+          <Routes>
+            <Route path='/sign-up/*' element={<SignUp/>}/>
+            <Route path='/sign-up/verify' element={<VerifyPhone/>}/>
+            <Route path='/start-league' element={<StartLeague/>}/>
+            <Route path='/' element={<Leagues leagues={leagues}/>}/>
+            <Route path='/league/:uuid' element={<League/>}/>
+            <Route path='/b/:uuid/*' element={<Brolympics/>}></Route>
+            <Route path='/invite/*' element={<Invites/>}/>
+          </Routes>
+        </AuthProvider>
     </div>
   )
-  //eventually make league /l/<id> and brolympics /l/<id>/b/<id>
 }
 
 export default App

@@ -23,7 +23,7 @@ const StepManager = ({step, nextStep, prevStep,}) => {
       )
       if (response.ok){
         const data = await response.json()
-        setLink(data.hashid)
+        setLink(data.uuid)
         console.log(data)
         nextStep()
       } else {

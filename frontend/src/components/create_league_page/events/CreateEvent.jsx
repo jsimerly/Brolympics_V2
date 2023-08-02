@@ -11,8 +11,8 @@ const CreateEvent = ({handleEventAdded}) => {
     const [eventName, setEventName] = useState("")
     
     const addClicked = async () => {
-
         handleEventAdded(eventName, selectedType)
+        setEventName("")
     }
 
     const TypeCard = ({e_type, description, examples, Icon}) => (

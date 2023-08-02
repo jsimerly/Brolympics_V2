@@ -56,6 +56,9 @@ class CurrentUserView(APIView):
         return Response(serializer.data)
     
 
+class CustomerTokenObtainPairView():
+    pass
+
     
 
 

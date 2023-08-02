@@ -23,18 +23,20 @@ const copyToClipboard = async () => {
   return (
     <div
       onClick={copyToClipboard}
-      className='flex w-full h-full'
+      className='flex items-center w-full h-full gap-2'
     >
       {children}
-      {copySuccess ?
-        <AssignmentTurnedInOutlinedIcon 
-          sx={{fontSize:size}}
-        /> 
-        :
-        <ContentCopyIcon 
-          sx={{fontSize:size}}
-        />
-      }
+      <div className=''>
+        {copySuccess ?
+          <AssignmentTurnedInOutlinedIcon 
+            sx={{fontSize:size}}
+          /> 
+          :
+          <ContentCopyIcon 
+            sx={{fontSize:size}}
+          />
+        }
+      </div>
     </div>
   )
 }

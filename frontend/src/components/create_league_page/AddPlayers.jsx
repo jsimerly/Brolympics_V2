@@ -60,7 +60,7 @@ const InputList = ({ label, values, setValues }) => (
     </button>
   </div>
 );
-const AddPlayers = ({ step, nextStep }) => {
+const AddPlayers = ({ step, nextStep, link }) => {
   const [phoneNumbers, setPhoneNumbers] = useState([""]);
   const [emails, setEmails] = useState([""]);
 
@@ -96,8 +96,10 @@ const AddPlayers = ({ step, nextStep }) => {
       <div 
         className='flex p-2 bg-white border rounded-md'
       >
-          <CopyWrapper copyString={'https://sleeper.com/i/k7N5Yxx00Ywz'}>
-              <span className='flex flex-1'>https://sleeper.com/i/k7N5Yxx00Ywz</span>
+          <CopyWrapper copyString={`https://brolympic.com/invite/league/${link}`}>
+            <div className='w-[90%]'>
+              https://brolympic.com/invite/league/{link}
+            </div>
           </CopyWrapper>
       </div>      
     </CreateWrapper>

@@ -38,9 +38,9 @@ class CreateAllLeagueView(APIView):
         brolympics_img_b64 = brolympics_data.get('img')
         brolympics_data['img'] = convert_to_img_file(brolympics_img_b64)
 
-        h2h_event_data = request.data.get('h2h_event')
-        ind_event_data = request.data.get('ind_event')
-        team_event_data = request.data.get('team_event')
+        h2h_event_data = request.data.get('h2h_events')
+        ind_event_data = request.data.get('ind_events')
+        team_event_data = request.data.get('team_events')
 
         league_serializer = LeagueCreateSerializer(data=league_data, context={'request': request})
         brolympics_serializer = BrolympicsCreateSerializer(data=brolympics_data)
@@ -68,16 +68,19 @@ class CreateAllLeagueView(APIView):
         if h2h_serializer.is_valid():
             h2h_serializer.save()
         else:
+            print(h2h_serializer.errors)
             return Response(h2h_serializer.errors, status=400)
 
         if ind_serializer.is_valid():
             ind_serializer.save()
         else:
+            print(ind_serializer.errors)
             return Response(ind_serializer.errors, status=400)
 
         if team_serializer.is_valid():
             team_serializer.save()
         else:
+            print(team_serializer.errors)
             return Response(team_serializer.errors, status=400)
         
 
@@ -300,15 +303,13 @@ class GetLeagueInvite(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, uuid):
+        print(uuid)
         league = get_object_or_404(League, uuid=uuid)
         
-        if self.request.user not in league.players.all() and self.request.user != league.owner:
-            raise PermissionDenied("You do not have permission to view this league's info.")
-
         return league
 
     def get(self, request, uuid):
-        league = self.get_object(League, uuid=uuid)
+        league = self.get_object(uuid)
         serializer = self.serializer_class(league, context={'request' : request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)

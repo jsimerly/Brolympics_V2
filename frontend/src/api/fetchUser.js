@@ -108,3 +108,22 @@ export async function fetchVerifyPhone(phoneNumber, firstName, lastName, passwor
         throw error
     }
 }
+
+export async function fetchResetPasswordVerify(phoneNumber){
+    const data = {phone_number: phoneNumber}
+    try {
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/account/reset-verify/`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+            body: JSON.stringify(data),
+        })
+        return response
+    } catch (error) {
+        console.log('here')
+        throw error
+    }
+}

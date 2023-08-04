@@ -1,12 +1,11 @@
-import Gold from '../../assets/svgs/gold.svg'
-import Silver from '../../assets/svgs/silver.svg'
-import Bronze from '../../assets/svgs/bronze.svg'
+import Gold from '../../../assets/svgs/gold.svg'
+import Silver from '../../../assets/svgs/silver.svg'
+import Bronze from '../../../assets/svgs/bronze.svg'
 import { Routes, Route} from 'react-router-dom'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import {fetchLeagueInfo} from '../../api/fetchLeague.js'
-import CreateBrolympics from '../create_league_page/CreateBrolympics'
-
+import {fetchLeagueInfo} from '../../../api/fetchLeague.js'
+import CreateBrolympicsManager from './CreateBrolympicsManager'
 
 const BrolympicsCard_Upcoming = ({img, name, events, teams, projected_start_date, projected_end_date, uuid}) => {
     const navigate = useNavigate()
@@ -167,7 +166,7 @@ const League = () => {
         </button>
         <Routes>
             <Route path='/league-settings'/>
-            <Route path='/create-brolympics' element={<CreateBrolympics/>}/>
+            <Route path='/create-brolympics' element={<CreateBrolympicsManager/>}/>
         </Routes>
     </div>
   )

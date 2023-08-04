@@ -25,7 +25,7 @@ const StepManager = ({step, nextStep, prevStep,}) => {
       )
       if (response.ok){
         const data = await response.json()
-        setLink(data.uuid)
+        setLink(data.bro_uuid)
         nextStep()
       } else {
         const data = await response.json()
@@ -47,7 +47,6 @@ const StepManager = ({step, nextStep, prevStep,}) => {
         <CreateBrolympics 
           step={2} 
           nextStep={nextStep} 
-          brolympicsState={brolympics}
           setBrolympics={setBrolympics}
         />
         <AddEvent 

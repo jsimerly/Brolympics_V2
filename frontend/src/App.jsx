@@ -5,14 +5,16 @@ import SignUp from './components/login_page/SignUp.jsx';
 import Navbar from './components/navbar/Navbar.jsx';
 import StartLeague from './components/create_league_page/StartLeague.jsx';
 import Brolympics from './components/brolympics/Brolympics.jsx';
-import League from './components/brolympics/League.jsx';
-import Leagues from './components/brolympics/Leagues.jsx';
+import League from './components/brolympics/league/League.jsx';
+import Leagues from './components/brolympics/league/Leagues.jsx';
 import VerifyPhone from './components/login_page/VerifyPhone.jsx';
 import Invites from './components/invites/Invites.jsx';
 import {fetchLeagues} from './api/fetchLeague.js'
 import Notification, { useNotification } from './components/Util/Notification.jsx';
 import { AuthContext } from './context/AuthContext.jsx';
-import LeagueSettings from './components/brolympics/LeagueSettings.jsx';
+import LeagueRouter from './components/brolympics/league/LeagueRouter.jsx';
+import ResetPassword from './components/login_page/ResetPassword.jsx';
+import ResetInfo from './components/login_page/ResetInfo.jsx';
 
 
 function App() {
@@ -49,8 +51,10 @@ function App() {
         <Route path='/sign-up/*' element={<SignUp/>}/>
         <Route path='/sign-up/verify' element={<VerifyPhone/>}/>
         <Route path='/start-league' element={<StartLeague/>}/>
+        <Route path='/reset-password/:uid/:token' element={<ResetPassword/>}/>
+        <Route path='/reset-info/' element={<ResetInfo/>}/>
         <Route path='/' element={<Leagues leagues={leagues}/>}/>
-        <Route path='/league/:uuid/*' element={<League/>}/>
+        <Route path='/league/:uuid/*' element={<LeagueRouter/>}/>
         <Route path='/b/:uuid/*' element={<Brolympics/>}></Route>
         <Route path='/invite/*' element={<Invites/>}/>
       </Routes>

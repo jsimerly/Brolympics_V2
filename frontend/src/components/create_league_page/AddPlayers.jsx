@@ -99,9 +99,9 @@ const AddPlayers = ({ step, nextStep, link }) => {
       <div 
         className='flex p-2 bg-white border rounded-md'
       >
-          <CopyWrapper copyString={`https://brolympic.com/invite/league/${link}`}>
+          <CopyWrapper copyString={`https://brolympic.com/invite/brolympics/${link}`}>
             <div className='w-[90%]'>
-              https://brolympic.com/invite/league/{link}
+              https://brolympic.com/invite/brolympics/{link}
             </div>
           </CopyWrapper>
       </div>      

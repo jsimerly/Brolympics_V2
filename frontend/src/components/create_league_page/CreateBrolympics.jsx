@@ -5,7 +5,7 @@ import ImageCropper, {readImageFile} from '../Util/ImageCropper';
 import { DateInput } from '../Util/Inputs';
 import { useNotification } from '../Util/Notification';
 
-const CreateBrolympics = ({step, nextStep, setBrolympics, brolympicsState}) => {
+const CreateBrolympics = ({step, nextStep, setBrolympics}) => {
     const [brolympics, setBrolympicsData] = useState({name: "", img: null, imgSrc: null, date:''})
     const [cropping, setCropping] = useState(false)
     const { showNotification } = useNotification()
@@ -71,7 +71,7 @@ const CreateBrolympics = ({step, nextStep, setBrolympics, brolympicsState}) => {
                 <h3 className='ml-1'>Start Date <span className='text-[12px]'> (Optional)</span></h3>
                 <input 
                     type='datetime-local' 
-                    value={brolympicsState.date}
+                    value={brolympics.date}
                     onChange={handleDateChange}
                     className='w-full p-2 border border-gray-200 rounded-md'
                 />

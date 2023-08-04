@@ -5,6 +5,7 @@ from brolympics.active_views import *
 urlpatterns = [
     #Create
     path('create-all-league/', CreateAllLeagueView.as_view(), name='create_all_league'),
+    path('create-brolympics/', CreateBrolympics.as_view(), name='create_brolympics'),
     path('create-single-team/', CreateSingleTeam.as_view(), name='create_single_team'),
     path('create-event/', CreateSingleEvent.as_view(), name='create_single_event'),
 

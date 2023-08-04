@@ -1,11 +1,11 @@
-import {useState} from 'react'
-import {useHistory} from 'react'
+import { useNotification } from '../../Util/Notification';
 import CreateEvent from './CreateEvent';
 
 const CreateEventManger = ({setAddedEvents ,setH2hEvents, setIndEvents, setTeamEvents}) => {
-
+    const {showNotification} = useNotification()
 
     const handleEventAdded = (eventName, selectedType) => {
+      if (eventName){
         let newEvent = {'name': eventName};
         if (selectedType === 'ind'){
           setIndEvents(prevEvents => [...prevEvents, newEvent])
@@ -16,7 +16,10 @@ const CreateEventManger = ({setAddedEvents ,setH2hEvents, setIndEvents, setTeamE
         if (selectedType == 'team'){
           setTeamEvents(prevEvents => [...prevEvents, newEvent])
         }
-        
+      } else {
+        showNotification("You must enter an event name.")
+      }
+      
     }
   return (
     <div className="w-full">

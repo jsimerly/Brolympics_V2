@@ -12,7 +12,7 @@ const EventComp = ({header, events, setter}) => {
 
   return(
     <>
-      <h4>{header}</h4>
+      <h4 className='font-semibold'>{header}</h4>
       <ul>
         {events.map((event, i) => (
           <li key={i} className='flex'>
@@ -32,15 +32,24 @@ const AddEvent = ({step, h2hEvents, indEvents, teamEvents, setH2hEvents, setIndE
     const handleCreateClicked = () => {
         createAll()
     }
+    const [buttonText, setButtonText] = useState('Skip')
+    const [isEventAdded, setIsEventAdded] = useState(false)
     
-    const total_events = h2hEvents.length + indEvents.length + teamEvents.length
-    const is_event_added = total_events === 0
-    const button_text = is_event_added ? 'Skip' : `Create ${total_events} Events`;
+    
+    useEffect(() => {
+      const totalEvents = h2hEvents.length + indEvents.length + teamEvents.length;
+      const isEventAddedLocal = totalEvents !== 0;
+      const buttonTextLocal = isEventAddedLocal ? `Create ${totalEvents} Events` : 'Skip';
+        
+        setButtonText(buttonTextLocal);
+        setIsEventAdded(isEventAddedLocal);
+    }, [h2hEvents, indEvents, teamEvents]);
+      
 
   return (
     <CreateWrapper
-        button_text={button_text}
-        grey_out={is_event_added}
+        button_text={buttonText}
+        grey_out={!isEventAdded}
 
         step={step}
         submit={handleCreateClicked}
@@ -59,6 +68,20 @@ const AddEvent = ({step, h2hEvents, indEvents, teamEvents, setH2hEvents, setIndE
               header='Individual Events'
               events={indEvents}
               setter={setIndEvents}
+            />
+          }
+          {h2hEvents.length > 0 &&
+            <EventComp
+              header='Individual Events'
+              events={h2hEvents}
+              setter={setH2hEvents}
+            />
+          }
+          {teamEvents.length > 0 &&
+            <EventComp
+              header='Individual Events'
+              events={teamEvents}
+              setter={setTeamEvents}
             />
           }
          

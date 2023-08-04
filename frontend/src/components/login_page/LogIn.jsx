@@ -87,9 +87,9 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) =>
             >
                 Login
             </button>
-            <div>
+            <a onClick={()=> navigate('/reset-info')}>
                 <p className="underline text-[12px] pt-5 pb-7">I've Forgotten My Password</p>
-            </div>
+            </a>
         </div>
   )
 }

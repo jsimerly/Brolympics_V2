@@ -3,8 +3,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from account.serializers import CreateUserSerializer, UserSerializer
-from account.twillio import send_verification_code, check_verification_code
+from account.twillio import send_verification_code, check_verification_code, reset_password_sms
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from twilio.rest import Client
 
 User = get_user_model()
 
@@ -56,6 +61,24 @@ class CurrentUserView(APIView):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
     
+class ResetPasswordVerify(APIView):
+    def post(self, request):
+        phone = request.data.get('phone_number')
+        user = get_object_or_404(User, phone=phone)
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        reset_url = f'{request.scheme}://{request.get_host()}/reset-password/{uid}/{token}'
+
+        reset_password_sms(phone, reset_url)
+        print(reset_url)
+
+        return Response(status=status.HTTP_200_OK)
+    
+class ResetPassword(APIView):
+    def post(self, request):
+        pass
+
 
     
 

@@ -15,6 +15,7 @@ const InviteWrapper = ({fetchInfo, fetchJoin, joinText, children}) => {
         if (response.ok) {
           const data = await response.json()
           setInfo(data)
+          console.log(data)
         } else if (response.status == 404){
           showNotification("We could not find this invite. We're rerouting you to the leagues page now.")
           

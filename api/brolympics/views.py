@@ -24,8 +24,8 @@ def convert_to_img_file(base_64_img):
     return data
 
 
-# Create your views here.
 
+# Create your views here.
 
 class CreateAllLeagueView(APIView):
     permission_classes = [IsAuthenticated]
@@ -69,24 +69,81 @@ class CreateAllLeagueView(APIView):
         if h2h_serializer.is_valid():
             h2h_serializer.save()
         else:
-            print(h2h_serializer.errors)
             return Response(h2h_serializer.errors, status=400)
 
         if ind_serializer.is_valid():
             ind_serializer.save()
         else:
-            print(ind_serializer.errors)
             return Response(ind_serializer.errors, status=400)
 
         if team_serializer.is_valid():
             team_serializer.save()
         else:
-            print(team_serializer.errors)
             return Response(team_serializer.errors, status=400)
         
 
         all_league_serializer = AllLeaguesSerializer(league, context={'request' : request})
-        return Response(all_league_serializer.data, status=status.HTTP_201_CREATED )
+
+        data = all_league_serializer.data
+        data['bro_uuid'] = brolympics.uuid
+
+        return Response(data, status=status.HTTP_201_CREATED )
+    
+class CreateBrolympics(APIView):
+    serializer_class = BrolympicsCreateSerializer
+
+    def post(self, request):
+        league_uuid = request.data.get('league_uuid')
+        league = get_object_or_404(League, uuid=league_uuid)
+
+        if request.user != league.league_owner:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        brolympics_data = request.data.get('brolympics')
+        brolympics_img_b64 = brolympics_data.get('img')
+        brolympics_data['img'] = convert_to_img_file(brolympics_img_b64)
+
+        h2h_event_data = request.data.get('h2h_events')
+        ind_event_data = request.data.get('ind_events')
+        team_event_data = request.data.get('team_events')
+
+        brolympics_serializer = self.serializer_class(data=brolympics_data)
+        brolympics_data['league'] = league.id
+
+        if brolympics_serializer.is_valid():
+            brolympics = brolympics_serializer.save()
+        else:
+            return Response(brolympics_serializer.errors, status=400)
+
+        for event_data_list in [h2h_event_data, ind_event_data, team_event_data]:
+            for event_data in event_data_list:
+                event_data['brolympics'] = brolympics.id
+
+
+        h2h_serializer = EventH2HCreateAllSerializer(data=h2h_event_data, many=True)
+        ind_serializer = EventIndCreateAllSerializer(data=ind_event_data, many=True) 
+        team_serializer = EventTeamCreateAllSerializer(data=team_event_data, many=True) 
+
+        if h2h_serializer.is_valid():
+            h2h_serializer.save()
+        else:
+            return Response(h2h_serializer.errors, status=400)
+
+        if ind_serializer.is_valid():
+            ind_serializer.save()
+        else:
+            return Response(ind_serializer.errors, status=400)
+
+        if team_serializer.is_valid():
+            team_serializer.save()
+        else:
+            return Response(team_serializer.errors, status=400)
+        
+        data = {'uuid': brolympics.uuid}
+        
+        return Response(data, status=status.HTTP_201_CREATED)
+
+        
     
 class CreateSingleTeam(APIView):
     serializer_class = TeamSerializer
@@ -445,7 +502,7 @@ class GetBrolympicsInvite(APIView):
 
     def get(self, request, uuid):
         broylmpics = get_object_or_404(Brolympics, uuid=uuid)
-        serializer = self.serializer_class(broylmpics)
+        serializer = self.serializer_class(broylmpics, context={'request':request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
             

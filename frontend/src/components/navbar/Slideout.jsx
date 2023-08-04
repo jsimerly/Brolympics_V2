@@ -50,7 +50,7 @@ const Slideout = ({open, leagues, setOpen}) => {
                 {view === 'account' ?
                     <Account setView={setView}/>
                 :
-                    <div className='flex flex-col h-[calc(100vh-60px)] bg-neutral text-white opacity-[99%] px-6 py-3 gap-3'>
+                    <div className='flex flex-col h-[calc(100vh-60px)] bg-neutral text-white opacity-[99%] px-6 py-3 gap-3 overflow-auto'>
                         {currentUser ? 
                             <>  
                                 <LeaguesButtons leagues={leagues} setOpen={setOpen}/>

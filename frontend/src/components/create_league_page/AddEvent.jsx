@@ -72,14 +72,14 @@ const AddEvent = ({step, h2hEvents, indEvents, teamEvents, setH2hEvents, setIndE
           }
           {h2hEvents.length > 0 &&
             <EventComp
-              header='Individual Events'
+              header='Head to Head Events'
               events={h2hEvents}
               setter={setH2hEvents}
             />
           }
           {teamEvents.length > 0 &&
             <EventComp
-              header='Individual Events'
+              header='Team Events'
               events={teamEvents}
               setter={setTeamEvents}
             />

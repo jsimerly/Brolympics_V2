@@ -26,8 +26,13 @@ const ManageEvent_h2h = ({event}) => {
         }));
     };
 
-    const handleUpdateClicked = () => {
-        fetchUpdateEvent(formValues)
+    const handleUpdateClicked = async () => {
+        const response = await fetchUpdateEvent(formValues)
+        if (response.ok){
+            showNotification(`${event.name} has been updated.`, '!border-primary')
+        } else {
+            showNotification('There was an issue when attemping to update this event.')
+        }
     }
 
     const [deleteOpen, setDeleteOpen] = useState(false)

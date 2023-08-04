@@ -328,13 +328,18 @@ class UpdateEvent(APIView):
         event_uuid = request.data.get('uuid')
         event_type = request.data.get('type')
 
+        for key, value in request.data.items():
+            if value == '':
+                request.data[key] = None
+
         if event_type == 'h2h':
             event = get_object_or_404(Event_H2H, uuid=event_uuid)
             serializer = EventBasicSerializer_H2h(event, data=request.data)
-
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         elif event_type == 'ind':
             event = get_object_or_404(Event_IND, uuid=event_uuid)
@@ -343,6 +348,9 @@ class UpdateEvent(APIView):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                print(serializer.errors)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         elif event_type == 'team':
             event = get_object_or_404(Event_Team, uuid=event_uuid)
@@ -351,6 +359,8 @@ class UpdateEvent(APIView):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
     

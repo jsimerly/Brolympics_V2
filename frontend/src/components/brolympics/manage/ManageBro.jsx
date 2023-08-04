@@ -80,6 +80,8 @@ const ManageBro = ({name, startDate, endDate, img}) => {
       const response = await fetchUpdateBrolympics(data)
       if (response.ok){
         showNotification("You have updated your Brolympics.", '!border-primary')
+      } else if (response.status == 413){
+        showNotification("The image you're trying to upload is to large. Please upload a smaller image.")
       } else {
         showNotification('There was an issue when trying to update your Brolympics.')
       }
@@ -164,8 +166,8 @@ const ManageBro = ({name, startDate, endDate, img}) => {
           <div 
             className='flex p-2 bg-white border rounded-md'
           >
-            <CopyWrapper copyString={'https://sleeper.com/i/k7N5Yxx00Ywz'}>
-                <span className='flex flex-1'>https://sleeper.com/i/k7N5Yxx00Ywz</span>
+            <CopyWrapper copyString={`https://brolympic.com/invite/brolympics/${uuid}`}>
+                <span className='flex flex-1'>https://brolympic.com/invite/brolympics/{uuid}</span>
             </CopyWrapper>
           </div>
         </div>

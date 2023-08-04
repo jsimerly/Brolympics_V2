@@ -3,7 +3,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const CreateWrapper = ({button_text, step, submit, title, description, grey_out=false, children}) => {
   return (
     <div 
-        className={`absolute flex flex-col items-center justify-between w-full p-6 h-[calc(100vh-180px)]
+        className={`absolute flex flex-col items-center justify-between w-full p-6 h-[calc(100vh-160px)]
         `}
         style={{transform: `translateX(${100 * (step-1)}%)`}}        
     >

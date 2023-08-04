@@ -35,11 +35,9 @@ const ManageEvent_ind = ({event}) => {
         const response = await fetchUpdateEvent(formValues)
 
         if (response.ok){
-            const data = await response.json()
-            console.log(data)
+            showNotification(`${event.name} has been updated.`, '!border-primary')
         } else {
-            const data = await response.json()
-            console.log(data)
+            showNotification('There was an issue when attemping to update this event.')
         }
     }
 

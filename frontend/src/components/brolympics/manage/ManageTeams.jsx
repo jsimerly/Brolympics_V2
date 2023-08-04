@@ -109,7 +109,7 @@ export const TeamCard = ({name, player_1, player_2, img, uuid}) => {
                 {!editing && !(player_1 && player_2) &&
                     <div className='absolute bottom-2 right-2 text-primary text-[12px] border-primary border p-1 rounded-md flex items-center gap-1'>
                         <CopyWrapper
-                            copyString={'This is text to copy'}
+                            copyString={`https://brolympic.com/invite/team/${uuid}`}
                             size={20}
                         >
                             <span className='mr-1'>Copy Invite Link</span>

@@ -54,7 +54,7 @@ const CreateBrolympics = ({step, nextStep, setBrolympics}) => {
         step={step}
         submit={handleCreateClicked}
         title={'Create a Brolympics'}
-        description={'A Brolympics is a group of events and competitions that are battled out between teams of 2. Utilmately at the end there is only 1 winner.'}
+        description={'A Brolympics is a group of events and competitions that are battled out between teams of 2.'}
     >
         <div className='flex flex-col w-full gap-3'>
             <div>

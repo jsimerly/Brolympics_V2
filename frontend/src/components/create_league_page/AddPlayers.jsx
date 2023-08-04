@@ -70,7 +70,7 @@ const AddPlayers = ({ step, nextStep, link }) => {
     console.log('CREATE Event');
     console.log('Phone Numbers:', phoneNumbers);
     console.log('Emails:', emails);
-    navigate(`/league/${link}`)
+    navigate(`/b/${link}`)
     location.reload()
   }
 

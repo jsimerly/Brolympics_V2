@@ -2,17 +2,19 @@ import {useState} from 'react';
 import CreateWrapper from "./CreateWrapper";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import ImageCropper, {readImageFile} from '../Util/ImageCropper';
+import { useNotification } from '../Util/Notification';
 
 const CreateLeaguePage = ({step, nextStep, setLeague}) => {
     const [league, setLeagueData] = useState({name: "", img: null, imgSrc: null});
     const [cropping, setCropping] = useState(false)
+    const {showNotification} = useNotification()
 
     const handleCreateClicked = () => {
         if (league.name) {
             nextStep();
             setLeague(league);
         } else {
-            console.log('throw error here');
+            showNotification("You must enter a league name.")
         }
     };
 

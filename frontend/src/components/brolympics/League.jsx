@@ -1,15 +1,22 @@
 import Gold from '../../assets/svgs/gold.svg'
 import Silver from '../../assets/svgs/silver.svg'
 import Bronze from '../../assets/svgs/bronze.svg'
+import { Routes, Route} from 'react-router-dom'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import {fetchLeagueInfo} from '../../api/fetchLeague.js'
+import CreateBrolympics from '../create_league_page/CreateBrolympics'
 
 
-const BrolympicsCard_Upcoming = ({img, name, events, teams, projected_start_date, uuid}) => {
+const BrolympicsCard_Upcoming = ({img, name, events, teams, projected_start_date, projected_end_date, uuid}) => {
     const navigate = useNavigate()
     const handleGoToBrolympics = () => {
         navigate(`/b/${uuid}/home/`)
+    }
+
+    const formatDate = (dateString) => {
+        const options = {month: 'short', day:'numeric'}
+        return new Date(dateString).toLocaleDateString(undefined, options)
     }
 
     return(
@@ -23,9 +30,9 @@ const BrolympicsCard_Upcoming = ({img, name, events, teams, projected_start_date
                     <div className='flex flex-col justify-center'>
                         <h3 className="text-[20px] font-bold flex items-center">{name}</h3> 
                         <div className="text-[12px] flex items-start justify-start">
-                            {projected_start_date &&
-                                <span>{projected_start_date}</span>
-                            }
+                        {projected_start_date && formatDate(projected_start_date)}
+                        {projected_start_date && projected_end_date && ' - '}
+                        {projected_end_date && formatDate(projected_end_date)}
                         </div>
                     </div>
                 </div>
@@ -98,6 +105,7 @@ const BrolympicsCard_Completed = ({img, name, end_date, winner, second, third}) 
 
 const League = () => {
     const [leagueInfo, setLeagueInfo] = useState()
+    const navigate = useNavigate()
     const {uuid} = useParams()
     
     useEffect(() => {
@@ -115,10 +123,15 @@ const League = () => {
        getLeagueInfo()
     },[uuid])
 
-    console.log(leagueInfo)
+    const onCreateClick = () => {
+        navigate('create-brolympics')
+    }
 
   return (
-    <div className='min-h-[calc(100vh-80px)] px-6 py-3 text-white bg-neutral'>
+    <div className='min-h-[calc(100vh-80px)] px-6 py-3 text-white bg-neutral flex flex-col justify-between'>
+        <div>
+            
+
         <div>
             <h1 className='text-[26px] font-bold leading-none pt-3'>
                 {leagueInfo?.name || 'No Name'}
@@ -144,7 +157,18 @@ const League = () => {
                 }
                 {leagueInfo && leagueInfo.completed_brolympics.length === 0 && "You have not completed any Brolympics."}
             </div>
+            </div>
         </div>
+        <button 
+            className='w-full p-2 rounded-md bg-primary'
+            onClick={onCreateClick}
+        >
+                Create Brolymipcs
+        </button>
+        <Routes>
+            <Route path='/league-settings'/>
+            <Route path='/create-brolympics' element={<CreateBrolympics/>}/>
+        </Routes>
     </div>
   )
 }

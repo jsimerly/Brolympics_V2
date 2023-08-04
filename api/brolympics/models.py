@@ -10,9 +10,10 @@ from django.dispatch import receiver
 User = get_user_model()
 
 # Create your models here.
-LEAGUE_IMAGES = [
-    'image_1'
-]
+def get_default_image(path, max):
+    i = random.randint(1,max)
+    return f'/{path}/image_{str(i)}.webp'
+
 class League(models.Model):
     name = models.CharField(max_length=120)
     league_owner = models.ForeignKey(
@@ -28,9 +29,7 @@ class League(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.img:
-            default_img_path = random.choice(LEAGUE_IMAGES)
-            self.img.name = default_img_path
-
+            self.img = get_default_image('default_league', 8)
         super().save(*args, **kwargs)
 
 
@@ -42,6 +41,7 @@ def delete_players(sender, instance, **kwargs):
 BROLYMPIC_IMAGES = [
 
 ]
+
 
 class Brolympics(models.Model):
     league = models.ForeignKey(
@@ -71,14 +71,13 @@ class Brolympics(models.Model):
     )
 
     uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
-    img = models.ImageField(upload_to='brolympics/', null=True, blank=True)
+    img = models.ImageField(upload_to='brolympics/', null=True, blank=True, default=get_default_image('default_bro', 8))
 
     players = models.ManyToManyField(User, related_name='brolympics', blank=True,)
 
     def save(self, *args, **kwargs):
         if not self.img:
-            default_img_path = random.choice(LEAGUE_IMAGES)
-            self.img.name = default_img_path
+            self.img = get_default_image('default_league', 8)
         super().save(*args, **kwargs)
 
     def get_available_teams(self):
@@ -1215,6 +1214,12 @@ class Team(models.Model):
 
     uuid = models.UUIDField(unique=True, editable=False, default=uuid4)
     img = models.ImageField(upload_to='teams/', null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.img:
+            self.img = get_default_image('default_league', 8)
+        super().save(*args, **kwargs)
+
 
     def add_player(self, player):
         if player == self.player_1 or player == self.player_2:

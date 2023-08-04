@@ -3,17 +3,20 @@ import CreateWrapper from './CreateWrapper'
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import ImageCropper, {readImageFile} from '../Util/ImageCropper';
 import { DateInput } from '../Util/Inputs';
+import { useNotification } from '../Util/Notification';
 
 const CreateBrolympics = ({step, nextStep, setBrolympics, brolympicsState}) => {
     const [brolympics, setBrolympicsData] = useState({name: "", img: null, imgSrc: null, date:''})
     const [cropping, setCropping] = useState(false)
+    const { showNotification } = useNotification()
 
     const handleCreateClicked = () => {
         if (brolympics.name) {
             nextStep()
             setBrolympics(brolympics)
+        } else{
+            showNotification("You must enter a name.")
         }
-
     }
 
     const handleImageUpload = async (e) => {
@@ -23,9 +26,7 @@ const CreateBrolympics = ({step, nextStep, setBrolympics, brolympicsState}) => {
             
             setBrolympicsData(prevBro => ({...prevBro, img: file, imgSrc: imageDataUrl }));
             setCropping(true);
-            console.log('corppin')
         }
-        console.log('but here')
     };
 
     const setCroppedImage = (croppedImage) => {

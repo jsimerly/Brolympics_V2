@@ -23,6 +23,7 @@ def convert_to_img_file(base_64_img):
     data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
     return data
 
+
 # Create your views here.
 
 
@@ -178,11 +179,12 @@ class GetUpcoming(APIView):
 
     def get(self, request):
         user = request.user
-
-
-        brolympics = Brolympics.objects.filter(players__in=[user])
-        upcoming_bro = brolympics.filter(start_time__isnull=True, is_complete=False)
-        current_bro = Brolympics.objects.filter(start_time__isnull=False, is_complete=False)
+        
+        brolympics = Brolympics.objects.filter(
+            Q(players__in=[user]) | Q(league__league_owner=user)
+        )
+        upcoming_bro = brolympics.filter(is_active=False, is_complete=False)
+        current_bro = Brolympics.objects.filter(is_active=True, is_complete=False)
 
         upcoming_comp_h2h = Competition_H2H.objects.filter(
             Q(team_1__player_1=user) | Q(team_1__player_2=user) | 
@@ -234,6 +236,34 @@ class GetLeagueTeams(APIView):
 
 
 ## Updates ##
+class UpdateBrolympics(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        uuid = request.data.get('uuid')
+        brolympics = get_object_or_404(Brolympics, uuid=uuid)
+
+        if request.user != brolympics.league.league_owner:
+            return Response({"detail": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
+        
+        data = request.data
+        img_b64 = request.data.get('img')
+
+        if img_b64.startswith('data:image/') and ';base64,' in img_b64:
+            data['img'] = convert_to_img_file(img_b64)
+        else:
+            del data['img']
+            
+        serializer = BrolympicsCreateSerializer(brolympics, data=data, partial=True)
+
+        print(data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+
 class UpdateEvent(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -266,6 +296,7 @@ class UpdateEvent(APIView):
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    
 
 ## Delete ##
 

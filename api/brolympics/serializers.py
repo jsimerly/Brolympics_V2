@@ -191,15 +191,15 @@ class BrolympicsSerializer(serializers.ModelSerializer):
         return h2h_serializer.data + ind_serializer.data + team_serializer.data
     
     def get_projected_start_date(self, obj):
-        if obj.projected_start_date is not None:
-            day = obj.projected_start_date.day
-            return obj.projected_start_date.strftime('%b ') + str(day)
-        return None
+        return self.format_datetime_for_display(obj.projected_start_date)
 
     def get_projected_end_date(self, obj):
-        if obj.projected_end_date is not None:
-            day = obj.projected_end_date.day
-            return obj.projected_end_date.strftime('%b ') + str(day)
+        return self.format_datetime_for_display(obj.projected_end_date)
+
+    def format_datetime_for_display(self, date_time):
+        if date_time is not None:
+            day = date_time.day
+            return date_time.strftime('%Y-%m-%d') + "T" + date_time.strftime('%H:%M')
         return None
     
     def get_is_owner(self, obj):
@@ -240,7 +240,7 @@ class LeagueInfoSerializer(serializers.ModelSerializer):
 class BrolympicsCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brolympics
-        fields = ['league', 'name', 'projected_start_date', 'img']
+        fields = ['league', 'name', 'projected_start_date', 'projected_end_date','img']
 
 class EventTeamCreateAllSerializer(serializers.ModelSerializer):
     class Meta:

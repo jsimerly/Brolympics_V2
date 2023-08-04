@@ -12,6 +12,7 @@ import Invites from './components/invites/Invites.jsx';
 import {fetchLeagues} from './api/fetchLeague.js'
 import Notification, { useNotification } from './components/Util/Notification.jsx';
 import { AuthContext } from './context/AuthContext.jsx';
+import LeagueSettings from './components/brolympics/LeagueSettings.jsx';
 
 
 function App() {
@@ -49,7 +50,7 @@ function App() {
         <Route path='/sign-up/verify' element={<VerifyPhone/>}/>
         <Route path='/start-league' element={<StartLeague/>}/>
         <Route path='/' element={<Leagues leagues={leagues}/>}/>
-        <Route path='/league/:uuid' element={<League/>}/>
+        <Route path='/league/:uuid/*' element={<League/>}/>
         <Route path='/b/:uuid/*' element={<Brolympics/>}></Route>
         <Route path='/invite/*' element={<Invites/>}/>
       </Routes>

@@ -7,7 +7,11 @@ const Card = (info, index, setOpen) => {
       navigate(`/b/${info.uuid}/home`)
       setOpen(false)
     }
-    console.log(info)
+
+    const formatDate = (dateString) => {
+        const options = {month: 'short', day:'numeric'}
+        return new Date(dateString).toLocaleDateString(undefined, options)
+    }
     
     return(
         <div 
@@ -19,16 +23,14 @@ const Card = (info, index, setOpen) => {
             <div className="flex flex-col">
                 <h3 className="text-[18px]">{info.name}</h3>
                 <div className='text-[14px] opacity-60'>
-                    {info.projected_start_date && info.projected_start_date}
+                    {info.projected_start_date && formatDate(info.projected_start_date)}
                     {info.projected_start_date && info.projected_end_date && ' - '}
-                    {info.projected_end_date && info.projected_end_date}
+                    {info.projected_end_date && formatDate(info.projected_end_date)}
                 </div>
             </div>
         </div>
     );
 }
-
-
 
 const CurrentBrolympics = ({current_brolympics, setOpen}) => {
 

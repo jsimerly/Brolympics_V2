@@ -16,6 +16,7 @@ urlpatterns = [
     path('league-teams/<uuid:uuid>', GetLeagueTeams.as_view(), name='league_teams'),
     
     #Update
+    path('update-brolympics/', UpdateBrolympics.as_view(), name='update_event'),
     path('update-event/', UpdateEvent.as_view(), name='update_event'),
 
     #Delete

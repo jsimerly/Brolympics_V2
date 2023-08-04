@@ -83,7 +83,7 @@ const AddPlayers = ({ step, nextStep, link }) => {
       title={'Add Players to Your Brolympics'}
       description={'Share a link with your friends and fellow competitors'}
     >
-      <PhoneList
+      {/* <PhoneList
         label="Phone"
         values={phoneNumbers}
         setValues={setPhoneNumbers}
@@ -93,7 +93,7 @@ const AddPlayers = ({ step, nextStep, link }) => {
         label="Email"
         values={emails}
         setValues={setEmails}
-      />
+      /> */}
 
       <h4 className='pb-1 font-bold'>Copy the Link and Share with Friends</h4>
       <div 

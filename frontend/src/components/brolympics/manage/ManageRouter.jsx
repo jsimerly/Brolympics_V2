@@ -37,7 +37,7 @@ const ManageRouter = ({brolympics}) => {
           <Route path='edit-competition' element={<EditComp/>}/>
           <Route path='edit-event' element={<EditEvent/>}/>
           <Route path='edit-overall' element={<EditOverall/>}/>
-          <Route path='manage-brolympics' element={<ManageBro/>}/>
+          <Route path='manage-brolympics' element={<ManageBro {...brolympics}/>}/>
           <Route path='manage-teams' element={<ManageTeams teams={brolympics.teams} broUUID={brolympics.uuid}/>}/>
           <Route path='manage-events' element={<ManageEvents events={brolympics.events}/>}/>
       </Routes>

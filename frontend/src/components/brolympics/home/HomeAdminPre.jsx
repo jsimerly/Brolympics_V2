@@ -7,7 +7,7 @@ import {fetchStartBrolympics} from '../../../api/activeBro/fetchAdmin'
 import { useNotification } from '../../Util/Notification';
 
 
-const HomeAdminPre = ({teams, events, uuid, setStatus}) => {
+const HomeAdminPre = ({teams, events, uuid, setStatus, name, projected_start_date, projected_end_date, img}) => {
   const { showNotification } = useNotification()
 
   const onStartClick = async () => {
@@ -44,7 +44,7 @@ const HomeAdminPre = ({teams, events, uuid, setStatus}) => {
       <div className='my-3'/>
       <ManageTeams teams={teams} broUUID={uuid}/>
       <div className='my-3'/>
-      <ManageBro/>
+      <ManageBro name={name} startDate={projected_start_date} endDate={projected_end_date} img={img}/>
     </div>
   )
 }

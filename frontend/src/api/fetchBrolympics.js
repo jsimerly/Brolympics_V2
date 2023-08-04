@@ -12,6 +12,25 @@ export async function fetchBrolympicsHome(uuid){
     }
 }
 
+export async function fetchUpdateBrolympics(data){
+    try{
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/update-brolympics/`,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+            body: JSON.stringify(data),
+        })
+
+        return response
+
+    } catch (error) {
+        throw (error)
+    }
+}
+
 export async function fetchInCompetition(){
     try {
         const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/is-in-competition/`)
@@ -33,7 +52,7 @@ export async function fetchDeleteBrolympics(uuid){
                 'X-CSRFTOKEN' : getCookie('csrftoken'),
             },
         })
-        
+
         return response
     } catch (error) {
         throw error

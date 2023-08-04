@@ -4,6 +4,7 @@ import CreateBrolympics from "./CreateBrolympics.jsx"
 import AddEvent from "./AddEvent.jsx"
 import AddPlayers from "./AddPlayers.jsx"
 import { createAllLeague} from '../../api/fetchLeague.js'
+import { useNotification } from "../Util/Notification.jsx"
 
 const StepManager = ({step, nextStep, prevStep,}) => {
     const [league, setLeague] = useState({})
@@ -12,6 +13,7 @@ const StepManager = ({step, nextStep, prevStep,}) => {
     const [indEvents, setIndEvents] = useState([])
     const [teamEvents, setTeamEvents] = useState([])
     const [link, setLink] = useState()
+    const {showNotification} = useNotification()
     
     const createAll = async () => {
       const response = await createAllLeague(
@@ -24,11 +26,10 @@ const StepManager = ({step, nextStep, prevStep,}) => {
       if (response.ok){
         const data = await response.json()
         setLink(data.uuid)
-        console.log(data)
         nextStep()
       } else {
         const data = await response.json()
-        console.log(data)
+        showNotification("There was an while trying to create your league. Please check back shortly.") 
       }
     }
   return (

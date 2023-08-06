@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from brolympics.models import *
 from brolympics.serializers import *
+from brolympics.active_serializers import EventCompSerailizer_h2h, EventCompSerailizer_ind, EventCompSerailizer_Team
 import base64
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
@@ -291,6 +292,32 @@ class GetLeagueTeams(APIView):
     def get(self, request, uuid):
         pass
 
+class GetAllCompData(APIView):
+    def get(self, request, uuid):
+
+        brolympics = get_object_or_404(Brolympics, uuid=uuid)
+        if request.user != brolympics.league.league_owner:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        
+        all_events = brolympics.get_all_events()
+
+        h2h_events = all_events['h2h']
+        ind_events = all_events['ind']
+        team_events = all_events['team']
+
+        h2h_event_data = EventCompSerailizer_h2h(h2h_events, many=True).data
+        ind_event_data = EventCompSerailizer_ind(ind_events, many=True).data
+        team_event_data = EventCompSerailizer_Team(team_events, many=True).data
+
+        data = {
+            'h2h' : h2h_event_data,
+            'ind' : ind_event_data,
+            'team' : team_event_data,
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
 
 ## Updates ##
 class UpdateBrolympics(APIView):
@@ -363,6 +390,34 @@ class UpdateEvent(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+class UpdateCompInd(APIView):
+    pass
+
+class UpdateCompH2h(APIView):
+    def put(self, request):
+        comp_uuid = request.data.get('uuid')
+        comp = get_object_or_404(Competition_H2H, uuid=comp_uuid)
+
+        if request.user != comp.event.brolympics.league.league_owner:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        
+        team_1_score = request.data.get('team_1_score')
+        team_2_score = request.data.get('team_2_score')
+
+        if team_1_score == '' or team_1_score is None:
+            return Response({'error':'Must enter a score for team 1.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if team_2_score == '' or team_2_score is None:
+            return Response({'error':'Must enter a score for team 2.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        comp.admin_end(team_1_score, team_2_score)
+       
+        return Response(status=status.HTTP_200_OK)
+
+
+class UpdateCompTeam(APIView):
+    pass
     
 
 ## Delete ##

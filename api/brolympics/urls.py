@@ -15,10 +15,15 @@ urlpatterns = [
     path('get-brolympics-home/<uuid:uuid>', GetBrolympicsHome.as_view(), name='get_brolympics_home'),
     path('upcoming/', GetUpcoming.as_view(), name='get_upcoming'),
     path('league-teams/<uuid:uuid>', GetLeagueTeams.as_view(), name='league_teams'),
+    path('all-comp-data/<uuid:uuid>', GetAllCompData.as_view(), name='get_comp_data'),
     
     #Update
     path('update-brolympics/', UpdateBrolympics.as_view(), name='update_event'),
     path('update-event/', UpdateEvent.as_view(), name='update_event'),
+    path('update-comp-h2h/', UpdateCompH2h.as_view(), name='update_comp_h2h'),
+    path('update-comp-ind/', UpdateCompInd.as_view(), name='update_comp_ind'),
+    path('update-comp-team/', UpdateCompTeam.as_view(), name='updated_comp_team'),
+
 
     #Delete
     path('delete-brolympics/<uuid:uuid>', DeleteBrolymics.as_view(), name='delete_brolympics'),

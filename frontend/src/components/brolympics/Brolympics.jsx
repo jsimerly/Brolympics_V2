@@ -34,7 +34,6 @@ const Brolympics = () => {
       if (response.ok){
         const data = await response.json()
         setBroInfo(data)
-        console.log(data)
       } else {
         
       }
@@ -59,11 +58,9 @@ const Brolympics = () => {
 
         if (response.ok){
           const data = await response.json()
-          console.log(data)
           if (!data.is_available){
             if (activeComp.is_available){
               setActiveComp(data)
-              console.log(data)
             }
 
             if (!location.pathname.includes(

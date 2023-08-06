@@ -37,7 +37,7 @@ const BrolympicsCard_Upcoming = ({img, name, events, teams, projected_start_date
                 </div>
             </div>
             <div className="flex pt-6 text-[14px]">
-                <div className="pr-2 text-[16px] flex items-center justify-center">
+                <div className="pr-2 text-[16px] flex  justify-center">
                     Events:
                 </div>
                 <div className="flex flex-wrap gap-2">

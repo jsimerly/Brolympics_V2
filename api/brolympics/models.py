@@ -879,9 +879,9 @@ class Event_H2H(EventAbstactBase):
             is_active=True
         )
 
-        return {'std': comps, 'bracket': bracket}
-    
-    
+        return {'std': comps, 'bracket': bracket}      
+
+
     def update_event_rankings_h2h(self, team_rankings=None):
         if team_rankings == None:
             team_rankings = list(self.event_h2h_event_rankings.all())
@@ -1495,9 +1495,24 @@ class Competition_H2H_Base(models.Model):
         self.is_active=False
         self.save()
 
+
+    def admin_end(self, team_1_score, team_2_score):
+        self.team_1_score = team_1_score
+        self.team_2_score = team_2_score
+
+        winner, loser = self.determine_winner(team_1_score, team_2_score)
+
+        self.winner = winner
+        self.loser = loser
+        self.is_complete=True
+        self.is_active=False
+
+        self.save()
+        self.team_1.end_comp()
+        self.team_2.end_comp()
+
+
     def end(self, team_1_score, team_2_score):
-        print("ENDING")
-        print(team_1_score, team_2_score)
         self.team_1_score = team_1_score
         self.team_2_score = team_2_score
 
@@ -1560,6 +1575,18 @@ class Competition_H2H(Competition_H2H_Base):
         self.event.update_event_rankings_h2h()
         self.event.check_for_round_robin_completion()
 
+    def admin_end(self, team_1_score, team_2_score):
+        super().admin_end(team_1_score, team_2_score)
+        team_1_ranking = EventRanking_H2H.objects.filter(team=self.team_1)
+        if team_1_ranking.exists():
+            team_1_ranking.first().recalculate_wl_sf()
+        
+        team_2_ranking = EventRanking_H2H.objects.filter(team=self.team_2)
+        if team_2_ranking.exists():
+            team_2_ranking.first().recalculate_wl_sf()
+
+        self.event.update_event_rankings_h2h()
+        self.event.check_for_round_robin_completion()
 
 class EventRankingAbstractBase(models.Model):
     event = models.ForeignKey(
@@ -1726,7 +1753,42 @@ class EventRanking_H2H(models.Model):
             win_rate = 0
 
         return win_rate
+    
+    def recalculate_wl_sf(self):
+        self.wins = 0
+        self.losses = 0
+        self.ties = 0
+        self.win_rate = 0
+        self.score_for = 0
+        self.score_against = 0
 
+        comps = Competition_H2H.objects.filter(
+            Q(team_1=self.team) | Q(team_2=self.team),
+            event=self.event, 
+            is_complete=True
+        )
+
+        for comp in comps:
+            if self.team == comp.winner:
+                self.wins += 1
+            elif self.team == comp.loser:
+                self.losses += 1
+            else:
+                self.ties += 1
+
+            is_team_1 = self.team == comp.team_1
+
+            if is_team_1:
+                self.score_for += comp.team_1_score
+                self.score_against += comp.team_2_score
+            else:
+                self.score_for += comp.team_2_score
+                self.score_against += comp.team_1_score
+
+        self.save()
+
+            
+    
     def __str__(self):
         return self.event.name + ' Ranking: ' + self.team.name
 

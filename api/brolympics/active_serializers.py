@@ -318,3 +318,36 @@ class OverallRankingSerializer(serializers.ModelSerializer):
 
 
 
+class EventCompSerailizer_h2h(serializers.ModelSerializer):
+    comps = serializers.SerializerMethodField()
+    class Meta:
+        model = Event_H2H
+        fields = ['name', 'comps']
+
+    def get_comps(self, obj):
+        comps = Competition_H2H.objects.filter(event=obj)
+        comps_data = CompetitionSerializer_H2h(comps, many=True).data
+        return comps_data
+    
+class EventCompSerailizer_ind(serializers.ModelSerializer):
+    comps = serializers.SerializerMethodField()
+    class Meta:
+        model = Event_IND
+        fields = ['name', 'comps']
+
+    def get_comps(self, obj):
+        comps = Competition_Ind.objects.filter(event=obj)
+        comps_data = CompetitionSerializer_Ind(comps, many=True).data
+        return comps_data
+    
+class EventCompSerailizer_Team(serializers.ModelSerializer):
+    comps = serializers.SerializerMethodField()
+    class Meta:
+        model = Event_Team
+        fields = ['name', 'comps']
+
+    def get_comps(self, obj):
+        comps = Competition_Team.objects.filter(event=obj)
+        comps_data = CompetitionSerializer_Team(comps, many=True).data
+        return comps_data
+

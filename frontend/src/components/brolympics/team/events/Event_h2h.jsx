@@ -17,10 +17,10 @@ const Matchup = ({team, team_1, team_1_score, team_2, team_2_score, winner, is_a
 
     let team_1_text;
     switch (true) {
-        case team_1.uuid == winner.uuid && team_1.uuid == team:
+        case team_1.uuid == winner?.uuid && team_1.uuid == team:
             team_1_text = 'text-primaryLight font-semibold';
             break;
-        case team_2.uuid == winner.uuid && team_1.uuid == team:
+        case team_2.uuid == winner?.uuid && team_1.uuid == team:
             team_1_text = 'text-errorRedLight'
             break
         default:
@@ -29,7 +29,7 @@ const Matchup = ({team, team_1, team_1_score, team_2, team_2_score, winner, is_a
 
     let team_2_text;
     switch (true) {
-        case team_2.uuid == winner.uuid && team_2.uuid == team:
+        case team_2.uuid == winner?.uuid && team_2.uuid == team:
             team_2_text = 'text-primaryLight font-semibold';
             break;
         case team_1.uuid == winner && team_2.uuid == team:

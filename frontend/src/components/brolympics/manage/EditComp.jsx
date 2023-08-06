@@ -7,6 +7,8 @@ import { useParams } from 'react-router-dom';
 import { useNotification } from '../../Util/Notification';
 
 const H2hComp = ({team_1, team_1_score, team_2, team_2_score, uuid}) => {
+
+  const {showNotification} = useNotification()
   const [compData, setCompData] = useState({
     uuid: uuid,
     team_1_score: team_1_score,
@@ -28,7 +30,7 @@ const H2hComp = ({team_1, team_1_score, team_2, team_2_score, uuid}) => {
   const handleUpdateClicked = async () => {
     const response = await fetchUpdateH2hComp(compData)
     if (response.ok){
-      console.log('updated')
+      showNotification('This competition has been updated.', '!border-primary')
     } else {
       console.log('no okay')
     }

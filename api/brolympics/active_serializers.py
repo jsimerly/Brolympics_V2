@@ -257,19 +257,31 @@ class EventPageSerializer_h2h(EventRankingPageSerailzier_AbstractBase):
 
     class Meta:
         model = EventRanking_H2H
-        fields = [] + EventRankingPageSerailzier_AbstractBase.Meta.fields
+        fields = ['wins', 'losses', 'ties'] + EventRankingPageSerailzier_AbstractBase.Meta.fields
 
 
     
 class EventPageSerializer_ind(EventRankingPageSerailzier_AbstractBase):
+    score = serializers.SerializerMethodField()
     class Meta:
         model = EventRanking_Ind
-        fields = [] + EventRankingPageSerailzier_AbstractBase.Meta.fields
+        fields = ['score'] + EventRankingPageSerailzier_AbstractBase.Meta.fields
+
+    def get_score(self,obj):
+        if obj.event.display_avg_score:
+            return obj.team_avg_score
+        return obj.team_total_score
 
 class EventPageSerializer_team(EventRankingPageSerailzier_AbstractBase):
+    score = serializers.SerializerMethodField()
     class Meta:
         model = EventRanking_Team
-        fields = [] + EventRankingPageSerailzier_AbstractBase.Meta.fields
+        fields = ['score'] + EventRankingPageSerailzier_AbstractBase.Meta.fields
+
+    def get_score(self, obj):
+        if obj.event.display_avg_score:
+            return obj.team_avg_score
+        return obj.team_total_score
 
 class BracketMatchupSerializer(serializers.ModelSerializer):
     team_1 = serializers.SerializerMethodField()

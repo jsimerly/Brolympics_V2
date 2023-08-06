@@ -946,7 +946,7 @@ class Event_H2H(EventAbstactBase):
         for group in grouped_teams:
             untied_wr_teams = self._tie_break_manager(group, tie_break_order)
             untied_teams.append(untied_wr_teams)
-        
+
         return self.flatten_1(untied_teams) #full flatten the list
     
     def _tie_break_manager(self, tied_teams, tie_break_order_funcs):
@@ -1577,11 +1577,12 @@ class Competition_H2H(Competition_H2H_Base):
 
     def admin_end(self, team_1_score, team_2_score):
         super().admin_end(team_1_score, team_2_score)
-        team_1_ranking = EventRanking_H2H.objects.filter(team=self.team_1)
+        team_1_ranking = EventRanking_H2H.objects.filter(team=self.team_1, event=self.event)
         if team_1_ranking.exists():
+            print(team_1_ranking)
             team_1_ranking.first().recalculate_wl_sf()
         
-        team_2_ranking = EventRanking_H2H.objects.filter(team=self.team_2)
+        team_2_ranking = EventRanking_H2H.objects.filter(team=self.team_2, event=self.event)
         if team_2_ranking.exists():
             team_2_ranking.first().recalculate_wl_sf()
 
@@ -1750,6 +1751,7 @@ class EventRanking_H2H(models.Model):
         if (self.wins + self.ties + self.losses) > 0:
             win_rate = (self.wins + (0.5 * self.ties)) / (self.wins + self.ties + self.losses)
         else:
+            print('here')
             win_rate = 0
 
         return win_rate
@@ -1784,6 +1786,8 @@ class EventRanking_H2H(models.Model):
             else:
                 self.score_for += comp.team_2_score
                 self.score_against += comp.team_1_score
+
+        self.win_rate = self.get_win_rate()
 
         self.save()
 

@@ -20,14 +20,21 @@ const Events = ({events, default_uuid, default_type}) => {
   const getFontSize = (name) => {
     if (name){
       if (name.length <= 12){
-        return '20px'
-      } else if (name.length <= 16){
         return '18px'
-      } else if (name.length <= 20){
+      } else if (name.length <= 16){
         return '16px'
+      } else if (name.length <= 20){
+        return '14px'
       } else {
         return '14px'
       }
+    }
+  }
+
+  const getDisplayInfo = (ranking) => {
+    if (eventInfo.type === 'h2h'){
+      return `${ranking.wins}-${ranking.losses} 
+      ${ranking.ties != 0 ? `${ranking.ties}` : ''}`
     }
   }
   
@@ -87,10 +94,12 @@ const Events = ({events, default_uuid, default_type}) => {
                 <td className='pl-3 text-start text-[20px] border-r border-neutralLight'>
                   <div className='flex items-center gap-2'>
                     <img src={ranking.team.img} className='w-[30px] h-[30px] rounded-md'/>
-                    <span className={`text-[${getFontSize(ranking.team.name)}]`}>
-                      {ranking.team.name}
-                    </span>
-
+                    <div className='flex flex-col justify-center'>
+                      <span className={`text-[${getFontSize(ranking.team.name)}] leading-5`}>
+                        {ranking.team.name}
+                      </span>
+                      <span className='text-[10px]'>{getDisplayInfo(ranking)}</span>
+                    </div>
                   </div>
                 </td>
                 <td className='p-2 text-center border-r text-[18px] border-neutralLight'>

@@ -10,11 +10,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Comp_ind from './Competitions/Comp_ind.jsx';
 import Comp_team from './Competitions/Comp_team.jsx';
+import { useNotification } from '../../Util/Notification';
 
 const Events = ({events, default_uuid, default_type}) => {
 
-  let {eventUuid, eventType} = useParams()
-  let navigate = useNavigate
+  let {eventUuid, eventType ,uuid} = useParams()
+  let navigate = useNavigate()
   const [eventInfo, setEventInfo] = useState()
 
   const getFontSize = (name) => {
@@ -38,9 +39,14 @@ const Events = ({events, default_uuid, default_type}) => {
     }
   }
   
+  const savedEventUuid = localStorage.getItem('selectedEventUuid')
+  const savedEventType = localStorage.getItem('selectedEventType')
+  
   useEffect(()=>{
-    if (!eventUuid && default_uuid && default_type){
-      navigate(`/team/${default_type}/${default_uuid}`)
+    if (!eventInfo && savedEventType && savedEventUuid){
+      navigate(`/b/${uuid}/event/${savedEventType}/${savedEventUuid}`)
+    } else if (!eventUuid && default_uuid && default_type){
+      navigate(`event/${uuid}/${default_type}/${default_uuid}`)
     }
   },[eventUuid])
 
@@ -50,6 +56,8 @@ const Events = ({events, default_uuid, default_type}) => {
       if (response.ok) {
         const data = await response.json()
         setEventInfo(data)
+      } else {
+        console.log('not okay')
       }
     }
     getEventInfo()
@@ -85,7 +93,7 @@ const Events = ({events, default_uuid, default_type}) => {
             </thead>
             <tbody>
             {
-              eventInfo &&
+              eventInfo && eventInfo.standings &&
               eventInfo.standings
                 .sort((a, b) => a.rank - b.rank) 
                 .map((ranking, i) => (
@@ -118,7 +126,7 @@ const Events = ({events, default_uuid, default_type}) => {
         }
 
       </div>
-      {eventInfo &&
+      {eventInfo && eventInfo.competitions &&
         <div className='pb-6'>
           <h2 className='font-bold text-[20px] px-6'>Competitions</h2>
           <div>

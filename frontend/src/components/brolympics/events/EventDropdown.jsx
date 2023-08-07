@@ -8,14 +8,19 @@ const EventDropdown = ({events}) => {
     const navigate = useNavigate()
     const {uuid} = useParams()
 
+    const savedEventUuid = localStorage.getItem('selectedEventUuid')
+
     useEffect(()=>{
       if(events){
-        setSelectedEvent(events[0])
+        const savedEvent = events.find(event => event.uuid === savedEventUuid)
+        setSelectedEvent(savedEvent || events[0])
       }
     },[events])
   
     const handleSelect = (event) => {
       setSelectedEvent(event)
+      localStorage.setItem('selectedEventUuid', event.uuid)
+      localStorage.setItem('selectedEventType', event.type)
       setIsOpen(false)
       navigate(`/b/${uuid}/event/${event.type}/${event.uuid}`);
     }
@@ -52,7 +57,6 @@ const EventDropdown = ({events}) => {
                     >
                       {event.name}
                     </li>
-                    
                   </div>
                 ))}
             </ul>

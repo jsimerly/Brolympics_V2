@@ -506,57 +506,65 @@ class GetEventInfo(APIView):
         if type == 'h2h':
             event = get_object_or_404(Event_H2H, uuid=uuid)
 
-            event_rankings = EventRanking_H2H.objects.filter(event=event)
-            ranking_data = EventPageSerializer_h2h(event_rankings, many=True, context={'request': request})
+            if event.is_active or event.is_complete:
+                event_rankings = EventRanking_H2H.objects.filter(event=event)
+                ranking_data = EventPageSerializer_h2h(event_rankings, many=True, context={'request': request})
 
-            comps = Competition_H2H.objects.filter(event=event)
-            comp_data = CompetitionSerializer_H2h(comps, many=True, context={'request': request})
+                comps = Competition_H2H.objects.filter(event=event)
+                comp_data = CompetitionSerializer_H2h(comps, many=True, context={'request': request})
 
-            bracket = BracketSerializer(event.bracket_4, context={'request': request})
+                bracket = BracketSerializer(event.bracket_4, context={'request': request})
 
-            data = {
-                'type' : 'h2h',
-                'standings' : ranking_data.data,
-                'competitions' : comp_data.data,
-                'bracket' : bracket.data
-            }
+                data = {
+                    'type' : 'h2h',
+                    'standings' : ranking_data.data,
+                    'competitions' : comp_data.data,
+                    'bracket' : bracket.data
+                }
 
-            return Response(data, status=status.HTTP_200_OK)
+                return Response(data, status=status.HTTP_200_OK)
+            
+            return Response({'message':'Event has not started yet.'}, status=status.HTTP_200_OK)
             
 
         if type == 'ind':
             event = get_object_or_404(Event_IND, uuid=uuid)
 
-            event_rankings = EventRanking_Ind.objects.filter(event=event)
-            ranking_data = EventPageSerializer_ind(event_rankings, many=True, context={'request': request})
+            if event.is_active or event.is_complete:
+                event_rankings = EventRanking_Ind.objects.filter(event=event)
+                ranking_data = EventPageSerializer_ind(event_rankings, many=True, context={'request': request})
 
-            comps = Competition_Ind.objects.filter(event=event)
-            comp_data = CompetitionSerializer_Ind(comps, many=True, context={'request': request})
+                comps = Competition_Ind.objects.filter(event=event)
+                comp_data = CompetitionSerializer_Ind(comps, many=True, context={'request': request})
 
-            data = {
-                'type' : 'ind',
-                'standings' : ranking_data.data,
-                'competitions' : comp_data.data,
-            }
+                data = {
+                    'type' : 'ind',
+                    'standings' : ranking_data.data,
+                    'competitions' : comp_data.data,
+                }
 
-            return Response(data, status=status.HTTP_200_OK)
+                return Response(data, status=status.HTTP_200_OK)
+            
+            return Response({'message':'Event has not started yet.'}, status=status.HTTP_200_OK)
 
         if type == 'team':
             event = get_object_or_404(Event_Team, uuid=uuid)
+            if event.is_active or event.is_complete:
+                event_rankings = EventRanking_Team.objects.filter(event=event)
+                ranking_data = EventPageSerializer_team(event_rankings, many=True, context={'request': request})
 
-            event_rankings = EventRanking_Team.objects.filter(event=event)
-            ranking_data = EventPageSerializer_team(event_rankings, many=True, context={'request': request})
+                comps = Competition_Team.objects.filter(event=event)
+                comp_data = CompetitionSerializer_Team(comps, many=True, context={'request': request})
 
-            comps = Competition_Team.objects.filter(event=event)
-            comp_data = CompetitionSerializer_Team(comps, many=True, context={'request': request})
+                data = {
+                    'type' : 'team',
+                    'standings' : ranking_data.data,
+                    'competitions' : comp_data.data,
+                }
 
-            data = {
-                'type' : 'team',
-                'standings' : ranking_data.data,
-                'competitions' : comp_data.data,
-            }
-
-            return Response(data, status=status.HTTP_200_OK)
+                return Response(data, status=status.HTTP_200_OK)
+            
+            return Response({'message':'Event has not started yet.'}, status=status.HTTP_200_OK)
 
 
         return Response(status=status.HTTP_400_BAD_REQUEST)

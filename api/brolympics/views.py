@@ -392,7 +392,26 @@ class UpdateEvent(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
 class UpdateCompInd(APIView):
-    pass
+    def put(self, request):
+        comp_uuid = request.data.get('uuid')
+        comp = get_object_or_404(Competition_Ind, uuid=comp_uuid)
+
+        if request.user != comp.event.brolympics.league.league_owner:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        
+
+        player_1_score = request.data.get('player_1_score')
+        player_2_score = request.data.get('player_2_score')
+
+        if player_1_score == '' or player_1_score is None:
+            return Response({'error':'Must enter a score for player 1.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if player_2_score == '' or player_2_score is None:
+            return Response({'error':'Must enter a score for player 2.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        comp.admin_end(player_1_score, player_2_score)
+        return Response(status=status.HTTP_200_OK)
+        
 
 class UpdateCompH2h(APIView):
     def put(self, request):

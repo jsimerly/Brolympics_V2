@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Comp_ind = ({team, team_score, player_1_score, player_2_score, is_complete}) => {
+const Comp_ind = ({team, player_1_score, player_2_score, is_complete}) => {
   
 
   return (

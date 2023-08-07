@@ -4,6 +4,7 @@ import DiamondOutlinedIcon from '@mui/icons-material/DiamondOutlined';
 import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
 import Bracket from './Bracket';
 import Comp_h2h from './Competitions/Comp_h2h';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 
 import { fetchEventInfo } from '../../../api/activeBro/fetchEvents.js'
 import { useParams, useNavigate } from 'react-router-dom';
@@ -74,13 +75,16 @@ const Events = ({events, default_uuid, default_type}) => {
   }
 
   const CompComp = componentMap[eventInfo?.type] || Comp_ind  
-
+  console.log(eventInfo)
   return (
     <div className=''>
       <EventDropdown events={events}/>
       <div className=''>
         <div className='flex items-center justify-between px-6 pb-2'>
-          <h2 className='font-bold text-[20px]'>Standings</h2>
+          <h2 className='font-bold text-[20px] flex items-center'>
+            Standings 
+            {eventInfo?.is_complete && <span className='ml-2 pt-2 text-primary text-[10px] flex items-center gap-1'>Final <TaskAltIcon sx={{fontSize: 14}}/></span>}
+          </h2>
           <div className='flex flex-col items-start justify-center'>
             <MenuBookOutlinedIcon sx={{fontSize:30}}/> 
           </div>
@@ -88,9 +92,9 @@ const Events = ({events, default_uuid, default_type}) => {
         <div className='px-6'>
           <table className='w-full border border-neutralLight'>
             <thead>
-              <tr className='border text-primary border-neutralLight'>
+              <tr className={`border ${eventInfo?.is_complete && 'text-primary'} border-neutralLight`}>
                 <th className='border border-neutralLight w-[60px] p-2'><NumbersOutlinedIcon/></th>
-                <th className='pl-6 border border-neutralLight text-start text-[20px]'>Team</th>
+                <th className='pl-3 border border-neutralLight text-start text-[20px]'>Team</th>
                 <th className='border border-neutralLight w-[80px]'><DiamondOutlinedIcon/>
                 </th>
               </tr>

@@ -266,6 +266,20 @@ class EventAbstactBase(models.Model):
 
     def get_percent_complete(self):
         return self._get_percent_complete()
+    
+
+    def get_decimal_value(self):
+        score_type_mapping = {
+            'I': 0,
+            'B': -1,
+            '1': 1,
+            '2': 2,
+            '3': 3,
+            '4': 4,
+            'F': 16,
+        }
+
+        return score_type_mapping[self.score_type]
 
 
     def __str__(self):
@@ -449,9 +463,10 @@ class Event_Team(EventAbstactBase):
 
     ## Clean Up ##
     def finalize_rankings(self):
-        self.update_event_rankings_team()
-        self._set_event_rankings_final()
-        self.update_overall_rankings()
+        with transaction.atomic():
+            self.update_event_rankings_team()
+            self._set_event_rankings_final()
+            self.update_overall_rankings()
 
     def _set_event_rankings_final(self):
         self.event_team_event_rankings.all().update(is_final=True)
@@ -463,6 +478,11 @@ class Event_Team(EventAbstactBase):
                 event=self,
                 team=ranking.team
             )
+            if event_ranking.rank >= 3:
+                ranking.event_podiums += 1
+            if event_ranking.rank == 1:
+                ranking.event_wins += 1
+
             ranking.total_points += event_ranking.points
             ranking.save()
 
@@ -658,9 +678,10 @@ class Event_IND(EventAbstactBase):
 
     ## Event Clean Up ##
     def finalize_rankings(self):
-        self.update_event_rankings_ind()
-        self._set_event_rankings_final()
-        self.update_overall_rankings()
+        with transaction.atomic():
+            self.update_event_rankings_ind()
+            self._set_event_rankings_final()
+            self.update_overall_rankings()
 
     def _set_event_rankings_final(self):
         self.event_ind_event_rankings.all().update(is_final=True)
@@ -672,6 +693,10 @@ class Event_IND(EventAbstactBase):
                 event=self,
                 team=ranking.team
             )
+            if event_ranking.rank >= 3:
+                ranking.event_podiums += 1
+            if event_ranking.rank == 1:
+                ranking.event_wins += 1
 
             ranking.total_points += event_ranking.points
             ranking.save()
@@ -1154,8 +1179,9 @@ class Event_H2H(EventAbstactBase):
         ]
 
         final_rankings = bracket_team_rankings  + back_half_teams
-        self._set_event_rankings_final(final_rankings)
-        self._update_overall_rankings()
+        with transaction.atomic():
+            self._set_event_rankings_final(final_rankings)
+            self._update_overall_rankings()
 
     def _set_event_rankings_final(self, final_rankings):
         self._set_rankings_and_points(final_rankings)
@@ -1168,6 +1194,11 @@ class Event_H2H(EventAbstactBase):
                 event=self,
                 team=ranking.team
             )
+            if event_ranking.rank >= 3:
+                ranking.event_podiums += 1
+            if event_ranking.rank == 1:
+                ranking.event_wins += 1
+
             ranking.wins += event_ranking.wins
             ranking.losses += event_ranking.losses
             ranking.ties += event_ranking.ties
@@ -1393,12 +1424,38 @@ class Competition_Ind(models.Model):
         self.is_active = False
         self.save()
 
+    def admin_end(self, player_1_score, player_2_score):
+        player_1_score = float(player_1_score)
+        player_2_score = float(player_2_score)
+
+        self.player_1_score = player_1_score
+        self.player_2_score = player_2_score
+
+        total = player_1_score + player_2_score
+        self.team_score = total
+        self.avg_score = total / 2    
+
+        self.is_active = False
+        self.is_complete = True
+
+        self.team.end_comp()
+        self.save()
+
+        team_ranking = EventRanking_Ind.objects.get(event=self.event, team=self.team)
+        team_ranking.update_scores()
+
+        self.event.update_event_rankings_ind()
+        self.event.check_for_completion()
+
     def end(self, player_1_score, player_2_score):
         self.end_time = timezone.now()
+        player_1_score = float(player_1_score)
+        player_2_score = float(player_2_score)
 
         self.player_1_score = player_1_score
         self.player_2_score = player_2_score
         total = player_1_score + player_2_score
+
         self.team_score = total
         self.avg_score = total / 2    
 

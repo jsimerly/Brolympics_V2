@@ -38,6 +38,8 @@ const Standings = () => {
       }
     }
   }
+
+  console.log(standingData)
   
     
   return (
@@ -84,7 +86,7 @@ const Standings = () => {
         <ul className='flex flex-col gap-6'>
         {standingData?.podiums.map((event, i) => (
           <div key={i+"_podium"}>
-            <h3 className='font-bold'>{event.name}</h3>
+            <h3 className='font-semibold'>{event.event}</h3>
             <div className='flex flex-col justify-center gap-2 px-2 pt-2'>
                 <div className='flex gap-2'>
                     <img src={Gold} className='h-[20px]'/>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { fetchAllCompData, fetchUpdateH2hComp } from "../../../api/activeBro/fetchAdmin";
+import { fetchAllCompData, fetchUpdateH2hComp, fetchUpdateIndComp } from "../../../api/activeBro/fetchAdmin";
 import { useParams } from 'react-router-dom';
 import { useNotification } from '../../Util/Notification';
 
@@ -32,7 +32,7 @@ const H2hComp = ({team_1, team_1_score, team_2, team_2_score, uuid}) => {
     if (response.ok){
       showNotification('This competition has been updated.', '!border-primary')
     } else {
-      console.log('no okay')
+      showNotification('There was an error when attemping to update this competition.')
     }
   }
   
@@ -64,24 +64,51 @@ const H2hComp = ({team_1, team_1_score, team_2, team_2_score, uuid}) => {
   )
 }
 
-const IndComp = ({team, player_1_name, player_1_score, player_2_name, player_2_score, uuid}) => {
-  const handleUpdateClicked = async () => {
-    
+const IndComp = ({team, player_1_score, player_2_score, uuid}) => {
+  const {showNotification} = useNotification()
+  const [compData, setCompData] = useState({
+    uuid: uuid,
+    player_1_score: player_1_score,
+    player_2_score: player_2_score
+  })
+  const handlePlayer1ScoreChange = (e) => {
+    setCompData({
+      ...compData,
+      player_1_score: e.target.value
+    })
   }
+  const handlePlayer2ScoreChange = (e) => {
+    setCompData({
+      ...compData,
+      player_2_score: e.target.value
+    })
+  }
+
+  const handleUpdateClicked = async () => {
+    const response = await fetchUpdateIndComp(compData)
+    if (response.ok){
+      showNotification('This competition has been updated', '!border-primary')
+    } else {
+      showNotification('There was an error when attemping to update this competition.')
+    }
+  }
+  
   return(
     <div className='relative flex flex-col gap-1 p-2 border'>
-      {team}
+      {team.name}
       <div className='flex items-center'>
-        <div>{player_1_name}:</div> 
+        <div>{team.player_1.short_name}:</div> 
         <input 
-          value={player_1_score} 
+          value={compData.player_1_score} 
+          onChange={handlePlayer1ScoreChange}
           className='p-2 rounded-md w-[60px] border ml-1'
         />
       </div>
       <div className='flex items-center'>
-        <div>{player_2_name}:</div> 
+        <div>{team.player_2.short_name}:</div> 
         <input 
-          value={player_2_score} 
+          value={compData.player_2_score} 
+          onChange={handlePlayer2ScoreChange}
           className='p-2 rounded-md w-[60px] border ml-1'
         />
         </div>
@@ -155,35 +182,7 @@ const EditComp = () => {
     getComps()
   },[])  
 
-  
-  const h2h_events = [
-    {name:'Cornole',
-    comps:[{team_1:'Greece', team_1_score: 21, team_2:"Germany", team_2_score:11},
-    {team_1:'Poland', team_1_score: 17, team_2:"Greece", team_2_score:21},
-    {team_1:'Germany', team_1_score: 14, team_2:"Poland", team_2_score:21},
-    {team_1:'Greece', team_1_score: 21, team_2:"USA", team_2_score:11},]
-    },
-  ]
-  const ind_events = [
-    {name:'Golf',
-    comps:[
-      {team:'Germany', player_1_score:21, player_1_name:'Jacob', player_2_score:14, player_2_name:'Timmy'
-      },
-      {team:'Greece', player_1_score:17, player_1_name:'Jim', player_2_score:21, player_2_name:'Jake'
-      },
-      {team:'GPoland', player_1_score:21, player_1_name:'Tanner', player_2_score:19, player_2_name:'Tim'
-      },
-    ]
-  }
-
-  ]
-  const team_events = [
-    {name:'Triva',
-    comps:[
-      {team:'Greece', team_score: 140},
-      {team:'Germany', team_score: 140},
-    ]}
-  ]
+  console.log(indEvents)
 
   return (
     <div>

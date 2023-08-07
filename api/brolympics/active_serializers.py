@@ -267,10 +267,13 @@ class EventPageSerializer_ind(EventRankingPageSerailzier_AbstractBase):
         model = EventRanking_Ind
         fields = ['score'] + EventRankingPageSerailzier_AbstractBase.Meta.fields
 
-    def get_score(self,obj):
+    def get_score(self, obj):
         if obj.event.display_avg_scores:
-            return obj.team_avg_score
-        return obj.team_total_score
+            score = obj.team_avg_score
+        else:
+            score = obj.team_total_score
+
+        return round(score, obj.event.get_decimal_value())
 
 class EventPageSerializer_team(EventRankingPageSerailzier_AbstractBase):
     score = serializers.SerializerMethodField()
@@ -280,8 +283,12 @@ class EventPageSerializer_team(EventRankingPageSerailzier_AbstractBase):
 
     def get_score(self, obj):
         if obj.event.display_avg_scores:
-            return obj.team_avg_score
-        return obj.team_total_score
+            score = obj.team_avg_score
+        else:
+            score = obj.team_total_score
+        print(round(score, obj.get_decimal_value()))
+        return round(score, obj.get_decimal_value())
+        
 
 class BracketMatchupSerializer(serializers.ModelSerializer):
     team_1 = serializers.SerializerMethodField()

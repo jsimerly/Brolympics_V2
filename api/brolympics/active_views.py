@@ -519,7 +519,8 @@ class GetEventInfo(APIView):
                     'type' : 'h2h',
                     'standings' : ranking_data.data,
                     'competitions' : comp_data.data,
-                    'bracket' : bracket.data
+                    'bracket' : bracket.data,
+                    'is_complete' : event.is_complete
                 }
 
                 return Response(data, status=status.HTTP_200_OK)
@@ -541,6 +542,7 @@ class GetEventInfo(APIView):
                     'type' : 'ind',
                     'standings' : ranking_data.data,
                     'competitions' : comp_data.data,
+                    'is_complete' : event.is_complete
                 }
 
                 return Response(data, status=status.HTTP_200_OK)
@@ -560,6 +562,7 @@ class GetEventInfo(APIView):
                     'type' : 'team',
                     'standings' : ranking_data.data,
                     'competitions' : comp_data.data,
+                    'is_complete' : event.is_complete,
                 }
 
                 return Response(data, status=status.HTTP_200_OK)

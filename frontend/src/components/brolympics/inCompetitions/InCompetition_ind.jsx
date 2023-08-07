@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { fetchActiveComp_ind, fetchSubmitComp_ind, fetchCancelComp_ind} from '../../../api/activeBro/fetchHome'
+import { useNotification } from '../../Util/Notification'
 
 const InCompetition_ind = () => {
     const [player1Score, setPlayer1Score] = useState(0)
@@ -9,6 +10,7 @@ const InCompetition_ind = () => {
     const handlePlayer2ScoreChange = (e) => setPlayer2Score(e.target.value);
 
     const {compUuid} = useParams()
+    const {showNotification} = useNotification()
 
     const [compData, setCompData] = useState()
     useEffect(()=>{
@@ -38,19 +40,35 @@ const InCompetition_ind = () => {
         }
       }
 
-    const isValidScore = (score) => {
-        return score >= compData.min_score && score <= compData.max_score
+      const isValidScore = (score) => {
+        const minScore = compData.min_score === null ? -Infinity : compData.min_score;
+        const maxScore = compData.max_score === null ? Infinity : compData.max_score;
+        
+        return score >= minScore && score <= maxScore;
       }
     
+    
   const handleSumbitClicked = async () => {
+    console.log('submit Clicked')
     if (isValidScore(player1Score) && isValidScore(player2Score)){
+      console.log('score is valid')
       const response = await fetchSubmitComp_ind(compUuid, player1Score, player2Score)
       if (response.ok){
         location.reload()
-      }
+      } 
+    } else {
+      showNotification(
+        <>
+          Please enter valid scores for each player.<br/> 
+          Min Score: {compData.min_score !== undefined && compData.min_score !== null ? compData.min_score : 'No min'}
+          <br/> Max Score: {compData.max_score || 'No max'}
+        </>
+
+      )
     }
   }
 
+  
   const handleCancelClicked = async () => {
     const response = await fetchCancelComp_ind(compUuid)
     if (response.ok){

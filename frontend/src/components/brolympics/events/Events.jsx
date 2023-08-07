@@ -36,6 +36,10 @@ const Events = ({events, default_uuid, default_type}) => {
     if (eventInfo.type === 'h2h'){
       return `${ranking.wins}-${ranking.losses} 
       ${ranking.ties != 0 ? `${ranking.ties}` : ''}`
+    } else if (eventInfo.type === 'ind'){
+      return ranking.score
+    } else if (eventInfo.type === 'team'){
+      return ranking.score
     }
   }
   

@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (phone, password) => {
     const response = await fetchLoginUser(phone, password)
     return response
+  
   }
 
   const logout = () => {

@@ -268,7 +268,7 @@ class EventPageSerializer_ind(EventRankingPageSerailzier_AbstractBase):
         fields = ['score'] + EventRankingPageSerailzier_AbstractBase.Meta.fields
 
     def get_score(self,obj):
-        if obj.event.display_avg_score:
+        if obj.event.display_avg_scores:
             return obj.team_avg_score
         return obj.team_total_score
 
@@ -279,7 +279,7 @@ class EventPageSerializer_team(EventRankingPageSerailzier_AbstractBase):
         fields = ['score'] + EventRankingPageSerailzier_AbstractBase.Meta.fields
 
     def get_score(self, obj):
-        if obj.event.display_avg_score:
+        if obj.event.display_avg_scores:
             return obj.team_avg_score
         return obj.team_total_score
 

@@ -42,6 +42,7 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) =>
 
         if (response.ok){
             const data = await response.json()
+
             setCurrentUser(data)
             setCookie('access_token', data.access, 60);
             setCookie('refresh_token', data.refresh, 60 * 24 * 30);
@@ -50,7 +51,6 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) =>
             } else {
                 navigate('/')
             }
-
         } else if (response.status === 401) {    
             showNotification("The phone number or password entered is incorrect.")
         } else {

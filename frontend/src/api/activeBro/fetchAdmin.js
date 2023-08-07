@@ -117,3 +117,13 @@ export async function fetchAllCompData(bro_uuid){
         throw (error)
     }
 }
+
+export async function fetchBracketData(bro_uuid){
+    try {
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/bracket-data/${bro_uuid}`)
+
+        return response
+    } catch (error) {
+        throw (error)
+    }
+}

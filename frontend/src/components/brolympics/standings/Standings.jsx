@@ -18,7 +18,6 @@ const Standings = () => {
       if (response.ok){
         const data = await response.json()
         setStandingData(data)
-        console.log(data)
       }
     }
     getStandingsInfo()
@@ -38,9 +37,6 @@ const Standings = () => {
       }
     }
   }
-
-  console.log(standingData)
-  
     
   return (
     <div className='px-6 py-3'>

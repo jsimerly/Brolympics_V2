@@ -62,7 +62,7 @@ const Events = ({events, default_uuid, default_type}) => {
         const data = await response.json()
         setEventInfo(data)
       } else {
-        console.log('not okay')
+
       }
     }
     getEventInfo()
@@ -75,7 +75,6 @@ const Events = ({events, default_uuid, default_type}) => {
   }
 
   const CompComp = componentMap[eventInfo?.type] || Comp_ind  
-  console.log(eventInfo)
   return (
     <div className=''>
       <EventDropdown events={events}/>

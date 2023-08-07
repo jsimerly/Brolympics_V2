@@ -214,7 +214,7 @@ class GetActiveHome(APIView):
 
         team_active_serialized = [
             comp
-            for qset in ind_active
+            for qset in team_active
             for comp in CompetitionSerializer_Team(
                     qset, 
                     many=True,

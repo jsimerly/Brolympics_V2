@@ -452,6 +452,7 @@ class Event_Team(EventAbstactBase):
         uncompleted = self.comp.filter(is_complete=False)
         if len(uncompleted) == 0:
             self.is_complete = True
+            self.is_active = False
             self.is_available = False
             self.finalize_rankings()
             self.save()
@@ -668,6 +669,7 @@ class Event_IND(EventAbstactBase):
         if len(uncompleted) == 0:
             self.is_complete = True
             self.is_available = False
+            self.is_active = False
             self.finalize_rankings()
             self.save()
 
@@ -1182,6 +1184,12 @@ class Event_H2H(EventAbstactBase):
         with transaction.atomic():
             self._set_event_rankings_final(final_rankings)
             self._update_overall_rankings()
+
+        self.is_complete = True
+        self.is_active = False
+        self.is_available = False
+
+        self.save()
 
     def _set_event_rankings_final(self, final_rankings):
         self._set_rankings_and_points(final_rankings)

@@ -1118,6 +1118,7 @@ class Event_H2H(EventAbstactBase):
         tied_points_total = 0
         tied_rankings = []
 
+        
         for i, ranking in enumerate(bottom_teams):
             tied_rankings.append(ranking)
             tied_points_total += score_map[self.n_bracket_teams + i + 1]
@@ -1156,15 +1157,13 @@ class Event_H2H(EventAbstactBase):
 
     def _update_bracket(self):
         top_4_rankings = self.event_h2h_event_rankings.all().order_by('rank')[:self.n_bracket_teams]
-        print(top_4_rankings)
         self.bracket_4.update_teams(top_4_rankings)
         
     ## End of Life Cycle ##
 
     ## Event Clean Up ##
     def finalize_rankings(self): #used by parent for finalize()
-        team_rankings = list(self.event_h2h_event_rankings.all().order_by('-rank'))
-
+        team_rankings = list(self.event_h2h_event_rankings.all().order_by('rank'))
 
         bracket_teams = [
             self.bracket_4.championship.winner,
@@ -1172,15 +1171,15 @@ class Event_H2H(EventAbstactBase):
             self.bracket_4.loser_bracket_finals.winner,
             self.bracket_4.loser_bracket_finals.loser,
         ]
-        back_half_teams = team_rankings[len(bracket_teams):]
+        back_half_teams = team_rankings[self.n_bracket_teams:]
 
 
         bracket_team_rankings = [
             EventRanking_H2H.objects.get(event=self, team=team) 
             for team in bracket_teams
         ]
-
         final_rankings = bracket_team_rankings  + back_half_teams
+
         with transaction.atomic():
             self._set_event_rankings_final(final_rankings)
             self._update_overall_rankings()
@@ -1202,6 +1201,7 @@ class Event_H2H(EventAbstactBase):
                 event=self,
                 team=ranking.team
             )
+            print(event_ranking)
             if event_ranking.rank <= 3:
                 ranking.event_podiums += 1
             if event_ranking.rank == 1:
@@ -1558,13 +1558,12 @@ class Competition_H2H_Base(models.Model):
     
 
     def start(self):
-        print('oop')
         if not self.team_1.is_available:
             raise ValueError(f"{self.team_1.name} is not currently available")
         
         if not self.team_2.is_available:
             raise ValueError(f"{self.team_2.name} is not currently available")
-        print('got to here')
+
         self.team_1.start_comp()
         self.team_2.start_comp()
 
@@ -1667,7 +1666,6 @@ class Competition_H2H(Competition_H2H_Base):
         super().admin_end(team_1_score, team_2_score)
         team_1_ranking = EventRanking_H2H.objects.filter(team=self.team_1, event=self.event)
         if team_1_ranking.exists():
-            print(team_1_ranking)
             team_1_ranking.first().recalculate_wl_sf()
         
         team_2_ranking = EventRanking_H2H.objects.filter(team=self.team_2, event=self.event)
@@ -1839,7 +1837,6 @@ class EventRanking_H2H(models.Model):
         if (self.wins + self.ties + self.losses) > 0:
             win_rate = (self.wins + (0.5 * self.ties)) / (self.wins + self.ties + self.losses)
         else:
-            print('here')
             win_rate = 0
 
         return win_rate
@@ -1955,14 +1952,26 @@ class BracketMatchup(Competition_H2H_Base):
 
         if self == self.bracket.championship.left:
             self.winner_node.team_1 = self.winner
-            self.winner_node.team_1_seed = self.team_1_seed
             self.loser_node.team_1 = self.loser
-            self.loser_node.team_1_seed = self.team_1_seed
+
+            if self.winner == self.team_1:
+                self.winner_node.team_1_seed = self.team_1_seed
+                self.loser_node.team_1_seed = self.team_2_seed
+            else:
+                self.winner_node.team_1_seed = self.team_2_seed
+                self.loser_node.team_1_seed = self.team_1_seed
         else:
             self.winner_node.team_2 = self.winner
-            self.winner_node.team_2_seed = self.team_2_seed
             self.loser_node.team_2 = self.loser
-            self.loser_node.team_2_seed = self.team_2_seed
+
+            if self.winner == self.team_1:
+                self.winner_node.team_2_seed = self.team_1_seed
+                self.loser_node.team_2_seed = self.team_2_seed
+            else:
+                self.winner_node.team_2_seed = self.team_2_seed
+                self.loser_node.team_2_seed = self.team_1_seed
+
+
 
 
         self.winner_node.save()

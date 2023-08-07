@@ -1191,7 +1191,8 @@ class Event_H2H(EventAbstactBase):
         self.save()
 
     def _set_event_rankings_final(self, final_rankings):
-        self._set_rankings_and_points(final_rankings)
+        final_rankings = self._set_rankings_and_points(final_rankings)
+        EventRanking_H2H.objects.bulk_update(final_rankings, ['rank', 'points'])
         self.event_h2h_event_rankings.all().update(is_final=True)
 
     def _update_overall_rankings(self):
@@ -1201,7 +1202,7 @@ class Event_H2H(EventAbstactBase):
                 event=self,
                 team=ranking.team
             )
-            print(event_ranking)
+
             if event_ranking.rank <= 3:
                 ranking.event_podiums += 1
             if event_ranking.rank == 1:
@@ -1584,6 +1585,8 @@ class Competition_H2H_Base(models.Model):
 
 
     def admin_end(self, team_1_score, team_2_score):
+        team_1_score = float(team_1_score)
+        team_2_score = float(team_2_score)
         self.team_1_score = team_1_score
         self.team_2_score = team_2_score
 
@@ -1600,8 +1603,8 @@ class Competition_H2H_Base(models.Model):
 
 
     def end(self, team_1_score, team_2_score):
-        self.team_1_score = team_1_score
-        self.team_2_score = team_2_score
+        self.team_1_score = float(team_1_score)
+        self.team_2_score = float(team_2_score)
 
         winner, loser = self.determine_winner(team_1_score, team_2_score)
 
@@ -1639,12 +1642,20 @@ class Competition_H2H_Base(models.Model):
         self.save()
 
     def determine_winner(self, team_1_score, team_2_score):
+        print(team_1_score)
+        print(type(team_1_score))
+        print(team_2_score)
+        print(type(team_2_score))
+        print(team_1_score > team_2_score)
+
         if team_1_score == team_2_score:
             winner, loser = None, None
+
         elif (team_1_score > team_2_score) == self.event.is_high_score_wins:
             winner, loser = self.team_1, self.team_2
         else:
             winner, loser = self.team_2, self.team_1
+
         
         return winner, loser
     

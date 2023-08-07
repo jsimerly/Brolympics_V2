@@ -436,7 +436,22 @@ class UpdateCompH2h(APIView):
 
 
 class UpdateCompTeam(APIView):
-    pass
+    def put(self, request):
+        comp_uuid = request.data.get('uuid')
+        print(comp_uuid)
+        comp = get_object_or_404(Competition_Team, uuid=comp_uuid)
+
+        if request.user != comp.event.brolympics.league.league_owner:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        
+        team_score = request.data.get('team_score')
+
+        if team_score == '' or team_score is None:
+            return Response({'error':'Must enter a score for player 1.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+        comp.admin_end(team_score)
+        return Response(status=status.HTTP_200_OK)
+        
     
 
 ## Delete ##

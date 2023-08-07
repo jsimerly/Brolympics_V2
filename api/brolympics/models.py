@@ -478,7 +478,7 @@ class Event_Team(EventAbstactBase):
                 event=self,
                 team=ranking.team
             )
-            if event_ranking.rank >= 3:
+            if event_ranking.rank <= 3:
                 ranking.event_podiums += 1
             if event_ranking.rank == 1:
                 ranking.event_wins += 1
@@ -693,7 +693,7 @@ class Event_IND(EventAbstactBase):
                 event=self,
                 team=ranking.team
             )
-            if event_ranking.rank >= 3:
+            if event_ranking.rank <= 3:
                 ranking.event_podiums += 1
             if event_ranking.rank == 1:
                 ranking.event_wins += 1
@@ -1194,7 +1194,7 @@ class Event_H2H(EventAbstactBase):
                 event=self,
                 team=ranking.team
             )
-            if event_ranking.rank >= 3:
+            if event_ranking.rank <= 3:
                 ranking.event_podiums += 1
             if event_ranking.rank == 1:
                 ranking.event_wins += 1
@@ -1356,6 +1356,22 @@ class Competition_Team(models.Model):
         self.team.end_comp()
         self.is_active = False
         self.save()
+
+    def admin_end(self, team_score):
+        team_score = float(team_score)
+
+        self.team_score = team_score
+        self.is_active = False
+        self.is_complete = True
+
+        self.team.end_comp()
+        self.save()
+
+        team_ranking = EventRanking_Team.objects.get(event=self.event, team=self.team)
+        team_ranking.update_scores()
+
+        self.event.update_event_rankings_team()
+        self.event.check_for_completion()
 
     def end(self, team_score):
         self.end_time = timezone.now()

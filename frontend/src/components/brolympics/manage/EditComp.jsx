@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { fetchAllCompData, fetchUpdateH2hComp, fetchUpdateIndComp } from "../../../api/activeBro/fetchAdmin";
+import { fetchAllCompData, fetchUpdateH2hComp, fetchUpdateIndComp, fetchUpdateTeamComp } from "../../../api/activeBro/fetchAdmin";
 import { useParams } from 'react-router-dom';
 import { useNotification } from '../../Util/Notification';
 
@@ -124,14 +124,30 @@ const IndComp = ({team, player_1_score, player_2_score, uuid}) => {
 
 
 const TeamComp = ({team, team_score, uuid}) => {
+  const {showNotification} = useNotification()
+  const [compData, setCompData] = useState({
+    uuid: uuid,
+    team_score: team_score
+  })
+  const handleTeamScoreChange = (e) => setCompData({...compData, team_score: e.target.value})
+  
   const handleUpdateClicked = async () => {
-    
+    const response = await fetchUpdateTeamComp(compData)
+    if (response.ok){
+      showNotification('This competition has been updated', '!border-primary')
+    } else {
+      showNotification('There was an error when attemping to update this competition.')
+    }
   }
   return(
     <div className="flex items-center justify-between p-2 border rounded-md">
       <div>
-        {team}: 
-        <input value={team_score} className='p-2 rounded-md w-[60px] border ml-1'/>
+        {team.name}: 
+        <input 
+          value={team_score} 
+          onChange={handleTeamScoreChange}
+          className='p-2 rounded-md w-[60px] border ml-1'
+        />
       </div>
       <button 
         className='px-2 py-1 text-white rounded-md bottom-2 right-2 bg-primary'

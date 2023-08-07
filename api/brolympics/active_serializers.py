@@ -286,8 +286,11 @@ class EventPageSerializer_team(EventRankingPageSerailzier_AbstractBase):
             score = obj.team_avg_score
         else:
             score = obj.team_total_score
-        print(round(score, obj.get_decimal_value()))
-        return round(score, obj.get_decimal_value())
+
+        if score is None:
+            return None
+
+        return round(score, obj.event.get_decimal_value())
         
 
 class BracketMatchupSerializer(serializers.ModelSerializer):

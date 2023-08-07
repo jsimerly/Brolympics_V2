@@ -313,13 +313,17 @@ class BracketMatchupSerializer(serializers.ModelSerializer):
 
 
 class BracketSerializer(serializers.ModelSerializer):
+    event = serializers.SerializerMethodField()
     match_1 = serializers.SerializerMethodField()
     match_2 = serializers.SerializerMethodField()
     championship = BracketMatchupSerializer()
     loser_bracket_finals = BracketMatchupSerializer()
     class Meta:
         model = Bracket_4
-        fields = ['championship', 'loser_bracket_finals', 'is_complete', 'uuid', 'match_1', 'match_2', 'is_active']
+        fields = ['championship', 'loser_bracket_finals', 'is_complete', 'uuid', 'match_1', 'match_2', 'is_active','event']
+
+    def get_event(self, obj):
+        return obj.event.name
 
     def get_match_1(self, obj):
         match_serailizer = BracketMatchupSerializer(obj.championship.left, context=self.context)

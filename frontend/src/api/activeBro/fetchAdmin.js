@@ -127,3 +127,22 @@ export async function fetchBracketData(bro_uuid){
         throw (error)
     }
 }
+
+export async function fetchUpdateBracketMatch(data){
+    try{
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/update-bracket-comp/`,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+            body: JSON.stringify(data),
+        })
+
+        return response
+
+    } catch (error) {
+        throw (error)
+    }
+}

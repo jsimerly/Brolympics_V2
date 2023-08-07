@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from brolympics.models import *
 from brolympics.serializers import *
-from brolympics.active_serializers import EventCompSerailizer_h2h, EventCompSerailizer_ind, EventCompSerailizer_Team
+from brolympics.active_serializers import EventCompSerailizer_h2h, EventCompSerailizer_ind, EventCompSerailizer_Team, BracketSerializer
 import base64
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
@@ -316,6 +316,22 @@ class GetAllCompData(APIView):
         }
 
         return Response(data, status=status.HTTP_200_OK)
+    
+class GetBracketData(APIView):
+    def get(self, request, uuid):
+        brolympics = get_object_or_404(Brolympics, uuid=uuid)
+        if request.user != brolympics.league.league_owner:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        
+        h2h_events = Event_H2H.objects.filter(
+            Q(is_active=True) | Q(is_complete=True),
+            brolympics=brolympics
+        )
+        
+        brackets = Bracket_4.objects.filter(event__in=h2h_events)
+        bracket_data = BracketSerializer(brackets, many=True).data
+
+        return Response(bracket_data, status=status.HTTP_200_OK)
 
 
 
@@ -451,7 +467,30 @@ class UpdateCompTeam(APIView):
     
         comp.admin_end(team_score)
         return Response(status=status.HTTP_200_OK)
+    
+
+class UpdateBracketComp(APIView):
+    def put(self, request):
+        print(request.data)
+        comp_uuid = request.data.get('uuid')
+        comp = get_object_or_404(BracketMatchup, uuid=comp_uuid)
+
+        if request.user != comp.event.brolympics.league.league_owner:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        team_1_score = request.data.get('team_1_score')
+        team_2_score = request.data.get('team_2_score')
+
+        if team_1_score == '' or team_1_score is None:
+            return Response({'error':'Must enter a score for team 1.'}, status=status.HTTP_400_BAD_REQUEST)
         
+        if team_2_score == '' or team_2_score is None:
+            return Response({'error':'Must enter a score for team 2.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        comp.end(team_1_score, team_2_score)
+        
+        return Response(status=status.HTTP_200_OK)
+
     
 
 ## Delete ##

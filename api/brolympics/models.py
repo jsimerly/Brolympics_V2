@@ -1935,8 +1935,10 @@ class BracketMatchup(Competition_H2H_Base):
             super().start()
         else:
             raise ValueError('Bracket is not active yet.')
-
+        
     def end(self, team_1_score, team_2_score):
+        team_1_score = float(team_1_score)
+        team_2_score = float(team_2_score)
         if team_1_score == team_2_score:
             raise Exception
 

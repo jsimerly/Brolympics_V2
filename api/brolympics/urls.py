@@ -16,6 +16,7 @@ urlpatterns = [
     path('upcoming/', GetUpcoming.as_view(), name='get_upcoming'),
     path('league-teams/<uuid:uuid>', GetLeagueTeams.as_view(), name='league_teams'),
     path('all-comp-data/<uuid:uuid>', GetAllCompData.as_view(), name='get_comp_data'),
+    path('bracket-data/<uuid:uuid>', GetBracketData.as_view(), name='bracket_data'),
     
     #Update
     path('update-brolympics/', UpdateBrolympics.as_view(), name='update_event'),
@@ -23,6 +24,7 @@ urlpatterns = [
     path('update-comp-h2h/', UpdateCompH2h.as_view(), name='update_comp_h2h'),
     path('update-comp-ind/', UpdateCompInd.as_view(), name='update_comp_ind'),
     path('update-comp-team/', UpdateCompTeam.as_view(), name='updated_comp_team'),
+    path('update-bracket-comp/', UpdateBracketComp.as_view(), name='update_bracket_comp'),
 
 
     #Delete

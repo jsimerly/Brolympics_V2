@@ -58,6 +58,7 @@ const Brolympics = () => {
 
         if (response.ok){
           const data = await response.json()
+          console.log(data)
           if (!data.is_available){
             if (activeComp.is_available){
               setActiveComp(data)

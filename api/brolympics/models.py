@@ -6,6 +6,7 @@ from django.db.models import Q, Avg, Sum
 from uuid import uuid4
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.db import transaction
 
 User = get_user_model()
 
@@ -1115,8 +1116,12 @@ class Event_H2H(EventAbstactBase):
         uncompleted = Competition_H2H.objects.filter(event=self, is_complete=False)
         if uncompleted.count() == 0:
             self.is_round_robin_complete = True
-            self.update_event_rankings_h2h()
-            self._update_bracket()
+            self.bracket_4.is_active = True
+
+            with transaction.atomic():
+                self.update_event_rankings_h2h()
+                self._update_bracket()
+
             self.save()
             return True
         return False
@@ -1124,6 +1129,7 @@ class Event_H2H(EventAbstactBase):
 
     def _update_bracket(self):
         top_4_rankings = self.event_h2h_event_rankings.all().order_by('rank')[:self.n_bracket_teams]
+        print(top_4_rankings)
         self.bracket_4.update_teams(top_4_rankings)
         
     ## End of Life Cycle ##
@@ -1471,12 +1477,13 @@ class Competition_H2H_Base(models.Model):
     
 
     def start(self):
+        print('oop')
         if not self.team_1.is_available:
             raise ValueError(f"{self.team_1.name} is not currently available")
         
         if not self.team_2.is_available:
             raise ValueError(f"{self.team_2.name} is not currently available")
-        
+        print('got to here')
         self.team_1.start_comp()
         self.team_2.start_comp()
 
@@ -1845,6 +1852,8 @@ class BracketMatchup(Competition_H2H_Base):
     def start(self):
         if self.bracket.is_active:
             super().start()
+        else:
+            raise ValueError('Bracket is not active yet.')
 
     def end(self, team_1_score, team_2_score):
         if team_1_score == team_2_score:
@@ -1943,8 +1952,8 @@ class Bracket_4(models.Model):
         two_three = BracketMatchup.objects.create(
             bracket=self,
             event=self.event,
-            team_1_seed=2, 
-            team_2_seed=3,
+            team_1_seed=3, 
+            team_2_seed=2,
             winner_node=championship,
             loser_node=loser_bracket_finals
         )
@@ -1975,6 +1984,8 @@ class Bracket_4(models.Model):
         self.championship.right.save()
         self.save()
         
+    def __str__(self):
+        return self.event.name + ' Bracket'
 
     
 

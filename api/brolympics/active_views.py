@@ -264,7 +264,7 @@ class StartCompetition(APIView):
 
         comp = self.get_object(comp_uuid, comp_type)
         comp.start()
-
+        
         return Response({'comp_uuid': comp_uuid}, status=status.HTTP_200_OK)
     
 class IsInCompetition(APIView):

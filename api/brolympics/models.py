@@ -1603,8 +1603,10 @@ class Competition_H2H_Base(models.Model):
 
 
     def end(self, team_1_score, team_2_score):
-        self.team_1_score = float(team_1_score)
-        self.team_2_score = float(team_2_score)
+        team_1_score = float(team_1_score)
+        team_2_score = float(team_2_score)
+        self.team_1_score = team_1_score
+        self.team_2_score = team_2_score
 
         winner, loser = self.determine_winner(team_1_score, team_2_score)
 
@@ -1642,12 +1644,6 @@ class Competition_H2H_Base(models.Model):
         self.save()
 
     def determine_winner(self, team_1_score, team_2_score):
-        print(team_1_score)
-        print(type(team_1_score))
-        print(team_2_score)
-        print(type(team_2_score))
-        print(team_1_score > team_2_score)
-
         if team_1_score == team_2_score:
             winner, loser = None, None
 

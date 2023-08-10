@@ -296,12 +296,14 @@ class TeamRankingsSerializer_Team(serializers.ModelSerializer):
 
 h2h_comp_fields = [
     'event', 'team_1', 'team_2', 'team_1_score', 'team_2_score',
-    'winner', 'loser', 'start_time', 'end_time', 'is_complete', 'uuid', 'is_active', 'is_bracket', 'type'
+    'winner', 'loser', 'start_time', 'end_time', 'is_complete', 'uuid', 'is_active', 'is_bracket', 'type', 'team_1_record', 'team_2_record'
 ]         
 
 class BaseCompetitionSerializer(serializers.ModelSerializer):
     team_1 = TeamSerializer()
+    team_1_record = serializers.SerializerMethodField()
     team_2 = TeamSerializer()
+    team_2_record = serializers.SerializerMethodField()
     winner = TeamSerializer()
     loser = TeamSerializer()
     event = serializers.SerializerMethodField()
@@ -309,6 +311,24 @@ class BaseCompetitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Competition_H2H
         fields = [] + h2h_comp_fields
+
+    def get_team_1_record(self, obj):
+        ranking = EventRanking_H2H.objects.filter(team=obj.team_1, event=obj.event)
+        record = None
+        if ranking.exists():
+            ranking = ranking.first()
+            record = f'{ranking.wins}-{ranking.losses}'
+            record += f'-{ranking.ties}' if ranking.ties != 0 else ''
+        return record
+    
+    def get_team_2_record(self, obj):
+        ranking = EventRanking_H2H.objects.filter(team=obj.team_2, event=obj.event)
+        record = None
+        if ranking.exists():
+            ranking = ranking.first()
+            record = f'{ranking.wins}-{ranking.losses}'
+            record += f'-{ranking.ties}' if ranking.ties != 0 else ''
+        return record
 
     def to_representation(self, instance):
         self.fields['team_1'].context.update(self.context)

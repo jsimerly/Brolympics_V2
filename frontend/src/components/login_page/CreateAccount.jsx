@@ -128,7 +128,7 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
                     Create
                 </button>
                 <div className="text-[12px]">
-                    By creating your account, you agree to our <a href='/terms-and-conditions' className="underline">Terms and Conditions</a> and our <a href='/privacy' className="underline">Privacy Policy</a>.
+                    By creating your account, you agree to our <a href='/terms-and-conditions' className="underline">Terms and Conditions</a> and agree to allow Brolympic to send you SMS messages.
                 </div>
             </div>
         </div>

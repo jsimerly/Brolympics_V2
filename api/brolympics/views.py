@@ -491,9 +491,8 @@ class UpdateTeamImage(APIView):
         img = convert_to_img_file(img_b64)
 
         team = get_object_or_404(Team, uuid=team_uuid)
-        print(team)
+
         if request.user != team.player_1 and request.user != team.player_2 and request.user != team.brolympics.league.league_owner:
-            print('here')
             raise PermissionDenied("You do not have permission to remove this player from this team.")
 
         team.img = img

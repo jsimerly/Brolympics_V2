@@ -26,7 +26,17 @@ const EventDropdown = ({events}) => {
     }
   
     const [isOpen, setIsOpen, handleDropdownClicked, dropdownNode] = useDropdown()
+    console.log(events)
 
+    const getEventText = (event) => {
+      if (event.is_active){
+        return 'text-white'
+      } else if (event.is_complete){
+        return 'text-primaryLight'
+      } else {
+        return 'text-neutralLight'
+      }
+    }
   return (
     <div className='relative flex flex-col items-center justify-center w-full py-3 '>
         <div>
@@ -52,7 +62,7 @@ const EventDropdown = ({events}) => {
                     <div key={index+'_divider'} className='w-full bg-gray-200 h-[1px]'/>}                
                     <li 
                       key={index+'_event'} 
-                      className='text-[16px] py-2'
+                      className={`text-[16px] py-2 ${getEventText(event)}`}
                       onClick={() => handleSelect(event)}
                     >
                       {event.name}

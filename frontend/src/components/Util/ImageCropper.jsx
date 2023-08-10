@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react'
 import Cropper from 'react-easy-crop'
 
 
-const ImageCropper = ({ img, setCroppedImage }) => {
+const ImageCropper = ({ img, setCroppedImage, handleCloseCropper }) => {
   const [crop, setCrop] = useState({x:0, y:0})
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
@@ -23,7 +23,7 @@ const ImageCropper = ({ img, setCroppedImage }) => {
 
 
   return (
-    <div className='fixed top-0 left-0 flex flex-col w-full h-full'>
+    <div className='fixed top-0 left-0 z-50 flex flex-col w-full h-full'>
       <Cropper
         image={img}
         crop={crop}
@@ -34,12 +34,21 @@ const ImageCropper = ({ img, setCroppedImage }) => {
         onZoomChange={setZoom}
       />
       <div className='flex items-center justify-center w-full'>
-        <button 
-          className='absolute z-20 w-1/2 p-2 font-bold text-white rounded-md bottom-20 bg-primary'
-          onClick={handleCrop}
-        > 
-          Crop 
-        </button>
+        <div className='absolute z-20 flex justify-center w-full gap-3 px-3 bottom-20'>
+          <button 
+            className='w-1/2 font-bold bg-white border rounded-md text-neutralDark border-errorRed'
+            onClick={handleCloseCropper}
+          >
+            Cancel
+          </button>
+        
+          <button 
+            className='w-1/2 p-2 font-bold text-white rounded-md bg-primary'
+            onClick={handleCrop}
+          > 
+            Crop 
+          </button>
+        </div>
       </div>
     </div>
 

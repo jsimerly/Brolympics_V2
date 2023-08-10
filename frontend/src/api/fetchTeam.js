@@ -68,3 +68,24 @@ export async function fetchRemovePlayer(player_uuid, team_uuid){
     }
 }
 
+export async function fetchUpdateTeamImage(img, team_uuid){
+    const data = {
+        uuid: team_uuid,
+        img: img
+    }
+    try{
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/brolympics/update-team-image/`,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+            body: JSON.stringify(data),
+        })
+
+        return response
+    } catch (error) {
+        throw (error)
+    }
+}

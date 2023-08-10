@@ -155,9 +155,7 @@ class CreateSingleTeam(APIView):
         if serializer.is_valid():
             join_team = request.data.get('user_join')
             team = serializer.save()
-            print(join_team)
             if join_team:
-                print('adding?')
                 team.add_player(request.user)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -356,12 +354,10 @@ class UpdateBrolympics(APIView):
             
         serializer = BrolympicsCreateSerializer(brolympics, data=data, partial=True)
 
-        print(data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
 
 class UpdateEvent(APIView):
@@ -392,7 +388,6 @@ class UpdateEvent(APIView):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
-                print(serializer.errors)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         elif event_type == 'team':
@@ -454,7 +449,6 @@ class UpdateCompH2h(APIView):
 class UpdateCompTeam(APIView):
     def put(self, request):
         comp_uuid = request.data.get('uuid')
-        print(comp_uuid)
         comp = get_object_or_404(Competition_Team, uuid=comp_uuid)
 
         if request.user != comp.event.brolympics.league.league_owner:
@@ -471,7 +465,6 @@ class UpdateCompTeam(APIView):
 
 class UpdateBracketComp(APIView):
     def put(self, request):
-        print(request.data)
         comp_uuid = request.data.get('uuid')
         comp = get_object_or_404(BracketMatchup, uuid=comp_uuid)
 
@@ -491,7 +484,23 @@ class UpdateBracketComp(APIView):
         
         return Response(status=status.HTTP_200_OK)
 
-    
+class UpdateTeamImage(APIView):
+    def put(self, request):
+        team_uuid = request.data.get('uuid')
+        img_b64 = request.data.get('img')
+        img = convert_to_img_file(img_b64)
+
+        team = get_object_or_404(Team, uuid=team_uuid)
+        print(team)
+        if request.user != team.player_1 and request.user != team.player_2 and request.user != team.brolympics.league.league_owner:
+            print('here')
+            raise PermissionDenied("You do not have permission to remove this player from this team.")
+
+        team.img = img
+        team.save()
+
+        return Response(status=status.HTTP_200_OK)
+
 
 ## Delete ##
 

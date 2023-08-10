@@ -10,6 +10,8 @@ import CopyWrapper from '../../Util/CopyWrapper.jsx';
 import { useParams } from 'react-router-dom';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import ImageCropper, {readImageFile} from '../../Util/ImageCropper.jsx';
+import { fetchUpdateTeamImage } from '../../../api/fetchTeam.js';
+import { useNotification } from '../../Util/Notification.jsx';
 
 const EventCard = ({name, projected_end_date, projected_start_date, n_matches, n_bracket_teams, n_competitions}) => {
 
@@ -30,6 +32,37 @@ const OwnTeamCard = ({name, img, player_1, player_2, uuid}) => {
   const [editOpen, setEditOpen] = useState(false)
   const [teamName, setTeamName] = useState(name)
   const handleTeamNameChange = (e) => setTeamName(e.target.value)
+  const {showNotification} = useNotification()
+
+  const [imgSrc, setImgSrc] = useState(null)
+  const [savedImg, setSavedImg] = useState(img)
+  const [cropping, setCropping] = useState(false)
+
+  const handleImageUpload = async (e) => {
+    if (e.target.files && e.target.files.length > 0){
+      const file = e.target.files[0]
+      let imageDataUrl = await readImageFile(file);
+
+      setImgSrc(imageDataUrl)
+      setCropping(true)
+    }
+  }
+
+  const setCroppedImage = async (croppedImage) => {
+    setSavedImg(croppedImage)
+    setCropping(false)
+
+    const response = await fetchUpdateTeamImage(croppedImage, uuid)
+    if (response.ok){
+      showNotification("Your team's image has been udpated.", '!border-primary')
+    } else {
+      showNotification("There was an issue when trying to upload your image. Please make sure your image is below 500kb.")
+    }
+  }
+
+  const handleCloseCropper = () => {
+    setCropping(false)
+  }
 
   const get_name_size = (name) => {
     if (name) {
@@ -52,6 +85,7 @@ const OwnTeamCard = ({name, img, player_1, player_2, uuid}) => {
   const [popupTeamOpen, setPopupTeamOpen] = useState(false)
   const [popupPlayerOpen, setPopupPlayerOpen] = useState(false)
   const [removePlayer, setRemovePlayer] = useState()
+
 
   const onRemovePlayer = (player) => {
     setRemovePlayer(player)
@@ -79,7 +113,33 @@ const OwnTeamCard = ({name, img, player_1, player_2, uuid}) => {
  
   return (
     <div className='relative flex items-center w-full gap-3 p-3 border rounded-md border-primary'>
-      <img src={img} className='rounded-md w-[80px] h-[80px]'/>
+      <input
+        type='file'
+        accept='image/*'
+        id='file_team'
+        onChange={handleImageUpload}
+        hidden
+      />
+      <label
+        htmlFor='file_team'
+        className='inline-flex bg-white rounded-md cursor-pointer'        
+      >
+        {savedImg ? 
+          <img src={savedImg} className='rounded-md w-[80px] h-[80px]'/>
+          :
+          <div className='w-[100px] h-[100px] rounded-md flex items-center justify-center'>
+            <CameraAltIcon className='bg-white w-[100px] text-neutral' sx={{fontSize:60}}/>
+          </div>
+        }
+      </label>
+      {cropping &&
+        <ImageCropper
+          img={imgSrc}
+          setCroppedImage={setCroppedImage}
+          handleCloseCropper={handleCloseCropper}
+        />
+      }
+      
       {editOpen ?
         <div className=''>
           <div className='relative'>

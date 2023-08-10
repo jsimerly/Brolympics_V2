@@ -25,6 +25,7 @@ urlpatterns = [
     path('update-comp-ind/', UpdateCompInd.as_view(), name='update_comp_ind'),
     path('update-comp-team/', UpdateCompTeam.as_view(), name='updated_comp_team'),
     path('update-bracket-comp/', UpdateBracketComp.as_view(), name='update_bracket_comp'),
+    path('update-team-image/', UpdateTeamImage.as_view(), name='update_team_img'),
 
 
     #Delete

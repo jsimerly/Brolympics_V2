@@ -39,7 +39,23 @@ const Team = ({teams, default_uuid}) => {
   
  
 
-  const TeamInfo = ({team, player_1, player_2}) => (
+  const TeamInfo = ({team, player_1, player_2}) => {
+    const getOrdinalSuffix = (number) => {
+      let suffix = '';
+      if (number % 100 >= 11 && number % 100 <= 13) {
+          suffix = 'th';
+      } else {
+          switch (number % 10) {
+              case 1: suffix = 'st'; break;
+              case 2: suffix = 'nd'; break;
+              case 3: suffix = 'rd'; break;
+              default: suffix = 'th'; break;
+          }
+      }
+      return suffix;
+  }
+  
+    return (
     <div className="flex items-center justify-center w-full gap-3 px-6">
       <div className="flex flex-col items-center justify-center w-full p-3 border rounded-md border-primary">
         <div className="flex justify-around w-3/4 py-3 pb-6">
@@ -49,33 +65,34 @@ const Team = ({teams, default_uuid}) => {
         <div className="flex justify-center w-full gap-6">
           <div className="flex">
             <NumbersOutlinedIcon className="text-primary"/>
-            <span className="text-[16px] font-bold pl-3">
-              {team.overall_ranking.rank}st   
+            <span className="text-[16px] font-bold pl-3 flex">
+              {team.overall_ranking?.rank}<span className="text-[10px] flex items-start ml-[1px] mt-[2px]">{getOrdinalSuffix(team.overall_ranking?.rank)}</span> 
             </span>
           </div>
           <div className="flex">
             <DiamondOutlinedIcon className="text-primary"/>
             <span className="text-[16px] font-bold pl-3">
-              {team.overall_ranking.total_points} pts   
+              {team.overall_ranking?.total_points} pts   
             </span>
           </div>
           <div className="flex">
             <EmojiEventsOutlinedIcon className="text-primary"/>
             <span className="text-[16px] font-bold pl-3">
-              {team.overall_ranking.event_wins}
+              {team.overall_ranking?.event_wins}
             </span>
           </div>
           <div className="flex">
             <LeaderboardOutlinedIcon className="text-primary"/>
             {/* <img src={Podium} className="text-white h-[26px] w-[26px]"/> */}
             <span className="text-[16px] font-bold pl-3">
-              {team.overall_ranking.event_podiums}
+              {team.overall_ranking?.event_podiums}
             </span>
           </div>
         </div>
       </div>
     </div>
   )
+}
 
   const getEventComponent = (type, props) => {
     switch (type) {

@@ -14,7 +14,6 @@ const BracketConnection = ({match1, match2}) => (
 )
 
 const Bracket = ({championship, loser_bracket_finals, match_1, match_2, is_active, is_complete}) => {
-    console.log(loser_bracket_finals.winner.name)
   return (
     <div className="px-6 pb-6 overflow-auto">
         <div className="flex items-center gap-2">

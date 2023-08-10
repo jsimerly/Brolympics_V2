@@ -167,7 +167,7 @@ const ManageBro = ({name, startDate, endDate, img}) => {
             className='flex p-2 bg-white border rounded-md'
           >
             <CopyWrapper copyString={`https://brolympic.com/invite/brolympics/${uuid}`}>
-                <span className='flex flex-1'>https://brolympic.com/invite/brolympics/{uuid}</span>
+                <span className='text-[12px]'>https://brolympic.com/invite/brolympics/{uuid}</span>
             </CopyWrapper>
           </div>
         </div>

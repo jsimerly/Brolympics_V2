@@ -10,7 +10,7 @@ import { useNotification } from '../Util/Notification';
 import { setCookie } from '../../api/cookies.js'
 
 
-const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) => {
+const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber}) => {
     const {login, setCurrentUser} = useContext(AuthContext)
     const { showNotification } = useNotification()
 
@@ -42,12 +42,15 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) =>
 
         if (response.ok){
             const data = await response.json()
-
+            console.log(data)
             setCurrentUser(data)
             setCookie('access_token', data.access, 60);
             setCookie('refresh_token', data.refresh, 60 * 24 * 30);
+            const endPath = sessionStorage.getItem('returnPath')
+
             if (endPath){
                 navigate(endPath)
+                sessionStorage.setItem('returnPath', '/')
             } else {
                 navigate('/')
             }
@@ -87,9 +90,9 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber, endPath}) =>
             >
                 Login
             </button>
-            <a onClick={()=> navigate('/reset-info')}>
+            <button onClick={()=> showNotification("Reseting password is currently not working. Please text Jacob to resolve this.")}>
                 <p className="underline text-[12px] pt-5 pb-7">I've Forgotten My Password</p>
-            </a>
+            </button>
         </div>
   )
 }

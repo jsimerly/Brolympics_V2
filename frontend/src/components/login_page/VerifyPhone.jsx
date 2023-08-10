@@ -32,15 +32,27 @@ const VerifyPhone = ({route, navigation}) => {
   }
 
   const location = useLocation()
-  const {phoneNumber, firstName, lastName, password, endPath} = location.state
+  const {phoneNumber, firstName, lastName, password} = location.state
   
   const verifyCode = async () => {
-    console.log(phoneNumber)
     const response = await fetchVerifyPhone(phoneNumber, firstName, lastName, password, code.join(''))
+    
     if (response.ok){
-      navigate(endPath)
+      const data = await response.json()
+
+      setCurrentUser(data)
+      setCookie('access_token', data.access, 60);
+      setCookie('refresh_token', data.refresh, 60 * 24 * 30);
+      const endPath = sessionStorage.getItem('returnPath')
+
+      if (endPath){
+          navigate(endPath)
+          sessionStorage.setItem('returnPath', '/')
+      } else {
+          navigate('/')
+      }
     } else {
-      //throw error message
+      showNotification("We ran into an issue while trying to authenticate.")
     }
   }
   

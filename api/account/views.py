@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from account.serializers import CreateUserSerializer, UserSerializer
 from account.twillio import send_verification_code, check_verification_code, reset_password_sms
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
@@ -50,7 +50,14 @@ class CheckPhoneVerification(APIView):
                     last_name=last_name,
                 )
 
-            return Response(status=status.HTTP_201_CREATED)
+                # Generate JWT tokens for the created user
+                refresh = RefreshToken.for_user(user)
+                access_token = str(refresh.access_token)
+                
+                return Response({
+                    'refresh': str(refresh),
+                    'access': access_token,
+                }, status=status.HTTP_201_CREATED)
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
     

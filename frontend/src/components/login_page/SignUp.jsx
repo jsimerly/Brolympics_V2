@@ -8,11 +8,16 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const SignUp = ({endPath='/'}) => {
+const SignUp = ({endPath}) => {
     const [currentPage, setCurrentPage] = useState('createAccount')
     const { currentUser } = useContext(AuthContext)
     const navigate = useNavigate()
+    
+    if (endPath){
+      sessionStorage.setItem('returnPath', endPath)
+    }
 
+    
     useEffect(()=>{
       if (currentUser){
         navigate('/')
@@ -64,8 +69,8 @@ const SignUp = ({endPath='/'}) => {
       </div>
       <div className={`transition ease-in-out duration-200 flex relative
       ${currentPage === 'createAccount' ? 'translate-x-0' : 'transform -translate-x-full'}`}>
-            <CreateAccount {...userState} endPath={endPath}/>
-            <LogIn {...userState} endPath={endPath}/> 
+            <CreateAccount {...userState}/>
+            <LogIn {...userState}/> 
       </div>
     </div>
   );

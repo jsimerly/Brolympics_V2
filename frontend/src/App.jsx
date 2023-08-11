@@ -37,7 +37,7 @@ function App() {
     },[currentUser])
 
   return (
-    <div className='min-h-screen text-white bg-neutral'>
+    <div className='min-h-screen text-white bg-neutral max-h-[800px] max-w-[600px]'>
       <Navbar leagues={leagues}/>
       {notification.show &&
         <Notification

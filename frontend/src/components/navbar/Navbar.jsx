@@ -21,7 +21,7 @@ const Navbar = ({leagues}) => {
 
   return (
     <>
-        <div className='fixed h-[60px] z-20 bg-neutralDark text-white w-full flex justify-between items-center px-3'>
+        <div className='fixed h-[60px] z-20 bg-neutralDark text-white w-full flex justify-between items-center px-3 max-w-[600px]'>
             <div 
                 className=''
                 onClick={menuClick}

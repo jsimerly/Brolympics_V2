@@ -83,13 +83,13 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
     }
     
   return (
-        <div className="flex flex-col items-center justify-end min-h-[calc(100vh-140px)] px-6 w-screen absolute">
+        <div className="flex flex-col items-center justify-end min-h-[calc(100vh-140px)] px-6 absolute">
             <div className="flex flex-1 w-full">
-                <img src={createImg} className="object-fill w-full h-full"/>
+                <img src={createImg} className="h-full "/>
             </div>
             <h2 className="text-[20px] font-bold">Create Your Account</h2>
             <div className="flex flex-col items-center justify-center gap-4 py-4">
-                <div className="flex flex-row justify-between w-full gap-2">
+                <div className="flex flex-row w-full gap-2">
                     <input
                         className={`w-1/2 border border-gray-200 rounded-md pl-2 outline-neutral p-2 ${firstNameError? 'border-errorRed' : null}`}
                         placeholder="First Name"

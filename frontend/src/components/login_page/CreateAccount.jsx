@@ -83,9 +83,9 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
     }
     
   return (
-        <div className="flex flex-col items-center justify-end min-h-[calc(100vh-140px)] px-6 absolute">
-            <div className="flex flex-1 w-full">
-                <img src={createImg} className="h-full "/>
+        <div className="flex flex-col items-center justify-end min-h-[calc(100vh-140px)] px-6 absolute w-full">
+            <div className="flex items-center flex-1">
+                <img src={createImg} className="max-h-[600px] max-w-screen"/>
             </div>
             <h2 className="text-[20px] font-bold">Create Your Account</h2>
             <div className="flex flex-col items-center justify-center gap-4 py-4">

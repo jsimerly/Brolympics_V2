@@ -64,36 +64,40 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber}) => {
   return (
         <div className="flex flex-col items-center justify-end h-[calc
 (100vh-140px)] px-6 absolute translate-x-[100%] w-full">
-            <div className="flex items-center flex-1 w-full">
-                <img src={loginImg} className='w-full h-full'/>
+            <div className="flex items-center flex-1">
+                <img src={loginImg} className='max-h-[600px] max-w-screen'/>
             </div>
             <h2 className="text-[20px] font-bold">Sign-In</h2>
-            <div className="flex flex-col w-full gap-4 py-4">
-                <div className="w-full">
-                    <PhoneNumberInput 
-                        value={phoneNumber}
-                        onChange={handlePhoneNumberChange}
-                        error={phoneNumberError}
-                    />
+            <div className='max-w-[580px] w-full'>
+                <div className="flex flex-col w-full gap-4 py-4">
+                    <div className="w-full">
+                        <PhoneNumberInput 
+                            value={phoneNumber}
+                            onChange={handlePhoneNumberChange}
+                            error={phoneNumberError}
+                        />
+                    </div>
+                    <div className="relative">
+                        <PasswordInput
+                            value={password}
+                            onChange={handlePasswordChange}
+                            error={passwordError}
+                        />
+                    </div>
                 </div>
-                <div className="relative">
-                    <PasswordInput
-                        value={password}
-                        onChange={handlePasswordChange}
-                        error={passwordError}
-                    />
-                </div>
+                <ErrorMessages errorMessages={errorMessages}/>
+                <button 
+                    className="w-full p-3 font-bold text-white rounded-md bg-primary"
+                    onClick={handleSignIn}
+                >
+                    Login
+                </button>
+                <button 
+                    className='w-full text-center'
+                    onClick={()=> showNotification("Reseting password is currently not working. Please text Jacob to resolve this.")}>
+                    <p className="underline text-[12px] pt-5 pb-7">I've Forgotten My Password</p>
+                </button>
             </div>
-            <ErrorMessages errorMessages={errorMessages}/>
-            <button 
-                className="w-full p-3 font-bold text-white rounded-md bg-primary"
-                onClick={handleSignIn}
-            >
-                Login
-            </button>
-            <button onClick={()=> showNotification("Reseting password is currently not working. Please text Jacob to resolve this.")}>
-                <p className="underline text-[12px] pt-5 pb-7">I've Forgotten My Password</p>
-            </button>
         </div>
   )
 }

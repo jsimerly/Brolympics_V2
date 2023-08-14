@@ -45,12 +45,15 @@ const VerifyPhone = ({route, navigation}) => {
       setCookie('refresh_token', data.refresh, 60 * 24 * 30);
       const endPath = sessionStorage.getItem('returnPath')
 
-      if (endPath){
+      setTimeout(()=> {
+        if (endPath){
           navigate(endPath)
           sessionStorage.setItem('returnPath', '/')
-      } else {
-          navigate('/')
-      }
+        } else {
+            navigate('/')
+        }
+      }, 1000)
+
       showNotification('You account has been created.', '!border-primary')
     } else {
       showNotification("We ran into an issue while trying to authenticate.")

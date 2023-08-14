@@ -51,6 +51,7 @@ const VerifyPhone = ({route, navigation}) => {
       } else {
           navigate('/')
       }
+      showNotification('You account has been created.', '!border-primary')
     } else {
       showNotification("We ran into an issue while trying to authenticate.")
     }

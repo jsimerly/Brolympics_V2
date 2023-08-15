@@ -120,6 +120,7 @@ const Brolympics = () => {
             />
             <Route path='competition/:compUuid' element={<InCompetition activeComp={activeComp}/>}/>
             <Route path='manage/*' element={<ManageRouter brolympics={broInfo}/>}/>
+            <Route path='*' element={<Navigate to={`/b/${uuid}/home`}/>}/>
         </Routes>
         {activeComp.is_available && 
           <Toolbar

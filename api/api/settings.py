@@ -35,7 +35,6 @@ if header_value:
 DEBUG = os.environ['DEBUG'] == 'True'
 ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split(',')
 
-
 CORS_ALLOWED_ORIGINS = os.environ['CORS_ALLOWED'].split(',')
 CORS_ALLOW_CREDENTIALS = True
 

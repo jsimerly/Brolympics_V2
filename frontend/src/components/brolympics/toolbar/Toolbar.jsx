@@ -9,7 +9,7 @@ import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 const Toolbar = ({status, is_owner, default_team_uuid, default_event_uuid, default_event_type}) => {
     const navigate = useNavigate();
     const {pathname} = useLocation()
-    const pathAfterBrolympics = pathname.split("/")[3];
+    const pathAfterBrolympics = ''
     const pathRoute = pathAfterBrolympics.split("/")[0]
 
     const {uuid} = useParams()

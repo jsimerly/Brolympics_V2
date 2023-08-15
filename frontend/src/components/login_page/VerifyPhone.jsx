@@ -4,12 +4,14 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { fetchVerifyPhone } from '../../api/fetchUser.js'
 import { AuthContext } from '../../context/AuthContext.jsx';
+import { useNotification } from '../Util/Notification.jsx';
 
 const VerifyPhone = ({route, navigation}) => {
   const initialState = Array(6).fill(''); 
   const [code, setCode] = useState(initialState);
   const inputRefs = Array.from({length: 6}, () => useRef(null)); 
-  const {setCurrentUser} = useContext(AuthContext)
+  const {setCurrentUser, currentUser} = useContext(AuthContext)
+  const {showNotification} = useNotification()
 
   const [displayHelpText, setDisplayHelpText] = useState(false)
 
@@ -41,26 +43,29 @@ const VerifyPhone = ({route, navigation}) => {
     
     if (response.ok){
       const data = await response.json()
-
-      setCurrentUser(data)
+      setCurrentUser(data.user)
       setCookie('access_token', data.access, 60);
       setCookie('refresh_token', data.refresh, 60 * 24 * 30);
-      const endPath = sessionStorage.getItem('returnPath')
-
-      setTimeout(()=> {
-        if (endPath){
-          navigate(endPath)
-          sessionStorage.setItem('returnPath', '/')
-        } else {
-            navigate('/')
-        }
-      }, 1000)
+      
 
       showNotification('You account has been created.', '!border-primary')
     } else {
       showNotification("We ran into an issue while trying to authenticate.")
     }
   }
+
+  useEffect(()=>{
+    if (currentUser){
+      const endPath = sessionStorage.getItem('returnPath') || '/';
+
+      if (endPath){
+        navigate(endPath)
+        sessionStorage.setItem('returnPath', '/')
+      } else {
+          navigate('/')
+      }
+    }
+  }, [currentUser])
   
   const handleKeyDown = (e, slot) => {
     if (e.key === "Backspace" && !code[slot] && slot > 0) {
@@ -97,11 +102,10 @@ const VerifyPhone = ({route, navigation}) => {
                             value={digit} 
                             onChange={(e) => handleChange(e.target.value, index)} 
                             maxLength="1"
-                            className='w-10 h-16 text-center rounded outline-none bg-offWhite text-[20px] font-bold'
+                            className='w-10 h-16 text-center rounded outline-none bg-neutralLight text-[20px] font-bold'
                             ref={inputRefs[index]}
                             onKeyDown={(e) => handleKeyDown(e, index)}
                         />
-                        <div className='bg-primary h-[2px] w-10'/>
                     </div>
 
                 ))}

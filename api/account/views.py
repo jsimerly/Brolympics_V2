@@ -36,7 +36,6 @@ class CheckPhoneVerification(APIView):
         if resp == 'approved':
             serializer = CreateUserSerializer(data=request.data)
 
-
             if serializer.is_valid():
                 phone = serializer.validated_data.get('phone')
                 password = serializer.validated_data.get('password')
@@ -53,12 +52,16 @@ class CheckPhoneVerification(APIView):
                 # Generate JWT tokens for the created user
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
-                
+
                 return Response({
                     'refresh': str(refresh),
                     'access': access_token,
+                    'user': UserSerializer(user).data,
                 }, status=status.HTTP_201_CREATED)
         
+        if resp == 'pending':
+            return Response({'error': 'Incorrect Code'}, status=status.HTTP_400_BAD_REQUEST)
+
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
 class CurrentUserView(APIView):

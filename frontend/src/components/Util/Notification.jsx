@@ -33,7 +33,7 @@ const Notification = ({ message, className, onClose }) => {
   return (
     <div className={`${className} p-2 fixed top-[70px] left-0 right-0 z-50 mx-6 rounded-md border-errorRed bg-white border text-neutralDark`}>
       <div className='flex items-start justify-between'>      
-        <p>{message}</p>
+        {message}
         <button onClick={onClose}><CloseIcon/></button>
       </div>
     </div>

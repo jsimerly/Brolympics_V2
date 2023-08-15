@@ -1,13 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useContext } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { fetchVerifyPhone } from '../../api/fetchUser.js'
+import { AuthContext } from '../../context/AuthContext.jsx';
 
 const VerifyPhone = ({route, navigation}) => {
   const initialState = Array(6).fill(''); 
   const [code, setCode] = useState(initialState);
   const inputRefs = Array.from({length: 6}, () => useRef(null)); 
+  const {setCurrentUser} = useContext(AuthContext)
 
   const [displayHelpText, setDisplayHelpText] = useState(false)
 

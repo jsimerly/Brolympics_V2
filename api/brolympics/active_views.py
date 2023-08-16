@@ -34,7 +34,7 @@ class StartBrolympics(APIView):
             return Response({'detail':'You cannot start this brolympics until it has at least 2 teams.'}, status=status.HTTP_412_PRECONDITION_FAILED)
         
         all_events = brolympics.get_all_events()
-        total_events = len(all_events['h2h']) + len(all_events['h2h']) + len(all_events['h2h']) 
+        total_events = len(all_events['h2h']) + len(all_events['ind']) + len(all_events['team']) 
 
         if total_events <= 0:
             return Response({'detail':'You cannot start this brolympics until it has at least 1 event.'}, status=status.HTTP_412_PRECONDITION_FAILED)

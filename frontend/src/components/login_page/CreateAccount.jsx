@@ -33,9 +33,14 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
     const handleError = (error) => {
         for (let key in error){
             if (error.hasOwnProperty(key)){
-                error[key].forEach((message) => {
-                    messages.push(message)
-                })
+                if (Array.isArray(error)){
+                    error[key].forEach((message) => {
+                        messages.push(message)
+                    })
+                } else {
+                    messages.push(error[key])
+                }
+
             }
         }
     

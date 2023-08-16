@@ -10,6 +10,7 @@ export async function fetchCreateUser(phoneNumber, firstName, lastName, password
         phone: phoneNumber,
     }
 
+    
     deleteCookie('refresh_token')
     deleteCookie('access_token')
 

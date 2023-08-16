@@ -40,7 +40,6 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
                 } else {
                     messages.push(error[key])
                 }
-
             }
         }
     

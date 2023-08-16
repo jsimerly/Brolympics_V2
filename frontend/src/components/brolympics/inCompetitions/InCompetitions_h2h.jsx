@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { fetchActiveComp_h2h, fetchSubmitComp_h2h} from '../../../api/activeBro/fetchHome'
+import { fetchActiveComp_h2h, fetchCancelComp_h2h, fetchSubmitComp_h2h} from '../../../api/activeBro/fetchHome'
+import { useNotification } from '../../Util/Notification'
 
 const InCompetitions_h2h = ({}) => {
     const [team1Score, setTeam1Score] = useState(0)
     const [team2Score, setTeam2Score] = useState(0)
     const handleTeam1ScoreChange = (e) => setTeam1Score(e.target.value);
     const handleTeam2ScoreChange = (e) => setTeam2Score(e.target.value);
+    const {showNotification} = useNotification()
   
     const {compUuid} = useParams()
 
@@ -24,14 +26,13 @@ const InCompetitions_h2h = ({}) => {
       getData()
       
     },[])
-
     
   const getFontSize = (name) => {
     if (name) {
       if (name.length <= 10) {
-          return '30px';
-      } else if (name.length <= 16) {
           return '26px';
+      } else if (name.length <= 16) {
+          return '22px';
       } else if (name.length <= 20) {
           return '20px';
       } else {
@@ -51,8 +52,23 @@ const InCompetitions_h2h = ({}) => {
     if (isValidScore(team1Score) && isValidScore(team2Score)){
       const response = await fetchSubmitComp_h2h(compUuid, team1Score, team2Score)
       if (response.ok){
+        showNotification('This competition has been updated.', '!border-primary')
         location.reload()
+      } else if(response.status == 409) {
+        showNotification('This competition was updated by someone else.')
+        localStorage.reload()
+      } else {
+        showNotification('There was an issue with trying to update this competition.')
       }
+    }
+  }
+
+  const handleCancelClicked = async () => {
+    const response = await fetchCancelComp_h2h(compUuid)
+    if (response.ok){
+      location.reload()
+    } else {
+      showNotification('There was an issue attempting to cancel this competition')
     }
   }
 
@@ -101,12 +117,20 @@ const InCompetitions_h2h = ({}) => {
             </div>
           </div>
         </div>
+        <div className='flex gap-2'>
           <button 
-            className='w-full p-3 mt-6 rounded-md bg-primary'
+              className='w-1/3 p-3 mt-6 border rounded-md border-primary'
+              onClick={handleCancelClicked}
+            >
+            Cancel
+          </button> 
+          <button 
+            className='w-2/3 p-3 mt-6 rounded-md bg-primary'
             onClick={handleSumbitClicked}
           >
             Submit Score
-          </button>    
+          </button>   
+        </div>   
     </div>
   )
 }

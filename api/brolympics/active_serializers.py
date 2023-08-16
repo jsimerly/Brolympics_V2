@@ -149,10 +149,17 @@ class EventRankingSerializer_Ind(serializers.ModelSerializer):
     def get_name(self, obj):
         return obj.event.name
     
+    
     def get_score(self, obj):
         if obj.event.display_avg_scores:
-            return obj.team_avg_score
-        return obj.team_total_score
+            score = obj.team_avg_score
+        else:
+            score = obj.team_total_score
+
+        if score is None:
+            return None
+
+        return round(score, obj.event.get_decimal_value())
     
     def get_decimal_places(self,obj):
         event_dec = obj.event.score_type
@@ -195,8 +202,14 @@ class EventRankingSerializer_Team(serializers.ModelSerializer):
     
     def get_score(self, obj):
         if obj.event.display_avg_scores:
-            return obj.team_avg_score
-        return obj.team_total_score
+            score = obj.team_avg_score
+        else:
+            score = obj.team_total_score
+
+        if score is None:
+            return None
+
+        return round(score, obj.event.get_decimal_value())
     
     def get_decimal_places(self,obj):
         event_dec = obj.event.score_type
@@ -267,11 +280,14 @@ class EventPageSerializer_ind(EventRankingPageSerailzier_AbstractBase):
         model = EventRanking_Ind
         fields = ['score'] + EventRankingPageSerailzier_AbstractBase.Meta.fields
 
-    def get_score(self, obj):
+    def get_score(self, obj):        
         if obj.event.display_avg_scores:
             score = obj.team_avg_score
         else:
             score = obj.team_total_score
+
+        if score is None:
+            return None
 
         return round(score, obj.event.get_decimal_value())
 

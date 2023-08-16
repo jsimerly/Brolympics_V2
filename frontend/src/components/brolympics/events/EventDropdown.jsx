@@ -26,7 +26,6 @@ const EventDropdown = ({events}) => {
     }
   
     const [isOpen, setIsOpen, handleDropdownClicked, dropdownNode] = useDropdown()
-    console.log(events)
 
     const getEventText = (event) => {
       if (event.is_active){

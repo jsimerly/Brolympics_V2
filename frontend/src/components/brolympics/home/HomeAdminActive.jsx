@@ -7,7 +7,7 @@ const UnstartedEventCard = ({name, projected_start_date, uuid, type}) => {
     const onStartClick = async () => {
         const response = await fetchStartEvent(uuid, type)
         if (response.ok){
-            
+            location.reload()
         } else {
             console.log('handle error start event')
         }

@@ -92,12 +92,12 @@ const IndComp = ({team, player_1_score, player_2_score, uuid}) => {
       showNotification('There was an error when attemping to update this competition.')
     }
   }
-  
+  console.log(team)
   return(
     <div className='relative flex flex-col gap-1 p-2 border'>
       {team.name}
       <div className='flex items-center'>
-        <div>{team.player_1.short_name}:</div> 
+        <div>{team.player_1?.short_name || 'Player 1'}:</div> 
         <input 
           value={compData.player_1_score} 
           onChange={handlePlayer1ScoreChange}
@@ -105,7 +105,7 @@ const IndComp = ({team, player_1_score, player_2_score, uuid}) => {
         />
       </div>
       <div className='flex items-center'>
-        <div>{team.player_2.short_name}:</div> 
+        <div>{team.player_2?.short_name || 'Player 2'}:</div> 
         <input 
           value={compData.player_2_score} 
           onChange={handlePlayer2ScoreChange}
@@ -197,8 +197,6 @@ const EditComp = () => {
     }
     getComps()
   },[])  
-
-  console.log(indEvents)
 
   return (
     <div>

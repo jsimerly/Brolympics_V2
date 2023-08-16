@@ -73,6 +73,8 @@ const InCompetition_ind = () => {
     const response = await fetchCancelComp_ind(compUuid)
     if (response.ok){
       location.reload()
+    } else {
+      showNotification('There was an issue attempting to cancel this competition')
     }
   }
   
@@ -93,7 +95,7 @@ const InCompetition_ind = () => {
               <h4 
                 className={
                   `w-full py-2 text-start text-[30px]`}
-              >{compData.team.player_1.short_name}</h4>
+              >{compData.team.player_1?.short_name || 'Player 1'}</h4>
               <div className='flex justify-center w-1/2'>
                 <input 
                   value={player1Score}
@@ -107,7 +109,7 @@ const InCompetition_ind = () => {
               <h4 
                 className={
                   `w-full py-2 text-start text-[30px]`}
-              >{compData.team.player_2.short_name}</h4>
+              >{compData.team.player_2?.short_name || 'Player 2'}</h4>
               <div className='flex justify-center w-1/2'>
                 <input 
                   value={player2Score}
@@ -133,7 +135,6 @@ const InCompetition_ind = () => {
           Submit Score
         </button>   
       </div>
-   
     </div>  
   )
 }

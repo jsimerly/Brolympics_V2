@@ -86,7 +86,7 @@ const EventDropdown_H2h = ({decimal_places, score_for, score_against, sos_wins, 
         <h4 className='pt-2 font-semibold'>Competitions</h4>    
         <div className='flex flex-col gap-1 py-1'>
             {comps.map((comp, i) => (
-                <Matchup {...comp} team={team}/>
+                <Matchup {...comp} team={team} key={i+'_team_matchup'}/>
             ))}
             {comps.length === 0 && 'Event has not started yet.'}
         </div>

@@ -10,8 +10,8 @@ const Competition = ({player_1_name, player_1_score, player_2_name, player_2_sco
       `}
     >
         <div className="grid grid-cols-2 ">
-          <div className="text-end">{team.player_1.short_name}:</div><div className="pl-3">{player_1_score}</div> 
-          <div className="text-end">{team.player_2.short_name}:</div><div className="pl-3">{player_2_score}</div>
+          <div className="text-end">{team.player_1?.short_name || 'Player 1'}:</div><div className="pl-3">{player_1_score}</div> 
+          <div className="text-end">{team.player_2?.short_name || 'Player 2'}:</div><div className="pl-3">{player_2_score}</div>
           <div className="font-bold text-end">Team:</div><div className="pl-3 font-bold">{team_score}</div>
         </div>
     </div>
@@ -23,7 +23,7 @@ const EventDropdown_Ind = ({comps, decimcal_places, is_active, rank}) => (
       <h4 className='pt-2 font-bold'>Competitions</h4>  
       <div className='flex flex-col gap-1 py-1'>
           {comps.map((comp, i) => (
-              <Competition {...comp} rank={rank}/>
+              <Competition {...comp} rank={rank} key={i+'_ind_competition'}/>
           ))}
           {comps.length === 0 && 'Event has not started yet.'}
       </div>

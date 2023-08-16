@@ -375,8 +375,11 @@ class EndCompH2h(APIView):
 
         if h2h_comp_qset.exists():
             comp = h2h_comp_qset.first()
-            comp.end(team_1_score, team_2_score)
 
+            if comp.is_complete:
+                return Response({'message':'This competition was already completed.'}, status=status.HTTP_409_CONFLICT)
+            
+            comp.end(team_1_score, team_2_score)
             return Response(status=status.HTTP_200_OK)
 
         bracket_comp_qset = BracketMatchup.objects.filter(uuid=comp_uuid)
@@ -434,14 +437,16 @@ class CancelCompH2h(APIView):
         h2h_comp_qset = Competition_H2H.objects.filter(uuid=comp_uuid)        
         if h2h_comp_qset.exists():
             comp = h2h_comp_qset.first()
-            comp.cancel()
+            if not comp.is_complete:
+                comp.cancel()
 
             return Response(status=status.HTTP_200_OK)
 
         bracket_comp_qset = BracketMatchup.objects.filter(uuid=comp_uuid)
         if bracket_comp_qset.exists():
             comp = bracket_comp_qset.first()
-            comp.cancel()
+            if not comp.is_complete:
+                comp.cancel()
 
             return Response(status=status.HTTP_200_OK)
 
@@ -453,7 +458,8 @@ class CancelCompInd(APIView):
     def put(self, request):
         comp_uuid = request.data.get('uuid')        
         comp = get_object_or_404(Competition_Ind, uuid=comp_uuid)
-        comp.cancel()
+        if not comp.is_complete:
+            comp.cancel()
 
         return Response(status=status.HTTP_200_OK) 
 
@@ -463,7 +469,8 @@ class CancelCompTeam(APIView):
     def put(self, request):
         comp_uuid = request.data.get('uuid')        
         comp = get_object_or_404(Competition_Team, uuid=comp_uuid)
-        comp.cancel()
+        if not comp.is_complete:
+            comp.cancel()
 
         return Response(status=status.HTTP_200_OK) 
     

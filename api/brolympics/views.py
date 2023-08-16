@@ -11,18 +11,37 @@ import base64
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
 from django.db.models import Q
+from PIL import Image
+from io import BytesIO
 
 
 User = get_user_model()
 
-def convert_to_img_file(base_64_img):
+def convert_to_img_file(base_64_img, quality=85):
     if base_64_img is None:
         return None
     
     format, imgstr = base_64_img.split(';base64,')
     ext = format.split('/')[-1]
-    data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-    return data
+    decoded_img = base64.b64decode(imgstr)
+
+    # Compress the image
+    img = Image.open(BytesIO(decoded_img))
+
+    # Depending on the extension apply compression
+    buffer = BytesIO()
+
+    if ext.lower() in ['jpeg', 'jpg']:
+        img.save(buffer, format="JPEG", quality=quality)  # You can adjust the quality parameter
+    elif ext.lower() == 'png':
+        img.save(buffer, format="PNG", compress_level=5)  # compress_level range is 0-9
+    else:
+        # If not jpg or png, save with original decoded content
+        return ContentFile(decoded_img, name='temp.' + ext)
+
+    img_compressed = buffer.getvalue()
+    
+    return ContentFile(img_compressed, name='temp.' + ext)
 
 
 

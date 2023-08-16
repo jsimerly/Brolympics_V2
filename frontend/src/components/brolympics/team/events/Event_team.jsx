@@ -20,7 +20,7 @@ const EventDropdown_Ind = ({comps, decimcal_places, is_active, rank}) => (
       <h4 className='pt-2 font-bold'>Competitions</h4>  
       <div className='flex flex-col gap-1 py-1'>
           {comps.map((comp, i) => (
-              <Competition {...comp} rank={rank}/>
+              <Competition {...comp} rank={rank} key={i+'_team_competition'}/>
           ))}
           {comps.length === 0 && 'Event has not started yet.'}
       </div>

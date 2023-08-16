@@ -59,8 +59,8 @@ const Team = ({teams, default_uuid}) => {
     <div className="flex items-center justify-center w-full gap-3 px-6">
       <div className="flex flex-col items-center justify-center w-full p-3 border rounded-md border-primary">
         <div className="flex justify-around w-3/4 py-3 pb-6">
-          <span className="font-bold text-[18px] text-center">{team.player_1.full_name}</span>
-          <span className="font-bold text-[18px] text-center">{team.player_2.full_name}</span>
+          <span className="font-bold text-[18px] text-center">{team.player_1?.full_name || 'Player 1'}</span>
+          <span className="font-bold text-[18px] text-center">{team.player_2?.full_name || 'Player 2'}</span>
         </div>
         <div className="flex justify-center w-full gap-6">
           <div className="flex">

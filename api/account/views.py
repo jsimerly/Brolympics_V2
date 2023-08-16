@@ -7,9 +7,8 @@ from account.twillio import send_verification_code, check_verification_code, res
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from twilio.rest import Client
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
 
 User = get_user_model()
 
@@ -71,23 +70,62 @@ class CurrentUserView(APIView):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
     
-class ResetPasswordVerify(APIView):
+
+class ResetInfo(APIView):
     def post(self, request):
         phone = request.data.get('phone_number')
-        user = get_object_or_404(User, phone=phone)
-        token = default_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-
-        reset_url = f'{request.scheme}://{request.get_host()}/reset-password/{uid}/{token}'
-
-        reset_password_sms(phone, reset_url)
-        print(reset_url)
+        print(phone)
+        send_verification_code(phone)
 
         return Response(status=status.HTTP_200_OK)
     
+
+class ResetPasswordVerify(APIView):
+    def post(self, request):
+        phone = request.data.get('phone_number')
+        code = request.data.get('code')
+        print(phone)
+        print(code)
+        resp = check_verification_code(phone, code)
+        if resp == 'approved':
+
+            user = get_object_or_404(User, phone=phone)
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+            return Response({'uid':uid, 'token':token},status=status.HTTP_200_OK)
+        
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
 class ResetPassword(APIView):
     def post(self, request):
-        pass
+        uidb64 = request.data.get('uid')
+        token = request.data.get('token')
+        new_password = request.data.get('password')
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except:
+            user = None
+        
+        print(default_token_generator.check_token(user, token))
+        if user is not None and default_token_generator.check_token(user, token):
+            user.set_password(new_password)
+            user.save()
+
+            refresh = RefreshToken.for_user(user)
+            access = str(refresh.access_token)
+
+            data = {
+                'message': 'Password reset successful!',
+                'user' : UserSerializer(user).data,
+                'refresh' : str(refresh),
+                'access' : access,
+            }
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Invalid token or user does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
     

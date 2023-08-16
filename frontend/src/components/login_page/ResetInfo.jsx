@@ -1,15 +1,15 @@
 import { useState } from "react"
 import { PhoneNumberInput } from "../Util/Inputs"
-import { fetchResetPassword, fetchResetPasswordVerify } from "../../api/fetchUser"
+import { fetchResetPassword, fetchResetPasswordVerify, fetchResetPasswordInfo } from "../../api/fetchUser"
 import { useNotification } from "../Util/Notification"
 import { useNavigate } from "react-router-dom"
 import AccountValidator from "../Util/input_validation"
 
-const ResetInfo = () => {
+const ResetInfo = ({setCleanPhoneNumber}) => {
+    const [phoneNumber, setPhoneNumber] = useState()
     const {showNotification} = useNotification()
     const navigate = useNavigate()
 
-    const [phoneNumber, setPhoneNumber] = useState()
     const handlePhoneNumberChange = (e) => setPhoneNumber(e.target.value)
 
     const validator = new AccountValidator()
@@ -17,10 +17,11 @@ const ResetInfo = () => {
     
     const onResetClicked = async () => {
         const cleanedPhoneNumber = validator.cleanPhoneNumber(phoneNumber)
-        const response = await fetchResetPasswordVerify(cleanedPhoneNumber)
+        setCleanPhoneNumber(cleanedPhoneNumber)
+        const response = await fetchResetPasswordInfo(cleanedPhoneNumber)
         
         if (response.ok){
-            showNotification('An text message has been sent to this phone number, please use the link to reset your password.', '!border-primary')
+            navigate('/reset-password/verify')
         } else if (response.status == 404){
             showNotification(
             <p>

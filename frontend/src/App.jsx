@@ -50,8 +50,7 @@ function App() {
         <Route path='/sign-up/*' element={<SignUp/>}/>
         <Route path='/sign-up/verify' element={<VerifyPhone/>}/>
         <Route path='/start-league' element={<StartLeague/>}/>
-        <Route path='/reset-password/:uid/:token' element={<ResetPassword/>}/>
-        <Route path='/reset-info/' element={<ResetInfo/>}/>
+        <Route path='/reset-password/*' element={<ResetPassword/>}/>
         <Route path='/' element={<Leagues leagues={leagues}/>}/>
         <Route path='/league/:uuid/*' element={<LeagueRouter/>}/>
         <Route path='/b/:uuid/*' element={<Brolympics/>}></Route>

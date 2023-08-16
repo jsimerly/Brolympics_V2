@@ -10,7 +10,7 @@ export async function fetchCreateUser(phoneNumber, firstName, lastName, password
         phone: phoneNumber,
     }
 
-    
+
     deleteCookie('refresh_token')
     deleteCookie('access_token')
 
@@ -70,7 +70,8 @@ export async function fetchUserInformation(){
     }
 }
 
-export async function fetchResetPassword(email){
+export async function fetchResetPassword(uid, token, password){
+    const data = {uid:uid, token:token, password:password}
     try {
         const response = await fetchWrapper(`${SERVER_ADDRESS}/api/account/reset-password/`,
         {
@@ -79,7 +80,7 @@ export async function fetchResetPassword(email){
                 'Content-Type': 'application/json',
                 'X-CSRFTOKEN' : getCookie('csrftoken'),
             },
-            body: JSON.stringify({email: email}),
+            body: JSON.stringify(data),
         })
         return response
         
@@ -113,8 +114,26 @@ export async function fetchVerifyPhone(phoneNumber, firstName, lastName, passwor
     }
 }
 
-export async function fetchResetPasswordVerify(phoneNumber){
+export async function fetchResetPasswordInfo(phoneNumber){
     const data = {phone_number: phoneNumber}
+    try {
+        const response = await fetchWrapper(`${SERVER_ADDRESS}/api/account/reset-info/`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN' : getCookie('csrftoken'),
+            },
+            body: JSON.stringify(data),
+        })
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function fetchResetPasswordVerify(phoneNumber, code){
+    const data = {phone_number: phoneNumber, code:code}
     try {
         const response = await fetchWrapper(`${SERVER_ADDRESS}/api/account/reset-verify/`,
         {
@@ -127,7 +146,6 @@ export async function fetchResetPasswordVerify(phoneNumber){
         })
         return response
     } catch (error) {
-        console.log('here')
         throw error
     }
 }

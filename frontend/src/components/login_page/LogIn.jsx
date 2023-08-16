@@ -94,7 +94,7 @@ const LogIn = ({password, setPassword, phoneNumber, setPhoneNumber}) => {
                 </button>
                 <button 
                     className='w-full text-center'
-                    onClick={()=> showNotification("Reseting password is currently not working. Please text Jacob to resolve this.")}>
+                    onClick={()=> navigate('/reset-password')}>
                     <p className="underline text-[12px] pt-5 pb-7">I've Forgotten My Password</p>
                 </button>
             </div>

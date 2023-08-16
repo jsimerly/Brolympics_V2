@@ -65,7 +65,7 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
 
         setErrorMessages(AccountValidator.errors)
         
-        if (validator.errors.lenght > 0){
+        if (validator.errors.length > 0){
             return
         }
         

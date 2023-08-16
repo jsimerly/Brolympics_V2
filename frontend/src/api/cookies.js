@@ -75,10 +75,6 @@ export async function fetchWrapper(url, options){
     }
 
     const response = await fetch(url, requestOptions);
-    
-    if (response.status==401){
-      deleteCookie('access_token')
-      deleteCookie('refresh_token')
-    }
+
     return response
 }

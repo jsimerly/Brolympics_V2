@@ -9,8 +9,17 @@ import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 const Toolbar = ({status, is_owner, default_team_uuid, default_event_uuid, default_event_type}) => {
     const navigate = useNavigate();
     const {pathname} = useLocation()
-    const pathAfterBrolympics = ''
-    const pathRoute = pathAfterBrolympics.split("/")[0]
+    const pathAfterBrolympics = pathname
+    let pathRoute = ''
+    try {
+        pathRoute = pathAfterBrolympics.split("/")[3];
+    } catch (error) {
+        if (error instanceof IndexError) {
+            pathRoute = '';
+        } else {
+            throw error;
+        }
+    }
 
     const {uuid} = useParams()
 
@@ -27,7 +36,6 @@ const Toolbar = ({status, is_owner, default_team_uuid, default_event_uuid, defau
         <span className='text-[10px]'>{text}</span>
     </div>
     )
-
   return (
     status !== 'pre' &&
     <>
@@ -38,7 +46,7 @@ const Toolbar = ({status, is_owner, default_team_uuid, default_event_uuid, defau
                 icon={<HomeOutlinedIcon sx={{fontSize:30}}/>}
             />
             <PageButton 
-                route={`team/${default_team_uuid || ''}`} 
+                route={`team/${default_team_uuid || `team/`}`} 
                 path='team'
                 text='Team' 
                 icon={<PeopleAltOutlinedIcon sx={{fontSize:30}}/>}

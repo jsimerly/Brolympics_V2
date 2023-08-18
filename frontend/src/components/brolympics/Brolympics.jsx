@@ -104,7 +104,6 @@ const Brolympics = () => {
         <Routes>
             <Route path="home" element={<Home brolympics={broInfo} status={status} setStatus={setStatus}/>} />
             <Route path="standings" element={<Standings />} />
-            
             <Route path="team/:teamUuid" element={
               <Team 
                 teams={broInfo?.teams} 

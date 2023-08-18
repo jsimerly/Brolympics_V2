@@ -17,7 +17,7 @@ const Team = ({teams, default_uuid}) => {
   let navigate = useNavigate()
   const [selectedTeam, setSelectedTeam] = useState()
   const [teamInfo, setTeamInfo] = useState()
-
+  
   useEffect(()=> {
     if (!teamUuid && default_uuid){
       navigate(`/team/${default_uuid}`)
@@ -34,10 +34,7 @@ const Team = ({teams, default_uuid}) => {
     }
     getTeamInfo()
 
-  }, [teamUuid])
-  
-  
- 
+  }, [teamUuid]) 
 
   const TeamInfo = ({team, player_1, player_2}) => {
     const getOrdinalSuffix = (number) => {

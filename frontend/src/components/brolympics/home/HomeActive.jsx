@@ -37,7 +37,6 @@ const getAvailableComponent = (type, props) => {
         case 'bracket':
             return <AvailableCompetition_h2h {...props} />;
         default:
-            console.log('123')
           return null;
       }
 }
@@ -53,7 +52,6 @@ const getActiveComponent = (type, props) => {
         case 'team':
           return <ActiveCompetition_team {...props} />;
         default:
-            console.log('here')
           return null;
       }
 }
@@ -137,7 +135,6 @@ const HomeActive = ({is_owner}) => {
             if (response.ok){
                 const data = await response.json()
                 setHomeData(data)
-                console.log(data)
             }
         }
         getHomeInfo()

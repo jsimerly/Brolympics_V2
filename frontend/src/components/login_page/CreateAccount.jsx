@@ -56,6 +56,7 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
 
     
     const handleCreateAccount = async () => {
+        console.log('1')
         validator.resetErrors()
 
         validator.validateFirstName(firstName, setFirstNameError)
@@ -66,18 +67,18 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
         setErrorMessages(AccountValidator.errors)
         
         if (validator.errors.length > 0){
-            return
-        } else {
+            
             const formattedErrorMessage = (
                 <ul className="">
-                    {errorMessages.map((message, i) => (
+                    {validator.errors.map((message, i) => (
                         <li key={i+'_format_message'}>- {message}</li>
                     ))}
                 </ul>
             )
             
             showNotification(formattedErrorMessage)
-        }
+            return
+        } 
         
         const cleanedPhoneNumber = validator.cleanPhoneNumber(phoneNumber)
         const response = await createUser(cleanedPhoneNumber, firstName, lastName, password)

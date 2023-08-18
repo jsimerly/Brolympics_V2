@@ -10,6 +10,7 @@ const Invites = () => {
     const {currentUser} = useContext(AuthContext)
     const location = useLocation()
     const returnPath = location.pathname
+    location.reload()
 
   return (
     <div className="bg-offWhite text-neutralDark">

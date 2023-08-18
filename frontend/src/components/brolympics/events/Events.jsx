@@ -75,6 +75,7 @@ const Events = ({events, default_uuid, default_type}) => {
   }
 
   const CompComp = componentMap[eventInfo?.type] || Comp_ind  
+  console.log(eventInfo)
   return (
     <div className=''>
       <EventDropdown events={events}/>

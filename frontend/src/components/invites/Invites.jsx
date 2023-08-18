@@ -5,13 +5,35 @@ import LeagueInvite from "./LeagueInvite"
 import BrolympicsInvite from "./BrolympicsInvite"
 import TeamInvite from "./TeamInvite"
 import SignUp from "../login_page/SignUp"
+import { fetchCreateUser } from "../../api/fetchUser"
 
 const Invites = () => {
-    const {currentUser} = useContext(AuthContext)
-    const location = useLocation()
-    const returnPath = location.pathname
-    location.reload()
+    const {currentUser, setCurrentUser} = useContext(AuthContext)
+    const urlLocation = useLocation()
+    const returnPath = urlLocation.pathname
 
+    useEffect(() => {
+      const getUser = async () => {
+        try {
+          const response = await fetchUserInformation();
+          if (response.ok) {
+            const data = await response.json();
+            setCurrentUser(data);
+          } else {
+            setCurrentUser(null);
+            navigate('/sign-up')
+          }
+        } catch (error) {
+          setCurrentUser(null);
+          navigate('/sign-up')
+        }
+      }
+        
+      if (!currentUser){
+        getUser()
+      }
+    },[])
+  
   return (
     <div className="bg-offWhite text-neutralDark">
       {currentUser ? 

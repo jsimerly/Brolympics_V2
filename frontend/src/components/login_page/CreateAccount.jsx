@@ -67,6 +67,16 @@ const CreateAccount = ({firstName, setFirstName, lastName, setLastName, password
         
         if (validator.errors.length > 0){
             return
+        } else {
+            const formattedErrorMessage = (
+                <ul className="">
+                    {errorMessages.map((message, i) => (
+                        <li key={i+'_format_message'}>- {message}</li>
+                    ))}
+                </ul>
+            )
+            
+            showNotification(formattedErrorMessage)
         }
         
         const cleanedPhoneNumber = validator.cleanPhoneNumber(phoneNumber)

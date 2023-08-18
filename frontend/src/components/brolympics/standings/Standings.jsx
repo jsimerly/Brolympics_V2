@@ -77,31 +77,34 @@ const Standings = () => {
           </tbody>
         </table>
       </div>
+      {standingData?.podiums &&
       <div className='py-6'>
         <h2 className='text-[20px] font-bold pb-2'>Event Podiums</h2>
-        {standingData?.podiums.length === 0 && 'No events have been completed yet.'}
-        <ul className='flex flex-col gap-6'>
-        {standingData?.podiums.map((event, i) => (
-          <div key={i+"_podium"}>
-            <h3 className='font-semibold'>{event.event}</h3>
-            <div className='flex flex-col justify-center gap-2 px-2 pt-2'>
-                <div className='flex gap-2'>
-                    <img src={Gold} className='h-[20px]'/>
-                    {event.first.name}
+          {standingData?.podiums.length === 0 && 'No events have been completed yet.'}
+          <ul className='flex flex-col gap-6'>
+          {standingData?.podiums.map((event, i) => (
+            <div key={i+"_podium"}>
+              <h3 className='font-semibold'>{event.event}</h3>
+              <div className='flex flex-col justify-center gap-2 px-2 pt-2'>
+                  <div className='flex gap-2'>
+                      <img src={Gold} className='h-[20px]'/>
+                      {event.first.name}
+                  </div>
+                  <div className='flex gap-2'>
+                      <img src={Silver} className='h-[20px]'/>
+                      {event.second.name}
+                  </div>
+                  <div className='flex gap-2'>
+                      <img src={Bronze} className='h-[20px]'/>
+                      {event.third.name}
+                  </div>
                 </div>
-                <div className='flex gap-2'>
-                    <img src={Silver} className='h-[20px]'/>
-                    {event.second.name}
-                </div>
-                <div className='flex gap-2'>
-                    <img src={Bronze} className='h-[20px]'/>
-                    {event.third.name}
-                </div>
-              </div>
-          </div>
-        ))}
-        </ul>
-      </div>
+            </div>
+          ))}
+          </ul>
+        </div>
+      }
+      
   </div>
   )
 }

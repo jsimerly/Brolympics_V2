@@ -5,6 +5,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { fetchVerifyPhone } from '../../api/fetchUser.js'
 import { AuthContext } from '../../context/AuthContext.jsx';
 import { useNotification } from '../Util/Notification.jsx';
+import { setCookie } from '../../api/cookies.js';
 
 const VerifyPhone = ({route, navigation}) => {
   const initialState = Array(6).fill(''); 
@@ -41,11 +42,14 @@ const VerifyPhone = ({route, navigation}) => {
   const verifyCode = async () => {
     const response = await fetchVerifyPhone(phoneNumber, firstName, lastName, password, code.join(''))
     
-    if (response.ok){
+    if (response.status === 201){
       const data = await response.json()
       setCurrentUser(data.user)
       setCookie('access_token', data.access, 60);
       setCookie('refresh_token', data.refresh, 60 * 24 * 30);
+      console.log(data.access)
+      console.log(data.refresh)
+      console.log(data.user)
       
 
       showNotification('You account has been created.', '!border-primary')

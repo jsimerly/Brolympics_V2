@@ -109,7 +109,7 @@ export async function fetchVerifyPhone(phoneNumber, firstName, lastName, passwor
         })
         return response
     } catch (error) {
-        console.log('here')
+
         throw error
     }
 }

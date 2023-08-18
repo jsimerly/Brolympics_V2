@@ -88,7 +88,7 @@ const VerifyPhone = ({route, navigation}) => {
 
   return (
     <div
-        className='flex flex-col items-center justify-between min-h-[calc(100vh-80px)] p-6 w-screen border'
+        className='flex flex-col items-center justify-between min-h-[calc(100vh-80px)] p-6 w-screen'
     >
         <div className='fixed w-full pl-6' onClick={goBack}> <ArrowBackIcon/> Back </div>
         <div/>

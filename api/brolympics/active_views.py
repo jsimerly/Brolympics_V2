@@ -592,21 +592,16 @@ class GetStandingsInfo(APIView):
             third = ranking_model.objects.filter(event=event, rank=3)
             
             if first.exists():
-                ranking  = first.first()
-                team = ranking.team
-                podium_data['first'] = SmallTeamSerializer(team, context={'request':self.request}).data
+                teams_first = [ranking.team for ranking in first]
+                podium_data['first'] = SmallTeamSerializer(teams_first, many=True, context={'request': self.request}).data
                       
-
             if second.exists():
-                ranking  = second.first()
-                team = ranking.team
-                podium_data['second'] = SmallTeamSerializer(team, context={'request':self.request}).data
-        
+                teams_second = [ranking.team for ranking in second]
+                podium_data['second'] = SmallTeamSerializer(teams_second, many=True, context={'request': self.request}).data
 
             if third.exists():
-                ranking  = third.first()
-                team = ranking.team
-                podium_data['third'] = SmallTeamSerializer(team, context={'request':self.request}).data
+                teams_third = [ranking.team for ranking in third]
+                podium_data['third'] = SmallTeamSerializer(teams_third, many=True, context={'request': self.request}).data
    
             
             event_data.append(podium_data)

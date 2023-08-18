@@ -86,18 +86,25 @@ const Standings = () => {
             <div key={i+"_podium"}>
               <h3 className='font-semibold'>{event.event}</h3>
               <div className='flex flex-col justify-center gap-2 px-2 pt-2'>
-                  <div className='flex gap-2'>
-                      <img src={Gold} className='h-[20px]'/>
-                      {event.first.name}
+                {event.first.map((team, i) => (
+                  <div className='flex gap-2' key={`first_`+i}>
+                    <img src={Gold} className='h-[20px]'/>
+                      {team.name}
                   </div>
-                  <div className='flex gap-2'>
-                      <img src={Silver} className='h-[20px]'/>
-                      {event.second.name}
+                ))}
+                {event.second.map((team, i) => (
+                  <div className='flex gap-2' key={`second_`+i}>
+                    <img src={Silver} className='h-[20px]'/>
+                    {team.name}
                   </div>
-                  <div className='flex gap-2'>
-                      <img src={Bronze} className='h-[20px]'/>
-                      {event.third.name}
+                ))}
+                {event.third.map((team,i) => (
+                  <div className='flex gap-2' key={`third_`+i}>
+                    <img src={Bronze} className='h-[20px]'/>
+                    {team.name}
                   </div>
+                ))}
+
                 </div>
             </div>
           ))}

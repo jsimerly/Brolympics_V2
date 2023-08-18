@@ -62,7 +62,7 @@ const Standings = () => {
                   <div className='flex items-center gap-2'>
                     <img src={ranking.team.img} className='w-[30px] h-[30px] rounded-md'/>
                     <span className={`text-[${getFontSize(ranking.team.name)}]`}>
-                      {ranking.team.name}
+                      {ranking.team?.name}
                     </span>
 
                   </div>
